@@ -95,7 +95,7 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
     case WM_ACTIVATE:
       //core->Signal( 1, !HIWORD( wParam ) );
       LOGI( "HandleCmd => WM_ACTIVATE, window[%p]", core->GetWindow() );
-      core->renderer = new Engine::RendererWin32gl( core->GetWindow() );
+      core->renderer = new Engine::RendererWin32gl( core->GetWindow(), core->screenWidth, core->screenHeight );
       return 0;
     break;
 

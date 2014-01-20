@@ -7,8 +7,8 @@
 
 using namespace Engine;
 
-RendererWin32gl::RendererWin32gl( HWND setWindow )
-:Renderer(), context( NULL ), palette( NULL ), display( NULL ), window( setWindow ) {
+RendererWin32gl::RendererWin32gl( const HWND setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight )
+:Renderer( setScreenWidth, setScreenHeight ), context( NULL ), display( NULL ), window( setWindow ) {
   this->isValid = true;
   this->isValid &= this->InitNativeDisplay();
 }
@@ -18,9 +18,6 @@ RendererWin32gl::~RendererWin32gl() {
   if( this->context ) {
     wglDeleteContext( this->context );
     this->context = NULL;
-  }
-  if( this->palette ) {
-    ::DeleteObject( this->palette );
   }
   if( this->display ) {
     ::ReleaseDC( this->window, this->display );
@@ -135,4 +132,5 @@ void RendererWin32gl::InitViewport() {
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
   glEnable( GL_BLEND );
   glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+  glViewport( 0, 0, this->screenWidth, this->screenHeight );
 }//InitViewport

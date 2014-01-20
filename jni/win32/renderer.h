@@ -9,9 +9,10 @@ namespace Engine {
 
 class RendererWin32gl: public Engine::Renderer {
 public:
-  RendererWin32gl( HWND setWindow );
+  RendererWin32gl( const HWND setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight );
   virtual ~RendererWin32gl();
   virtual void Render();
+  virtual void InitViewport();
 
 private:
   RendererWin32gl();
@@ -20,11 +21,9 @@ private:
   bool InitNativeDisplay();
   void DestroyNativeDisplay();
   bool InitPixelFormat();
-  void InitViewport();
 
   HWND window;
   HGLRC context;
-  HPALETTE palette;
   HDC display;
 };
 

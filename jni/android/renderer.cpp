@@ -2,9 +2,10 @@
 
 using namespace Engine;
 
-RendererAndroid::RendererAndroid( ANativeWindow *setWindow )
-:Renderer(), display( NULL ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
+RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight )
+:Renderer( setScreenWidth, setScreenHeight ), display( NULL ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
   this->InitNativeDisplay();
+  this->isValid = true;
 }
 
 RendererAndroid::~RendererAndroid() {

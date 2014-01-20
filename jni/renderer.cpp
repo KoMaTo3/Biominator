@@ -2,8 +2,8 @@
 
 using namespace Engine;
 
-Renderer::Renderer()
-:isValid( false ) {
+Renderer::Renderer( const unsigned int setScreenWidth, const unsigned int setScreenHeight )
+  :isValid( false ), screenWidth( setScreenWidth ), screenHeight( setScreenHeight ) {
 }
 
 Renderer::~Renderer() {

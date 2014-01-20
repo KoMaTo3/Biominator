@@ -9,7 +9,7 @@ namespace Engine {
 
 class RendererAndroid: public Engine::Renderer {
 public:
-  RendererAndroid( ANativeWindow *setWindow );
+  RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight );
   virtual ~RendererAndroid();
   virtual void Render();
 
