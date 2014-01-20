@@ -31,3 +31,9 @@ proguard/
 # so
 libs/*
 obj/
+
+#visual c
+vc/Biominator/Debug/
+vc/Biominator/Release/
+vc/Biominator/*.sdf
+vc/Biominator/*.suo

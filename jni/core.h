@@ -1,5 +1,7 @@
 #pragma once
 
+void OnEngineRun();
+
 namespace Engine {
 
 class Renderer;
@@ -15,6 +17,8 @@ public:
 protected:
   bool isValid;
   Renderer *renderer;
+  unsigned int screenWidth;
+  unsigned int screenHeight;
 
 private:
   Core( const Core& );

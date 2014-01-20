@@ -8,6 +8,9 @@ public:
   Renderer();
   virtual ~Renderer();
   virtual void Render() = 0;
+
+protected:
+  bool isValid;
 };
 
 };

@@ -17,7 +17,7 @@ private:
   RendererAndroid();
   RendererAndroid( const RendererAndroid& );
   RendererAndroid& operator=( const RendererAndroid& );
-  void InitVativeDisplay();
+  void InitNativeDisplay();
   void DestroyNativeDisplay();
 
   ANativeWindow *window;

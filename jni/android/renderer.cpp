@@ -3,8 +3,8 @@
 using namespace Engine;
 
 RendererAndroid::RendererAndroid( ANativeWindow *setWindow )
-:display( NULL ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
-  this->InitVativeDisplay();
+:Renderer(), display( NULL ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
+  this->InitNativeDisplay();
 }
 
 RendererAndroid::~RendererAndroid() {
@@ -22,7 +22,7 @@ void RendererAndroid::Render() {
   eglSwapBuffers( this->display, this->renderSurface );
 }//Render
 
-void RendererAndroid::InitVativeDisplay() {
+void RendererAndroid::InitNativeDisplay() {
   if( this->display == EGL_NO_DISPLAY )   {
     this->display = eglGetDisplay( EGL_DEFAULT_DISPLAY );
     //assert(this->display);
@@ -80,7 +80,7 @@ void RendererAndroid::InitVativeDisplay() {
 
     //m_bInitialized = true;
   }
-}//InitVativeDisplay
+}//InitNativeDisplay
 
 void RendererAndroid::DestroyNativeDisplay() {
   if( this->display != EGL_NO_DISPLAY ) {

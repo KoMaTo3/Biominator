@@ -2,7 +2,8 @@
 
 using namespace Engine;
 
-Renderer::Renderer() {
+Renderer::Renderer()
+:isValid( false ) {
 }
 
 Renderer::~Renderer() {

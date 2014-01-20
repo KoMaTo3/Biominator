@@ -6,6 +6,7 @@ using namespace Engine;
 
 CoreAndroid::CoreAndroid( android_app *setState )
 :Core(), state( setState ) {
+  app_dummy();
   this->state->onAppCmd = CoreAndroid::HandleCmd;
   this->state->onInputEvent = CoreAndroid::HandleInput;
   this->state->userData = this;

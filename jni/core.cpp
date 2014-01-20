@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Core::Core()
-:isValid( true ), renderer( NULL ) {
+:isValid( true ), renderer( 0 ) {
   SAFE_DELETE( this->renderer );
 }
 
