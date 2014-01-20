@@ -29,6 +29,12 @@
     <ClCompile Include="..\..\jni\win32\renderer.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\entrypoint.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\win32\entrypoint.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\core.h">
@@ -48,6 +54,12 @@
     </ClInclude>
     <ClInclude Include="..\..\jni\predefines.h">
       <Filter>h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\entrypoint.h">
+      <Filter>h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\win32\entrypoint.h">
+      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
