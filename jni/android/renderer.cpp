@@ -1,20 +1,26 @@
 #include "renderer.h"
+#include "math.h"
+#include "tools.h"
 
 using namespace Engine;
 
 RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight )
-:Renderer( setScreenWidth, setScreenHeight ), display( NULL ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
+:Renderer( setScreenWidth, setScreenHeight ), display( EGL_NO_DISPLAY ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
   this->InitNativeDisplay();
   this->isValid = true;
 }
 
 RendererAndroid::~RendererAndroid() {
+  this->DestroyNativeDisplay();
 }
 
 void RendererAndroid::Render() {
   if( !this->context ) {
     return;
   }
+  static float f = 0.0f;
+  f += 0.1f;
+  glClearColor( sinf( f ) * 0.5f + 0.5f, cosf( f ) * 0.5f + 0.5f, 0.0f, 1.0f );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glEnable( GL_DEPTH_TEST );
   glEnable( GL_CULL_FACE );
@@ -73,17 +79,37 @@ void RendererAndroid::InitNativeDisplay() {
 
     EGLint m_width, m_height;
     res = eglQuerySurface(this->display, this->renderSurface, EGL_WIDTH, &m_width);
+    this->screenWidth = m_width;
     //assert(res);
     res = eglQuerySurface(this->display, this->renderSurface, EGL_HEIGHT, &m_height);
+    this->screenHeight = m_height;
     //assert(res);
 
     glClearColor(0.5f, 1.0f, 0.5f, 1.0f);
 
     //m_bInitialized = true;
+  } else {
+    LOGE( "InitNativeDisplay => already initialized" );
   }
 }//InitNativeDisplay
 
 void RendererAndroid::DestroyNativeDisplay() {
+  if (this->display != EGL_NO_DISPLAY) {
+    eglMakeCurrent( this->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
+    if( this->context != EGL_NO_CONTEXT ) {
+      eglDestroyContext( this->display, this->context );
+    }
+    if( this->renderSurface != EGL_NO_SURFACE ) {
+      eglDestroySurface( this->display, this->renderSurface );
+    }
+    eglTerminate( this->display );
+  }
+  //engine->animating = 0;
+  this->display = EGL_NO_DISPLAY;
+  this->context = EGL_NO_CONTEXT;
+  this->renderSurface = EGL_NO_SURFACE;
+  this->isValid = false;
+  /*
   if( this->display != EGL_NO_DISPLAY ) {
     eglMakeCurrent( this->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
     if( this->context != EGL_NO_CONTEXT ) {
@@ -97,4 +123,27 @@ void RendererAndroid::DestroyNativeDisplay() {
   this->display = EGL_NO_DISPLAY;
   this->context = EGL_NO_CONTEXT;
   this->renderSurface = EGL_NO_SURFACE;
+  */
 }//DestroyNativeDisplay
+
+void RendererAndroid::InitViewport() {
+  //glMatrixMode( GL_PROJECTION );
+  //glLoadIdentity();
+  //glOrtho( 0.0, 100.0, 100.0, 0.0, 10.0, -100.0 );
+  //glMatrixMode( GL_MODELVIEW );
+  //glShadeModel( GL_SMOOTH );
+  glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+  //glClearDepth( 1.0f );
+  glDepthFunc( GL_LEQUAL );
+  //glDepthFunc( GL_NICEST );
+  glEnable( GL_DEPTH_TEST );
+
+  glEnable( GL_TEXTURE_2D );
+
+  //glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glEnable( GL_BLEND );
+  //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+  glViewport( 0, 0, this->screenWidth, this->screenHeight );
+}//InitViewport

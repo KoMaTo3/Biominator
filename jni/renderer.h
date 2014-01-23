@@ -9,6 +9,7 @@ public:
   virtual ~Renderer();
   virtual void Render() = 0;
   virtual void InitViewport() = 0;
+  inline bool IsValid() { return this->isValid; }
 
 protected:
   bool isValid;

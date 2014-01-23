@@ -14,15 +14,7 @@ RendererWin32gl::RendererWin32gl( const HWND setWindow, const unsigned int setSc
 }
 
 RendererWin32gl::~RendererWin32gl() {
-  wglMakeCurrent( NULL, NULL );
-  if( this->context ) {
-    wglDeleteContext( this->context );
-    this->context = NULL;
-  }
-  if( this->display ) {
-    ::ReleaseDC( this->window, this->display );
-    this->display = NULL;
-  }
+  this->DestroyNativeDisplay();
 }
 
 void RendererWin32gl::Render() {
@@ -60,6 +52,15 @@ bool RendererWin32gl::InitNativeDisplay() {
 }//InitNativeDisplay
 
 void RendererWin32gl::DestroyNativeDisplay() {
+  wglMakeCurrent( NULL, NULL );
+  if( this->context ) {
+    wglDeleteContext( this->context );
+    this->context = NULL;
+  }
+  if( this->display ) {
+    ::ReleaseDC( this->window, this->display );
+    this->display = NULL;
+  }
 }//DestroyNativeDisplay
 
 bool RendererWin32gl::InitPixelFormat() {

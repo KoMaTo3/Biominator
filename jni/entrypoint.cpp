@@ -1,4 +1,5 @@
 #include "entrypoint.h"
+#include "tools.h"
 
 using namespace Engine;
 

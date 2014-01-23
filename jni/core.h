@@ -16,6 +16,8 @@ public:
 
 protected:
   bool isValid;
+  bool isFocused;
+  bool isVisible;
   Renderer *renderer;
   unsigned int screenWidth;
   unsigned int screenHeight;
