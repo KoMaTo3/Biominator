@@ -4,62 +4,90 @@
     <Filter Include="win32">
       <UniqueIdentifier>{b3c1ecf0-c079-4cf8-94b1-c9efeb27a116}</UniqueIdentifier>
     </Filter>
-    <Filter Include="h">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="cpp">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="core">
+      <UniqueIdentifier>{108f7229-5c69-4f2d-9c1b-ec49863d7af6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\jni\Biominator.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\jni\core.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\jni\renderer.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\jni\win32\core.cpp">
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\jni\win32\renderer.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\jni\entrypoint.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\jni\win32\entrypoint.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\Biominator.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\entrypoint.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\renderer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\event.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\eventmanager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\listener.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\producer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\eventmanagercontainer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\jni\core.h">
-      <Filter>h</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\jni\tools.h">
-      <Filter>h</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\jni\win32\core.h">
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\win32\renderer.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\jni\renderer.h">
-      <Filter>h</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\jni\predefines.h">
-      <Filter>h</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\jni\entrypoint.h">
-      <Filter>h</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\jni\win32\entrypoint.h">
       <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\entrypoint.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\predefines.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\renderer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\tools.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\event.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\eventmanager.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\listener.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\producer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\eventtypes.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\eventmanagercontainer.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

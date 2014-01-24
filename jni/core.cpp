@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Core::Core()
-:isValid( true ), renderer( 0 ), isFocused( false ), isVisible( true ) {
+:Producer(), isValid( true ), renderer( 0 ), isFocused( false ), isVisible( true ) {
 }
 
 Core::~Core() {
@@ -25,3 +25,7 @@ void Core::Run() {
   }
   LOGE("Run done...");
 }//Run
+
+const std::string Core::GetPlatform() const {
+  return ENGINE_PLATFORM;
+}

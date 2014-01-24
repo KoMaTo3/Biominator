@@ -1,7 +1,9 @@
 #include "renderer.h"
 #include "../tools.h"
+#include "../eventtypes.h"
 
 #include <vector>
+#include <math.h>
 
 #pragma comment( lib, "opengl32.lib" )
 
@@ -21,6 +23,9 @@ void RendererWin32gl::Render() {
   if( !this->context ) {
     return;
   }
+  static float f = 0.0f;
+  f += 0.01f;
+  glClearColor( sinf( f ) * 0.5f + 0.5f, cosf( f ) * 0.5f + 0.5f, 0.5f, 1.0f );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glEnable( GL_DEPTH_TEST );
   glEnable( GL_CULL_FACE );
@@ -47,11 +52,13 @@ bool RendererWin32gl::InitNativeDisplay() {
   this->InitViewport();
   //this->InitExtensions();
 
-  glClearColor(0.5f, 1.0f, 0.5f, 1.0f);
+  glClearColor( 0.5f, 1.0f, 0.5f, 1.0f );
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT );
   return true;
 }//InitNativeDisplay
 
 void RendererWin32gl::DestroyNativeDisplay() {
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_BEFORE_DESTROY );
   wglMakeCurrent( NULL, NULL );
   if( this->context ) {
     wglDeleteContext( this->context );
@@ -61,6 +68,7 @@ void RendererWin32gl::DestroyNativeDisplay() {
     ::ReleaseDC( this->window, this->display );
     this->display = NULL;
   }
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_AFTER_DESTROY );
 }//DestroyNativeDisplay
 
 bool RendererWin32gl::InitPixelFormat() {

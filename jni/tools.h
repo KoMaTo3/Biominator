@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stdio.h"
 #include "predefines.h"
 
 #define SAFE_DELETE( q ) { if( q ) { delete q; q = 0; } }
@@ -9,14 +10,17 @@
 #define ENGINE_MAIN int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 #define ENGINE_CORE CoreWin32
 #define ENGINE_CORE_ARGUMENTS hInstance, hPrevInstance, lpCmdLine, nCmdShow
-#define LOGI(format, ...) (printf(format, __VA_ARGS__))
-#define LOGW(format, ...) (printf("Warning: " format, __VA_ARGS__))
-#define LOGE(format, ...) (printf("Error: " format, __VA_ARGS__))
+#define ENGINE_PLATFORM "win32"
+#define LOGI(format, ...) ( fprintf( __logFile, format "\n", __VA_ARGS__ ) )
+#define LOGW(format, ...) ( fprintf( __logFile, "[W] " format "\n", __VA_ARGS__ ) )
+#define LOGE(format, ...) ( fprintf( __logFile, "[E] " format "\n", __VA_ARGS__ ) )
+extern FILE *__logFile;
 //_WIN32
 #elif IS_ANDROID
 #define ENGINE_MAIN void android_main( struct android_app* state )
 #define ENGINE_CORE CoreAndroid
 #define ENGINE_CORE_ARGUMENTS state
+#define ENGINE_PLATFORM "android"
 #include <android/log.h>
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))

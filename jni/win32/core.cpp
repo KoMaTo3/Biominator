@@ -1,6 +1,7 @@
 #include "core.h"
 #include "renderer.h"
 #include "../tools.h"
+#include "../eventtypes.h"
 
 #include <string>
 
@@ -85,6 +86,8 @@ HWND CoreWin32::GetWindow() {
 
 void CoreWin32::Destroy() {
   this->isValid = false;
+  this->isFocused = false;
+  this->isVisible = false;
 }//Destroy
 
 
@@ -92,39 +95,43 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
   CoreWin32 *core = ( CoreWin32* ) GetWindowLong( hWnd, GWL_USERDATA );
   LOGI( "HandleCmd" );
   switch( message ) {
-    case WM_ACTIVATE:
+    case WM_ACTIVATE: {
       //core->Signal( 1, !HIWORD( wParam ) );
       LOGI( "HandleCmd => WM_ACTIVATE, window[%p]", core->GetWindow() );
       core->renderer = new Engine::RendererWin32gl( core->GetWindow(), core->screenWidth, core->screenHeight );
-      return 0;
-    break;
+      core->isFocused = true;
+      core->isVisible = true;
+    }
+    return 0;
 
-    case WM_CLOSE:
+    case WM_CLOSE: {
       if( core ) {
         LOGI( "HandleCmd => WM_CLOSE" );
+        core->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE );
         core->Destroy();
         return 0;
       }
+    }
     break;
 
-    case WM_DESTROY:
-      PostQuitMessage( 0 );
-    return 0;
-
-    /*
-    case WM_SIZE:
-      if( core )
-        core->Signal( CORE_SIGNAL_RESIZE, lParam );
-    return 0;
-
-    case WM_PALETTECHANGED:
-      if( core && ( HWND ) wParam != hWnd )
-        core->Signal( CORE_SIGNAL_UPDATEPALETTE, ( LPARAM ) hWnd );
+    case WM_SIZE: {
+      switch( wParam ) {
+        case SIZE_MINIMIZED: {
+          core->isVisible = false;
+        }
+        default: {
+          core->isVisible = true;
+        }
+        break;
+      }//wparam
+    }
     break;
 
-    case WM_QUERYNEWPALETTE:
-      if( core && core->Signal( CORE_SIGNAL_UPDATEPALETTE, ( LPARAM ) hWnd ) )
-        return TRUE;
+    case WM_KEYDOWN: {
+      if( wParam == VK_ESCAPE ) {
+        core->isValid = false;
+      }
+    }
     break;
 
     case WM_SYSKEYDOWN:
@@ -132,17 +139,28 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
     case WM_SYSCHAR: {
       bool altPressed = ( ( lParam&( 1<<29 ) ) == ( 1<<29) );
       if( wParam == VK_F4 && altPressed ) { //Alt+F4
-        core->SetState( CORE_STATE_EXIT );
+        core->isValid = false;
       }
       if( message == WM_SYSKEYDOWN ) {
         if( !( lParam & 0x40000000 ) ) {
-          core->keyboard.DoPress( wParam );
+          //core->keyboard.DoPress( wParam );
         }
       } else {
-        core->keyboard.DoRelease( wParam );
+        //core->keyboard.DoRelease( wParam );
       }
       return 0;
     }
+
+    case WM_DESTROY: {
+      PostQuitMessage( 0 );
+    }
+    return 0;
+
+    /*
+    case WM_SIZE:
+      if( core )
+        core->Signal( CORE_SIGNAL_RESIZE, lParam );
+    return 0;
 
     case WM_SYSCOMMAND: // Перехватываем системную команду
     {

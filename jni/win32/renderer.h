@@ -7,7 +7,7 @@
 
 namespace Engine {
 
-class RendererWin32gl: public Engine::Renderer {
+class RendererWin32gl: public Renderer {
 public:
   RendererWin32gl( const HWND setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight );
   virtual ~RendererWin32gl();

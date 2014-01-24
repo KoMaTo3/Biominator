@@ -79,6 +79,11 @@
     <ClCompile Include="..\..\jni\Biominator.cpp" />
     <ClCompile Include="..\..\jni\core.cpp" />
     <ClCompile Include="..\..\jni\entrypoint.cpp" />
+    <ClCompile Include="..\..\jni\event.cpp" />
+    <ClCompile Include="..\..\jni\eventmanager.cpp" />
+    <ClCompile Include="..\..\jni\eventmanagercontainer.cpp" />
+    <ClCompile Include="..\..\jni\listener.cpp" />
+    <ClCompile Include="..\..\jni\producer.cpp" />
     <ClCompile Include="..\..\jni\renderer.cpp" />
     <ClCompile Include="..\..\jni\win32\core.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\win32\</ObjectFileName>
@@ -95,7 +100,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\jni\core.h" />
     <ClInclude Include="..\..\jni\entrypoint.h" />
+    <ClInclude Include="..\..\jni\event.h" />
+    <ClInclude Include="..\..\jni\eventmanager.h" />
+    <ClInclude Include="..\..\jni\eventmanagercontainer.h" />
+    <ClInclude Include="..\..\jni\eventtypes.h" />
+    <ClInclude Include="..\..\jni\listener.h" />
     <ClInclude Include="..\..\jni\predefines.h" />
+    <ClInclude Include="..\..\jni\producer.h" />
     <ClInclude Include="..\..\jni\renderer.h" />
     <ClInclude Include="..\..\jni\tools.h" />
     <ClInclude Include="..\..\jni\win32\core.h" />

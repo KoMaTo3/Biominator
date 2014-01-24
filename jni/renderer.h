@@ -1,9 +1,10 @@
 #pragma once
 
+#include "producer.h"
 
 namespace Engine {
 
-class Renderer {
+class Renderer: public Producer {
 public:
   Renderer( const unsigned int setScreenWidth, const unsigned int setScreenHeight );
   virtual ~Renderer();

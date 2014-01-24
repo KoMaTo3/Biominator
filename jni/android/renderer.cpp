@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include "math.h"
 #include "tools.h"
+#include "eventtypes.h"
 
 using namespace Engine;
 
@@ -86,6 +87,7 @@ void RendererAndroid::InitNativeDisplay() {
     //assert(res);
 
     glClearColor(0.5f, 1.0f, 0.5f, 1.0f);
+    this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT );
 
     //m_bInitialized = true;
   } else {
@@ -94,6 +96,7 @@ void RendererAndroid::InitNativeDisplay() {
 }//InitNativeDisplay
 
 void RendererAndroid::DestroyNativeDisplay() {
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_BEFORE_DESTROY );
   if (this->display != EGL_NO_DISPLAY) {
     eglMakeCurrent( this->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
     if( this->context != EGL_NO_CONTEXT ) {
@@ -109,6 +112,7 @@ void RendererAndroid::DestroyNativeDisplay() {
   this->context = EGL_NO_CONTEXT;
   this->renderSurface = EGL_NO_SURFACE;
   this->isValid = false;
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_AFTER_DESTROY );
   /*
   if( this->display != EGL_NO_DISPLAY ) {
     eglMakeCurrent( this->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
