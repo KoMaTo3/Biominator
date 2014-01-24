@@ -6,9 +6,9 @@
 using namespace Engine;
 
 RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight )
-:Renderer( setScreenWidth, setScreenHeight ), display( EGL_NO_DISPLAY ), renderSurface( NULL ), context( NULL ), window( setWindow ) {
+:Renderer( setScreenWidth, setScreenHeight ), display( EGL_NO_DISPLAY ), renderSurface( EGL_NO_SURFACE )
+,context( EGL_NO_CONTEXT ), window( setWindow ) {
   this->InitNativeDisplay();
-  this->isValid = true;
 }
 
 RendererAndroid::~RendererAndroid() {
@@ -16,21 +16,25 @@ RendererAndroid::~RendererAndroid() {
 }
 
 void RendererAndroid::Render() {
-  if( !this->context ) {
+  if( !this->isValid ) {
     return;
   }
   static float f = 0.0f;
   f += 0.1f;
   glClearColor( sinf( f ) * 0.5f + 0.5f, cosf( f ) * 0.5f + 0.5f, 0.0f, 1.0f );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glEnable( GL_DEPTH_TEST );
-  glEnable( GL_CULL_FACE );
-  glFrontFace( GL_CW );
-  glCullFace( GL_BACK );
+  //glEnable( GL_DEPTH_TEST );
+  //glEnable( GL_CULL_FACE );
+  //glFrontFace( GL_CW );
+  //glCullFace( GL_BACK );
   eglSwapBuffers( this->display, this->renderSurface );
 }//Render
 
 void RendererAndroid::InitNativeDisplay() {
+  if( this->isValid ) {
+    LOGE( "RendererAndroid::InitNativeDisplay => already initialized" );
+    return;
+  }
   if( this->display == EGL_NO_DISPLAY )   {
     this->display = eglGetDisplay( EGL_DEFAULT_DISPLAY );
     //assert(this->display);
@@ -131,6 +135,9 @@ void RendererAndroid::DestroyNativeDisplay() {
 }//DestroyNativeDisplay
 
 void RendererAndroid::InitViewport() {
+  if( !this->isValid ) {
+    return;
+  }
   //glMatrixMode( GL_PROJECTION );
   //glLoadIdentity();
   //glOrtho( 0.0, 100.0, 100.0, 0.0, 10.0, -100.0 );

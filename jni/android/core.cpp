@@ -16,19 +16,18 @@ CoreAndroid::CoreAndroid( android_app *setApp )
   //this->sensorManager = ASensorManager_getInstance();
   //this->sensorAccelometer = ASensorManager_getDefaultSensor( this->sensorManager, ASENSOR_TYPE_ACCELEROMETER );
   //this->sensorEventQueue = ASensorManager_createEventQueue( this->sensorManager, this->app->looper, LOOPER_ID_USER, NULL, NULL );
-  this->savedState.angle = 0.0f;
-  this->savedState.x = 0;
-  this->savedState.y = 0;
+  //this->savedState.angle = 0.0f;
+  //this->savedState.x = 0;
+  //this->savedState.y = 0;
 
   if( this->app->savedState ) {
-    this->savedState = *( ( AndroidSavedState* ) this->app->savedState );
+    //this->savedState = *( ( AndroidSavedState* ) this->app->savedState );
   }
 }
 
 
 CoreAndroid::~CoreAndroid() {
-  LOGE( "ANativeActivity_finish" );
-  ANativeActivity_finish( this->app->activity );
+  SAFE_DELETE( this->renderer );
 }
 
 void CoreAndroid::Update() {
@@ -36,11 +35,12 @@ void CoreAndroid::Update() {
   int events;
   struct android_poll_source* source;
 
-  while( ( ident = ALooper_pollAll( this->isFocused && this->isVisible ? 0 : -1, NULL, &events, ( void** ) &source ) ) >= 0 ) {
+  while( ( ident = ALooper_pollAll( this->isFocused && this->isVisible && this->renderer ? 0 : -1, NULL, &events, ( void** ) &source ) ) >= 0 ) {
     if( source != NULL ) {
       source->process( this->app, source );
     }
 
+    /*
     if( ident == LOOPER_ID_USER ) {
         if( this->sensorAccelometer ) {
             ASensorEvent event;
@@ -49,14 +49,15 @@ void CoreAndroid::Update() {
             }
         }
     }
+    */
 
     if( this->app->destroyRequested != 0 ) {
       //SAFE_DELETE( this->renderer );
       this->isValid = false;
-      this->isVisible = false;
-      this->isFocused = false;
+      //this->isVisible = false;
+      //this->isFocused = false;
       LOGE( "destroyRequested" );
-      return;
+      break;
       //this->Destroy();
       //break;
     }
@@ -81,29 +82,44 @@ void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
   switch( cmd ) {
     case APP_CMD_SAVE_STATE: {
       LOGE( "HandleCmd => APP_CMD_SAVE_STATE" );
+      core->app->savedState = 0;
+      core->app->savedStateSize = 0;
+      /*
       core->app->savedState = new AndroidSavedState();
       *( ( AndroidSavedState* ) core->app->savedState ) = core->savedState;
       core->app->savedStateSize = sizeof( core->savedState );
+      */
     }
     break;
     case APP_CMD_INIT_WINDOW: {
       LOGE( "HandleCmd => APP_CMD_INIT_WINDOW" );
-      if( core && core->app && core->app->window ) {
-        core->renderer = new Engine::RendererAndroid( core->GetWindow(), core->screenWidth, core->screenHeight );
+      if( core ) {
+        core->renderer = new Engine::RendererAndroid( core->app->window, core->screenWidth, core->screenHeight );
+      } else {
+        LOGE( "APP_CMD_INIT_WINDOW => core is NULL" );
       }
+      /*
+      if( core && core->app && core->app->window ) {
+        if( core->renderer ) {
+          LOGE( "ERROR: APP_CMD_INIT_WINDOW => renderer already exists" );
+        } else {
+          core->renderer = new Engine::RendererAndroid( core->app->window, core->screenWidth, core->screenHeight );
+        }
+      }
+      */
     }
     break;
     case APP_CMD_TERM_WINDOW: {
       LOGE( "HandleCmd => APP_CMD_TERM_WINDOW" );
       SAFE_DELETE( core->renderer );
+      //core->isVisible = false;
+      //core->isFocused = false;
       //core->Destroy();
     }
     break;
     case APP_CMD_GAINED_FOCUS: {
       LOGE( "HandleCmd => APP_CMD_GAINED_FOCUS" );
-      if( core->renderer && core->renderer->IsValid() ) {
-        core->isFocused = true;
-      }
+      core->isFocused = true;
       /*
       if( core->sensorAccelometer ) {
         ASensorEventQueue_enableSensor( core->sensorEventQueue, core->sensorAccelometer );
@@ -114,30 +130,26 @@ void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
     break;
     case APP_CMD_LOST_FOCUS: {
       core->isFocused = false;
+      //pause game there
       //core->Destroy();
       LOGE( "HandleCmd => APP_CMD_LOST_FOCUS" );
+      /*
       if( core->sensorAccelometer ) {
         ASensorEventQueue_disableSensor( core->sensorEventQueue, core->sensorAccelometer );
       }
+      */
     }
     break;
     case APP_CMD_START: {
       LOGE( "HandleCmd => APP_CMD_START" );
-        core->isVisible = true;
+      //core->isVisible = true;
+      //load resources there
     }
     break;
     case APP_CMD_STOP: {
       LOGE( "HandleCmd => APP_CMD_STOP" );
-      core->isVisible = false;
-      core->isValid = false;
-      SAFE_DELETE( core->renderer );
-    }
-    break;
-    /*
-    case APP_CMD_DESTROY: {
-      LOGE( "HandleCmd => APP_CMD_DESTROY" );
-      core->isValid = false;
-      //core->Destroy();
+      //SAFE_DELETE( core->renderer );
+      //save game there
     }
     break;
     case APP_CMD_RESUME: {
@@ -148,6 +160,12 @@ void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
     case APP_CMD_PAUSE: {
       LOGE( "HandleCmd => APP_CMD_PAUSE" );
       core->isVisible = false;
+    }
+    break;
+    /*
+    case APP_CMD_DESTROY: {
+      LOGE( "HandleCmd => APP_CMD_DESTROY" );
+      //core->Destroy();
     }
     break;
     case APP_CMD_INPUT_CHANGED: {
@@ -178,7 +196,7 @@ void CoreAndroid::ProcessInput( struct android_app* app, struct android_poll_sou
       LOGE( "app->onInputEvent..." );
       handled = app->onInputEvent(app, event);
     }
-    AInputQueue_finishEvent(app->inputQueue, event, handled);
+    AInputQueue_finishEvent( app->inputQueue, event, handled );
     processed = 1;
   }
   if (processed == 0) {
@@ -199,7 +217,7 @@ int32_t CoreAndroid::HandleInput( struct android_app* app, AInputEvent *event ) 
     if( AKeyEvent_getKeyCode( event ) == AKEYCODE_BACK ) {
       LOGE( "Do exit by key" );
       core->isValid = false;
-      return 0;
+      return 1;
     }
     //return handle_key_input(event);
   }
