@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Core::Core()
-:isValid( true ), renderer( 0 ), isFocused( false ), isVisible( true ) {
+:isValid( true ), renderer( 0 ), isFocused( false ), isVisible( false ) {
 }
 
 Core::~Core() {
