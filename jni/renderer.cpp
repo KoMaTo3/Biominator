@@ -8,5 +8,4 @@ Renderer::Renderer( const unsigned int setScreenWidth, const unsigned int setScr
 }
 
 Renderer::~Renderer() {
-  LOGE( "~Renderer" );
 }

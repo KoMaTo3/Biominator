@@ -2,6 +2,7 @@
 
 #include "producer.h"
 #include "eventmanagercontainer.h"
+#include <string>
 
 void OnEngineRun();
 
@@ -22,6 +23,7 @@ protected:
   bool isValid;
   bool isFocused;
   bool isVisible;
+  bool animating;
   Renderer *renderer;
   unsigned int screenWidth;
   unsigned int screenHeight;

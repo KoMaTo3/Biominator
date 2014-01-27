@@ -1,5 +1,4 @@
 #include "entrypoint.h"
-#include "windows.h"
 
 using namespace Engine;
 

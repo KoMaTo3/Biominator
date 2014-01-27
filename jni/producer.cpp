@@ -10,6 +10,6 @@ Producer::Producer()
 Producer::~Producer() {
 }
 
-void Producer::TouchEvent( const int eventId ) {
-  this->eventManager.TouchEvent( eventId, this );
+void Producer::TouchEvent( const int eventId, void *data ) {
+  this->eventManager.TouchEvent( eventId, this, data );
 }//TouchEvent

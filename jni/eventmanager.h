@@ -10,7 +10,7 @@ class EventManager;
 
 class Listener;
 class Producer;
-typedef void ( ListenerProc )( Listener* listener, Producer *producer, int eventId );
+typedef void ( ListenerProc )( Listener* listener, Producer *producer, int eventId, void *data );
 struct ListenerHandler {
   int eventId;
   Listener* listener;
@@ -29,7 +29,7 @@ public:
   void RemoveListener( const Listener *listener );
   void RemoveListener( const Listener *listener, const int eventId );
   bool ListenerExists( const Listener *listener, const int eventId ) const;
-  void TouchEvent( const int eventId, Producer* producer );
+  void TouchEvent( const int eventId, Producer* producer, void *data );
 
 private:
   EventManager( EventManager& );

@@ -56,18 +56,15 @@ void EventManager::RemoveListener( const Listener *listener, const int eventId )
   }
 }//RemoveListener
 
-void EventManager::TouchEvent( const int eventId, Producer* producer ) {
+void EventManager::TouchEvent( const int eventId, Producer* producer, void *data ) {
   ListenerVector listenersListProc;
-  LOGI( "EventManager::TouchEvent => eventId[%d]", eventId );
   for( auto& listener: this->listenersList ) {
     if( listener.eventId == eventId ) {
       listenersListProc.push_back( listener );
-      LOGI( ". listener[%p]", listener.listener );
     }
   }
 
   for( auto& listener: listenersListProc ) {
-    listener.proc( listener.listener, producer, eventId );
+    listener.proc( listener.listener, producer, eventId, data );
   }
-  LOGI( "EventManager::TouchEvent done" );
 }//TouchEvent
