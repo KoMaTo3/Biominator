@@ -21,6 +21,7 @@ public:
   virtual ~GameContainer();
   static void OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnMobileKeyPressed( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+  static void OnAppClose( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   void AppExit();
   void AppSuspend();
 
@@ -58,6 +59,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
     }
     break;
   }
+  this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
 }
 
 GameContainer::~GameContainer() {
@@ -81,3 +83,8 @@ void GameContainer::AppExit() {
 void GameContainer::AppSuspend() {
   this->core->Stop();
 }//AppSuspend
+
+void GameContainer::OnAppClose( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  GameContainer *game = ( GameContainer* ) listener;
+  game->AppExit();
+}//OnAppClose
