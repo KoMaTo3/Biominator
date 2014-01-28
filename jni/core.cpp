@@ -23,6 +23,10 @@ void Core::Run() {
   }
 }//Run
 
-const std::string Core::GetPlatform() const {
-  return ENGINE_PLATFORM;
+const std::string Core::GetPlatformName() const {
+  return ENGINE_PLATFORM_NAME;
+}
+
+const PlatformType Core::GetPlatformType() const {
+  return ENGINE_PLATFORM_TYPE;
 }

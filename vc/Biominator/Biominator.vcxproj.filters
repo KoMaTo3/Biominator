@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\jni\eventmanagercontainer.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\eventtypes.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">

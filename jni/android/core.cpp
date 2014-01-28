@@ -55,6 +55,10 @@ void CoreAndroid::Destroy() {
   this->animating = false;
 }//Destroy
 
+void CoreAndroid::Stop() {
+  this->doFinish = true;
+}//Stop
+
 void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
   CoreAndroid *core = ( CoreAndroid* ) app->userData;
   switch( cmd ) {
@@ -97,6 +101,7 @@ void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
     case APP_CMD_STOP: {
       core->isVisible = false;
       core->animating = false;
+      core->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE, NULL );
       //save game there
     }
     break;

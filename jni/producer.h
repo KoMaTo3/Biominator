@@ -11,6 +11,7 @@ public:
   Producer();
   virtual ~Producer();
   void TouchEvent( const int eventId, void *data );
+  void TouchEvent( Event* event );
 
 private:
   Producer( Producer& );

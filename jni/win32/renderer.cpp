@@ -53,12 +53,12 @@ bool RendererWin32gl::InitNativeDisplay() {
   //this->InitExtensions();
 
   glClearColor( 0.5f, 1.0f, 0.5f, 1.0f );
-  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT );
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT, NULL );
   return true;
 }//InitNativeDisplay
 
 void RendererWin32gl::DestroyNativeDisplay() {
-  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_BEFORE_DESTROY );
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_BEFORE_DESTROY, NULL );
   wglMakeCurrent( NULL, NULL );
   if( this->context ) {
     wglDeleteContext( this->context );
@@ -68,7 +68,7 @@ void RendererWin32gl::DestroyNativeDisplay() {
     ::ReleaseDC( this->window, this->display );
     this->display = NULL;
   }
-  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_AFTER_DESTROY );
+  this->TouchEvent( Engine::EVENT_TYPE_RENDERER_AFTER_DESTROY, NULL );
 }//DestroyNativeDisplay
 
 bool RendererWin32gl::InitPixelFormat() {

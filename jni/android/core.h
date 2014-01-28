@@ -23,6 +23,7 @@ public:
   virtual ~CoreAndroid();
   virtual void Update();
   virtual void Destroy();
+  virtual void Stop();
   static void HandleCmd( struct android_app* app, int cmd );
   static int32_t HandleInput( struct android_app* app, AInputEvent *event );
   static void ProcessInput( struct android_app* app, struct android_poll_source *source );

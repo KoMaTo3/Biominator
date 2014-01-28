@@ -14,6 +14,7 @@ public:
   virtual ~CoreWin32();
   virtual void Update();
   virtual void Destroy();
+  virtual void Stop();
   static LRESULT APIENTRY HandleCmd( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
   HWND GetWindow();
 

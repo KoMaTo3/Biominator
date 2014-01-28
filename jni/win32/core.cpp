@@ -88,26 +88,47 @@ void CoreWin32::Destroy() {
   this->isValid = false;
   this->isFocused = false;
   this->isVisible = false;
+  this->animating = false;
 }//Destroy
 
+void CoreWin32::Stop() {
+  this->isFocused = false;
+  this->isVisible = false;
+  this->animating = false;
+  ::ShowWindow( this->windowHandle, SW_MINIMIZE );
+}//Stop
 
 LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
   CoreWin32 *core = ( CoreWin32* ) GetWindowLong( hWnd, GWL_USERDATA );
-  LOGI( "HandleCmd" );
   switch( message ) {
     case WM_ACTIVATE: {
       //core->Signal( 1, !HIWORD( wParam ) );
-      LOGI( "HandleCmd => WM_ACTIVATE, window[%p]", core->GetWindow() );
-      core->renderer = new Engine::RendererWin32gl( core->GetWindow(), core->screenWidth, core->screenHeight );
-      core->isFocused = true;
+      if( !core->renderer ) {
+        core->renderer = new Engine::RendererWin32gl( core->GetWindow(), core->screenWidth, core->screenHeight );
+      }
       core->isVisible = true;
+      core->animating = core->isFocused && core->isVisible;
     }
     return 0;
+
+    case WM_KILLFOCUS: {
+      LOGI( "WM_KILLFOCUS" );
+      core->isFocused = false;
+      core->animating = false;
+    }
+    break;
+
+    case WM_SETFOCUS: {
+      LOGI( "WM_SETFOCUS" );
+      core->isFocused = true;
+      core->animating = core->isFocused && core->isVisible;
+    }
+    break;
 
     case WM_CLOSE: {
       if( core ) {
         LOGI( "HandleCmd => WM_CLOSE" );
-        core->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE );
+        core->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE, NULL );
         core->Destroy();
         return 0;
       }
@@ -128,11 +149,71 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
     break;
 
     case WM_KEYDOWN: {
-      if( wParam == VK_ESCAPE ) {
-        core->isValid = false;
+      if( !( lParam & 0x40000000 ) ) {  //prevent auto-repeating
+        EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
+        key.keyCode = wParam;
+        core->TouchEvent( &key );
       }
+      return 0;
     }
-    break;
+
+    case WM_KEYUP: {
+      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
+      key.keyCode = wParam;
+      core->TouchEvent( &key );
+      return 0;
+    }
+
+    case WM_MOUSEMOVE: {
+      EventMouseMove event;
+      event.x = LOWORD( lParam );
+      event.y = HIWORD( lParam );
+      core->TouchEvent( &event );
+      return 0;
+    }
+
+    case WM_LBUTTONDOWN: {
+      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
+      key.keyCode = VK_LBUTTON;
+      core->TouchEvent( &key );
+      return 0;
+    }
+
+    case WM_LBUTTONUP: {
+      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
+      key.keyCode = VK_LBUTTON;
+      core->TouchEvent( &key );
+      //}
+      return 0;
+    }
+
+    case WM_RBUTTONDOWN: {
+      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
+      key.keyCode = VK_RBUTTON;
+      core->TouchEvent( &key );
+      return 0;
+    }
+
+    case WM_RBUTTONUP: {
+      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
+      key.keyCode = VK_RBUTTON;
+      core->TouchEvent( &key );
+      return 0;
+    }
+
+    case WM_MBUTTONDOWN: {
+      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
+      key.keyCode = VK_MBUTTON;
+      core->TouchEvent( &key );
+      return 0;
+    }
+
+    case WM_MBUTTONUP: {
+      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
+      key.keyCode = VK_MBUTTON;
+      core->TouchEvent( &key );
+      return 0;
+    }
 
     case WM_SYSKEYDOWN:
     case WM_SYSKEYUP:
@@ -143,6 +224,9 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       }
       if( message == WM_SYSKEYDOWN ) {
         if( !( lParam & 0x40000000 ) ) {
+          EventKey key( Engine::EVENT_TYPE_SYSTEM_KEY );
+          key.keyCode = wParam;
+          core->TouchEvent( &key );
           //core->keyboard.DoPress( wParam );
         }
       } else {
@@ -153,8 +237,8 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
 
     case WM_DESTROY: {
       PostQuitMessage( 0 );
+      return 0;
     }
-    return 0;
 
     /*
     case WM_SIZE:
@@ -173,71 +257,13 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       break;
     }
 
-    case WM_KEYDOWN:
-    {
-      if( !( lParam & 0x40000000 ) ) {  //prevent auto-repeating
-        //__log.PrintInfo( Filelevel_DEBUG, "WM_KEYDOWN: %d[x%X] => %d mods[%d]", wParam, wParam, Keyboard::KeyCodeToGlut( wParam ), KeyboardGetModifiers() );
-        core->keyboard.DoPress( wParam );
-      }
-      //}
-      return 0;
-    }
-
-    case WM_KEYUP:
-    {
-      core->keyboard.DoRelease( wParam );
-      return 0;
-    }
-
-    case WM_MOUSEMOVE:
-    {
-      core->mouse.MoveCursor( Vec2( float( LOWORD( lParam ) ), float( HIWORD( lParam ) ) ) );
-      return 0;
-    }
-
-    case WM_LBUTTONDOWN:
-        core->mouse.DoPress( VK_LBUTTON );
-      //}
-      return 0;
-    break;
-
-    case WM_LBUTTONUP:
-        core->mouse.DoRelease( VK_LBUTTON );
-      //}
-      return 0;
-    break;
-
-    case WM_RBUTTONDOWN:
-        core->mouse.DoPress( VK_RBUTTON );
-      //}
-      return 0;
-    break;
-
-    case WM_RBUTTONUP:
-        core->mouse.DoRelease( VK_RBUTTON );
-      //}
-      return 0;
-    break;
-
-    case WM_MBUTTONDOWN:
-        core->mouse.DoPress( VK_MBUTTON );
-      //}
-      return 0;
-    break;
-
-    case WM_MBUTTONUP:
-        core->mouse.DoRelease( VK_MBUTTON );
-      //}
-      return 0;
-    break;
-    */
-
     case WM_SETCURSOR:
       return 0;
     break;
 
     default:
     break;
+    */
   }
   return DefWindowProc( hWnd, message, wParam, lParam );
 }//HandleCmd

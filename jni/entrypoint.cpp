@@ -11,5 +11,4 @@ EntryPoint::~EntryPoint() {
 void EntryPoint::Run( Core* core ) {
   this->Init( core );
   core->Run();
-  delete core;
 }

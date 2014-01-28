@@ -2,6 +2,7 @@
 
 #include "producer.h"
 #include "eventmanagercontainer.h"
+#include "eventtypes.h"
 #include <string>
 
 void OnEngineRun();
@@ -17,7 +18,9 @@ public:
   virtual void Update() = 0;
   virtual void Destroy() = 0;
   virtual void Run();
-  const std::string GetPlatform() const;
+  virtual void Stop() = 0;
+  const std::string GetPlatformName() const;
+  const PlatformType GetPlatformType() const;
 
 protected:
   bool isValid;

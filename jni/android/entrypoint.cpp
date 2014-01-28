@@ -4,8 +4,10 @@
 
 void android_main( struct android_app* state ) {
   Engine::EntryPointAndroid *entryPoint = new Engine::EntryPointAndroid();
-  entryPoint->Run( new Engine::CoreAndroid( state ) );
-  delete entryPoint;
+  Engine::Core *core = new Engine::CoreAndroid( state );
+  entryPoint->Run( core );
+  SAFE_DELETE( core );
+  SAFE_DELETE( entryPoint );
   ANativeActivity_finish( state->activity );
 }
 
