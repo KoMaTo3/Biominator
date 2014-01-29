@@ -7,6 +7,9 @@
     <Filter Include="core">
       <UniqueIdentifier>{108f7229-5c69-4f2d-9c1b-ec49863d7af6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{6746387d-60bc-424b-bf99-3f90910b52ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\jni\win32\core.cpp">
@@ -47,6 +50,24 @@
     </ClCompile>
     <ClCompile Include="..\..\jni\eventtypes.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\vertexbuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\math\kangles.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\math\klib.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\math\kmath.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\math\kmatrix.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\math\kvector.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +112,27 @@
     </ClInclude>
     <ClInclude Include="..\..\jni\eventmanagercontainer.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\vertexbuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\kangles.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\klib.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\kmath.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\kmatrix.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\kvector.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\math\ktypes.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

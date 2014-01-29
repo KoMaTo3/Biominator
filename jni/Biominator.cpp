@@ -11,6 +11,9 @@
 #include "eventtypes.h"
 #include "producer.h"
 
+//test
+#include "vertexbuffer.h"
+
 namespace Game {
 
 class KeyListener;
