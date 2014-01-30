@@ -1,6 +1,11 @@
-#include "renderer.h"
 #include "math.h"
+
 #include "../tools.h"
+#define INTERNGL_H_PREFIX
+#define INTERNGL_H_POSTFIX = NULL
+#include "../interngl.h"
+
+#include "renderer.h"
 #include "../eventtypes.h"
 
 using namespace Engine;
@@ -21,6 +26,7 @@ void RendererAndroid::Render() {
   if( !this->isValid ) {
     return;
   }
+  this->TouchEvent( EVENT_TYPE_RENDERER_BEFORE_RENDER, NULL );
   static float f = 0.0f;
   f += 0.1f;
   glClearColor( sinf( f ) * 0.5f + 0.5f, cosf( f ) * 0.5f + 0.5f, 0.0f, 1.0f );
@@ -30,6 +36,7 @@ void RendererAndroid::Render() {
   glFrontFace( GL_CW );
   glCullFace( GL_BACK );
   eglSwapBuffers( this->display, this->renderSurface );
+  this->TouchEvent( EVENT_TYPE_RENDERER_AFTER_RENDER, NULL );
 } //Render
 
 void RendererAndroid::InitNativeDisplay() {
@@ -117,3 +124,6 @@ void RendererAndroid::InitViewport() {
   glEnable( GL_BLEND );
   glViewport( 0, 0, this->screenWidth, this->screenHeight );
 } //InitViewport
+
+void RendererAndroid::InitExtensions() {
+}//InitExtensions

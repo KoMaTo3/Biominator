@@ -22,12 +22,13 @@ public:
   const std::string GetPlatformName() const;
   const PlatformType GetPlatformType() const;
 
+  Renderer *renderer;
+
 protected:
   bool isValid;
   bool isFocused;
   bool isVisible;
   bool animating;
-  Renderer *renderer;
   unsigned int screenWidth;
   unsigned int screenHeight;
 

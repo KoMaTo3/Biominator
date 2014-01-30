@@ -24,6 +24,7 @@ typedef std::vector< IndicesBlock > IndicesVector;
 
 class VertexBufferWriter;
 
+
 class IVertexBufferPool {
 public:
   virtual void Delete( VertexBufferWriter* buffer ) = NULL;
@@ -36,12 +37,13 @@ public:
   VertexBufferWriter* New( unsigned short size );
   virtual void Delete( VertexBufferWriter* buffer );
 
+protected:
+  VerticesVector verticesList;
+  IndicesVector freeIndicesList;
+
 private:
   VertexBuffer( VertexBuffer& );
   VertexBuffer& operator=( VertexBuffer& );
-
-  VerticesVector verticesList;
-  IndicesVector freeIndicesList;
 };
 
 

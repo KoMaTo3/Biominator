@@ -1,3 +1,4 @@
+#include "tools.h"
 #include "listener.h"
 #include "eventmanager.h"
 
@@ -7,6 +8,7 @@ Listener::Listener() {
 }
 
 Listener::~Listener() {
+  LOGI( "~Listener => _eventManagersList[%d]", this->_eventManagersList.size() );
   for( auto& manager: this->_eventManagersList ) {
     manager->RemoveListener( this );
   }

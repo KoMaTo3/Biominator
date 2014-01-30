@@ -113,7 +113,7 @@ IndicesBlock::IndicesBlock( unsigned short setBegin, unsigned short setSize )
 }
 
 Vertice& VertexBufferWriter::operator[]( unsigned short index ) {
-  return ( *this->verticesList )[ this->begin + Min2( index, this->size ) ];
+  return ( *this->verticesList )[ this->begin + Min2( index, ( unsigned short ) ( this->size - 1 ) ) ];
 }
 
 Vertice& VertexBufferWriter::Get( unsigned short index ) {

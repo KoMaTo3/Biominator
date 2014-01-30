@@ -100,7 +100,6 @@ void CoreWin32::Stop() {
 
 LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
   CoreWin32 *core = ( CoreWin32* ) GetWindowLong( hWnd, GWL_USERDATA );
-  LOGI( "HandleCmd: x%X [%d:%d]", message, wParam, lParam );
   switch( message ) {
     case WM_ACTIVATE: {
       //core->Signal( 1, !HIWORD( wParam ) );
@@ -113,14 +112,12 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
     return 0;
 
     case WM_KILLFOCUS: {
-      LOGI( "WM_KILLFOCUS" );
       core->isFocused = false;
       core->animating = false;
     }
     break;
 
     case WM_SETFOCUS: {
-      LOGI( "WM_SETFOCUS" );
       core->isFocused = true;
       core->animating = core->isFocused && core->isVisible;
     }
@@ -128,7 +125,6 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
 
     case WM_CLOSE: {
       if( core ) {
-        LOGI( "HandleCmd => WM_CLOSE" );
         core->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE, NULL );
         return 0;
       }

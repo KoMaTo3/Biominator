@@ -92,6 +92,7 @@
     <ClCompile Include="..\..\jni\producer.cpp" />
     <ClCompile Include="..\..\jni\renderer.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffer.cpp" />
+    <ClCompile Include="..\..\jni\vertexbuffergl.cpp" />
     <ClCompile Include="..\..\jni\win32\core.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\win32\</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\win32\</ObjectFileName>
@@ -111,6 +112,7 @@
     <ClInclude Include="..\..\jni\eventmanager.h" />
     <ClInclude Include="..\..\jni\eventmanagercontainer.h" />
     <ClInclude Include="..\..\jni\eventtypes.h" />
+    <ClInclude Include="..\..\jni\interngl.h" />
     <ClInclude Include="..\..\jni\listener.h" />
     <ClInclude Include="..\..\jni\math\kangles.h" />
     <ClInclude Include="..\..\jni\math\klib.h" />
@@ -123,8 +125,10 @@
     <ClInclude Include="..\..\jni\renderer.h" />
     <ClInclude Include="..\..\jni\tools.h" />
     <ClInclude Include="..\..\jni\vertexbuffer.h" />
+    <ClInclude Include="..\..\jni\vertexbuffergl.h" />
     <ClInclude Include="..\..\jni\win32\core.h" />
     <ClInclude Include="..\..\jni\win32\entrypoint.h" />
+    <ClInclude Include="..\..\jni\win32\opengl.h" />
     <ClInclude Include="..\..\jni\win32\renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

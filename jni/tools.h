@@ -12,6 +12,7 @@
 #define ENGINE_CORE_ARGUMENTS hInstance, hPrevInstance, lpCmdLine, nCmdShow
 #define ENGINE_PLATFORM_NAME "win32"
 #define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_WIN32
+#define ENGINE_PLATFORM_INCLUDE_OPENGL "win32/opengl.h"
 #define LOGI(format, ...) ( fprintf( __logFile, format "\n", __VA_ARGS__ ) )
 #define LOGW(format, ...) ( fprintf( __logFile, "[W] " format "\n", __VA_ARGS__ ) )
 #define LOGE(format, ...) ( fprintf( __logFile, "[E] " format "\n", __VA_ARGS__ ) )
@@ -23,6 +24,7 @@ extern FILE *__logFile;
 #define ENGINE_CORE_ARGUMENTS state
 #define ENGINE_PLATFORM_NAME "android"
 #define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_ANDROID
+#define ENGINE_PLATFORM_INCLUDE_OPENGL "android/opengl.h"
 #include <android/log.h>
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))

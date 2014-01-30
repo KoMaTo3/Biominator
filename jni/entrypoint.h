@@ -13,6 +13,7 @@ private:
   EntryPoint( EntryPoint& );
   EntryPoint& operator=( EntryPoint& );
   void Init( Core* core );
+  void Destroy();
 };
 
 };

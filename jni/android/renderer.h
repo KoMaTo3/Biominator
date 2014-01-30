@@ -1,9 +1,7 @@
 #pragma once
 
+#include "opengl.h"
 #include "../renderer.h"
-
-#include <EGL/egl.h>
-#include <GLES/gl.h>
 
 namespace Engine {
 
@@ -13,6 +11,9 @@ public:
   virtual ~RendererAndroid();
   virtual void Render();
   virtual void InitViewport();
+
+protected:
+  virtual void InitExtensions();
 
 private:
   RendererAndroid();

@@ -12,7 +12,7 @@
 #include "producer.h"
 
 //test
-#include "vertexbuffer.h"
+#include "vertexbuffergl.h"
 
 namespace Game {
 
@@ -34,6 +34,9 @@ private:
   GameContainer();
   GameContainer( GameContainer& );
   GameContainer& operator=( GameContainer& );
+
+  //test
+  Engine::VertexBufferGL *buffer;
 };
 
 GameContainer *game = NULL;
@@ -41,10 +44,6 @@ GameContainer *game = NULL;
 };  //namespace Game
 
 using namespace Game;
-
-void Engine::EntryPoint::Init( Core* core ) {
-  game = new GameContainer( core );
-}
 
 
 GameContainer::GameContainer( Engine::Core *setCore )
@@ -63,9 +62,14 @@ GameContainer::GameContainer( Engine::Core *setCore )
     break;
   }
   this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
+
+  this->buffer = new Engine::VertexBufferGL( this->core->renderer );
+  this->buffer->New( 1204 );
+  this->buffer->New( 3769 );
 }
 
 GameContainer::~GameContainer() {
+  SAFE_DELETE( this->buffer );
 }
 
 void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
@@ -91,3 +95,13 @@ void GameContainer::OnAppClose( Engine::Listener* listener, Engine::Producer *pr
   GameContainer *game = ( GameContainer* ) listener;
   game->AppExit();
 }//OnAppClose
+
+
+//entry point
+void Engine::EntryPoint::Init( Core* core ) {
+  game = new GameContainer( core );
+}//Init
+
+void Engine::EntryPoint::Destroy() {
+  SAFE_DELETE( game );
+}//Destroy

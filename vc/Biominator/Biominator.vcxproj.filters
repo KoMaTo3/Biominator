@@ -69,6 +69,9 @@
     <ClCompile Include="..\..\jni\math\kvector.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\vertexbuffergl.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -133,6 +136,15 @@
     </ClInclude>
     <ClInclude Include="..\..\jni\math\ktypes.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\vertexbuffergl.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\interngl.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\win32\opengl.h">
+      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

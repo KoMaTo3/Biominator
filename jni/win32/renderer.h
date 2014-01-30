@@ -1,8 +1,6 @@
 #pragma once
 
-#include "windows.h"
-#include "opengl/gl.h"
-
+#include "opengl.h"
 #include "../renderer.h"
 
 namespace Engine {
@@ -14,6 +12,9 @@ public:
   virtual void Render();
   virtual void InitViewport();
 
+protected:
+  virtual void InitExtensions();
+
 private:
   RendererWin32gl();
   RendererWin32gl( const RendererWin32gl& );
@@ -21,6 +22,7 @@ private:
   bool InitNativeDisplay();
   void DestroyNativeDisplay();
   bool InitPixelFormat();
+  bool LoadExtension( const std::string &name, void** function );
 
   HWND window;
   HGLRC context;

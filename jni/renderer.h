@@ -17,6 +17,8 @@ protected:
   unsigned int screenWidth;
   unsigned int screenHeight;
 
+  virtual void InitExtensions() = 0;
+
 private:
   Renderer();
   Renderer( const Renderer& );
