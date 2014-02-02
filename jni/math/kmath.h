@@ -54,7 +54,7 @@ public:
   template < class T >
   static void         Swap( T& a, T& b );   //swap values a and b
   template < class T >
-  static bool         Between( T l, T r, T x, float epsilon );  //test  l-E <= x <= r+E
+  KM_INLINE static bool         Between( T l, T r, T x, float epsilon );  //test  l-E <= x <= r+E
   template < class T >
   static bool Intersect1D( T a, T b, T c, T d, float epsilon = 0.01f ); //test on intersect [a; b] and [c; d]
 
@@ -806,12 +806,12 @@ KM_INLINE void Math::Swap( T& a, T& b ) {
 }
 
 template < class T >
-KM_INLINE static bool Math::Between( T _l, T _r, T _x, float epsilon ) {
+KM_INLINE bool Math::Between( T _l, T _r, T _x, float epsilon ) {
   return Min2( _l, _r ) <= _x + epsilon && _x <= Max2( _l, _r ) + epsilon;
 }
 
 template < class T >
-KM_INLINE static bool Math::Intersect1D( T a, T b, T c, T d, float epsilon ) {
+KM_INLINE bool Math::Intersect1D( T a, T b, T c, T d, float epsilon ) {
 	if( a > b ) {
     Math::Swap( a, b );
   }

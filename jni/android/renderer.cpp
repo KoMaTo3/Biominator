@@ -1,9 +1,6 @@
 #include "math.h"
 
 #include "../tools.h"
-#define INTERNGL_H_PREFIX
-#define INTERNGL_H_POSTFIX = NULL
-#include "../interngl.h"
 
 #include "renderer.h"
 #include "../eventtypes.h"
@@ -18,8 +15,9 @@ RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int s
 }
 
 RendererAndroid::~RendererAndroid() {
-  LOGI( "~RendererAndroid" );
+  LOGI( "~RendererAndroid..." );
   this->DestroyNativeDisplay();
+  LOGI( "~RendererAndroid done" );
 }
 
 void RendererAndroid::Render() {

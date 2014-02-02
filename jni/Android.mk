@@ -13,6 +13,8 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     producer.cpp \
                     renderer.cpp \
                     types.cpp \
+                    vertexbuffer.cpp \
+                    vertexbuffergl.cpp \
                     android/core.cpp \
                     android/entrypoint.cpp \
                     android/renderer.cpp

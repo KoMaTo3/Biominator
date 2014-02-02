@@ -119,3 +119,6 @@ Vertice& VertexBufferWriter::operator[]( unsigned short index ) {
 Vertice& VertexBufferWriter::Get( unsigned short index ) {
   return this->operator[]( index );
 }
+
+IVertexBufferPool::~IVertexBufferPool() {
+}

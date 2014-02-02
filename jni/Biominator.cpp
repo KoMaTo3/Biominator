@@ -25,6 +25,7 @@ public:
   static void OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnMobileKeyPressed( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnAppClose( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+  static void OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   void AppExit();
   void AppSuspend();
 
@@ -47,7 +48,7 @@ using namespace Game;
 
 
 GameContainer::GameContainer( Engine::Core *setCore )
-:core( setCore ) {
+:core( setCore ), buffer( NULL ) {
   switch( this->core->GetPlatformType() ) {
     case Engine::PLATFORM_TYPE_WIN32: {
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_PRESSED, GameContainer::OnKeyEvent );
@@ -62,10 +63,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
     break;
   }
   this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
-
-  this->buffer = new Engine::VertexBufferGL( this->core->renderer );
-  this->buffer->New( 1204 );
-  this->buffer->New( 3769 );
+  this->core->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnGraphicsInit );
 }
 
 GameContainer::~GameContainer() {
@@ -84,7 +82,7 @@ void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *pr
 }//OnKeyEvent
 
 void GameContainer::AppExit() {
-  this->core->Destroy();
+  this->core->Stop();
 }//AppExit
 
 void GameContainer::AppSuspend() {
@@ -105,3 +103,10 @@ void Engine::EntryPoint::Init( Core* core ) {
 void Engine::EntryPoint::Destroy() {
   SAFE_DELETE( game );
 }//Destroy
+
+void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  GameContainer *game = ( GameContainer* ) listener;
+  game->buffer = new Engine::VertexBufferGL( game->core->renderer );
+  game->buffer->New( 1204 );
+  game->buffer->New( 3769 );
+}//OnGraphicsInit

@@ -27,7 +27,8 @@ class VertexBufferWriter;
 
 class IVertexBufferPool {
 public:
-  virtual void Delete( VertexBufferWriter* buffer ) = NULL;
+  virtual void Delete( VertexBufferWriter* buffer ) = 0;
+  virtual ~IVertexBufferPool();
 };
 
 class VertexBuffer: public IVertexBufferPool {
