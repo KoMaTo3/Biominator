@@ -2,7 +2,8 @@
 
 using namespace Engine;
 
-Position::Position() {
+Position::Position()
+:x(), y() {
 }
 
 Position::Position( const int setX, const int setY )
@@ -12,7 +13,8 @@ Position::Position( const int setX, const int setY )
 Position::~Position() {
 }
 
-Size::Size() {
+Size::Size()
+:width(), height() {
 }
 
 Size::Size( const int setWidth, const int setHeight )

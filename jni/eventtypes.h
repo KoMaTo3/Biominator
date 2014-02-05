@@ -7,35 +7,35 @@ namespace Engine {
 enum EventType {
   EVENT_TYPE_UNKNOWN = 0,
 
-  /* рендер */
+  /* пїЅпїЅпїЅпїЅпїЅпїЅ */
   EVENT_TYPE_RENDERER_INIT,
   EVENT_TYPE_RENDERER_BEFORE_DESTROY,
   EVENT_TYPE_RENDERER_AFTER_DESTROY,
   EVENT_TYPE_RENDERER_BEFORE_RENDER,
   EVENT_TYPE_RENDERER_AFTER_RENDER,
 
-  /* ядро */
+  /* пїЅпїЅпїЅпїЅ */
   EVENT_TYPE_CORE_CLOSE,
 
-  /* тач-пад */
+  /* пїЅпїЅпїЅ-пїЅпїЅпїЅ */
   EVENT_TYPE_MOTION,
 
-  /* клавиатура и кнопки мыши */
+  /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
   EVENT_TYPE_KEY_PRESSED,
   EVENT_TYPE_KEY_RELEASED,
   EVENT_TYPE_KEY_CLICKED,
   EVENT_TYPE_KEY_DBLCLICKED,
 
-  /* курсор мыши */
+  /* пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
   EVENT_TYPE_MOUSE_MOVE,
 
-  /* системные кнопки, такие как "Назад" у мобильных девайсов */
+  /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅ" пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
   EVENT_TYPE_SYSTEM_KEY,
 
   EVENT_TYPE_MAX
 };
 
-/* коды клавиш клавиатуры и мыши */
+/* пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ */
 enum KeyCode {
   KEY_CODE_UNKNOWN      = 0,
   KEY_CODE_MOUSE_LEFT   = 0x01,
@@ -107,6 +107,7 @@ enum PlatformType {
   PLATFORM_TYPE_UNKNOWN = 0,
   PLATFORM_TYPE_ANDROID = 1,
   PLATFORM_TYPE_WIN32   = 2,
+  PLATFORM_TYPE_LINUX   = 3,
 };
 
 class EventKey: public Event {

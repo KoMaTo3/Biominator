@@ -8,7 +8,7 @@ Listener::Listener() {
 }
 
 Listener::~Listener() {
-  LOGI( "~Listener => _eventManagersList[%d]", this->_eventManagersList.size() );
+  LOGI( "~Listener => _eventManagersList[%d]", ( int ) this->_eventManagersList.size() );
   for( auto& manager: this->_eventManagersList ) {
     manager->RemoveListener( this );
   }

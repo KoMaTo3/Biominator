@@ -4,6 +4,8 @@
 #include "win32/entrypoint.h"
 #elif IS_ANDROID
 #include "android/entrypoint.h"
+#elif IS_LINUX
+#include "linux/entrypoint.h"
 #endif
 
 #include "tools.h"
@@ -59,6 +61,13 @@ GameContainer::GameContainer( Engine::Core *setCore )
     break;
     case Engine::PLATFORM_TYPE_ANDROID: {
       this->core->Listen( this, Engine::EVENT_TYPE_SYSTEM_KEY, GameContainer::OnKeyEvent );
+    }
+    break;
+    case Engine::PLATFORM_TYPE_LINUX: {
+    }
+    break;
+    default: {
+      LOGE( "GameContainer: unknown platform" );
     }
     break;
   }

@@ -38,3 +38,6 @@ vc/Biominator/Release/
 vc/Biominator/*.sdf
 vc/Biominator/*.suo
 vc/Biominator/log.txt
+
+#linux eclipse
+.metadata

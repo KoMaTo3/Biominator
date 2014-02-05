@@ -1,6 +1,8 @@
+//#define GL_GLEXT_PROTOTYPES
+#include "tools.h"
+#include ENGINE_PLATFORM_INCLUDE_OPENGL
 #include "vertexbuffer.h"
 #include "math/kmath.h"
-#include "tools.h"
 
 using namespace Engine;
 
@@ -41,7 +43,7 @@ VertexBufferWriter* VertexBuffer::New( unsigned short size ) {
   if( !finded ) {
     this->verticesList.resize( this->verticesList.size() + size );
     begin = this->verticesList.size() - size;
-    LOGI( "VertexBuffer::New => alloc new vertices, new size = %d", this->verticesList.size() );
+    LOGI( "VertexBuffer::New => alloc new vertices, new size = %d", ( int ) this->verticesList.size() );
   }
 
   VertexBufferWriter *buffer = new VertexBufferWriter( begin, size, &this->verticesList, this );

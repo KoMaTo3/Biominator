@@ -7,7 +7,8 @@
 using namespace Engine;
 
 Core::Core()
-:Producer(), isValid( true ), renderer( 0 ), isFocused( false ), isVisible( true ), animating( false ) {
+:Producer(), renderer( 0 ), isValid( true ), isFocused( false ), isVisible( true )
+,animating( false ), screenWidth( 0 ), screenHeight( 0 ) {
 }
 
 Core::~Core() {

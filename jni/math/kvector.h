@@ -64,7 +64,8 @@ public:
   void      Lerp( const Vec2 &v1, const Vec2 &v2, const float l );
 };
 
-KM_INLINE Vec2::Vec2( void ) {
+KM_INLINE Vec2::Vec2( void )
+:x(), y() {
 }
 
 KM_INLINE Vec2::Vec2( const float x, const float y ) {
@@ -130,7 +131,13 @@ KM_INLINE float& Vec2::operator[]( int index ) {
 }
 
 KM_INLINE bool Vec2::IsLess( const Vec2 &a ) const {
-  return x < a.x - Math::FLT_EPSILON_NUM || Math::Fabs( x - a.x ) < Math::FLT_EPSILON_NUM && y < a.y - Math::FLT_EPSILON_NUM;
+  return
+    (
+      ( x < a.x - Math::FLT_EPSILON_NUM )
+      || ( Math::Fabs( x - a.x ) < Math::FLT_EPSILON_NUM )
+    )
+    && ( y < a.y - Math::FLT_EPSILON_NUM )
+    ;
 }
 
 KM_INLINE float Vec2::IntersectDet( float a, float b, float c, float d ) {
@@ -370,7 +377,8 @@ public:
   void      SLerp( const Vec3 &v1, const Vec3 &v2, const float l );
 };
 
-KM_INLINE Vec3::Vec3( void ) {
+KM_INLINE Vec3::Vec3( void )
+:x(), y(), z() {
 }
 
 KM_INLINE Vec3::Vec3( const float x, const float y, const float z ) {
@@ -837,7 +845,8 @@ public:
   void      Lerp( const Vec4 &v1, const Vec4 &v2, const float l );
 };
 
-KM_INLINE Vec4::Vec4( void ) {
+KM_INLINE Vec4::Vec4( void )
+: x(), y(), z(), w() {
 }
 
 KM_INLINE Vec4::Vec4( const float x, const float y, const float z, const float w ) {
@@ -1053,7 +1062,8 @@ public:
   Vec3      ToVec3( void ) const;
 };
 
-KM_INLINE Polar3::Polar3( void ) {
+KM_INLINE Polar3::Polar3( void )
+:radius(), theta(), phi(){
 }
 
 KM_INLINE Polar3::Polar3( const float radius, const float theta, const float phi ) {

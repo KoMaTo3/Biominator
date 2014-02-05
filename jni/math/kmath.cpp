@@ -13,7 +13,7 @@ const float Math::M_DEG2RAD     = PI / 180.0f;
 const float Math::M_RAD2DEG     = 180.0f / PI;
 const float Math::M_SEC2MS      = 1000.0f;
 const float Math::M_MS2SEC      = 0.001f;
-const float Math::INFINITY      = 1e30f;
+const float Math::FLT_INFINITY  = 1e30f;
 const float Math::FLT_EPSILON_NUM = 1.192092896e-07f;
 
 bool Math::initialized          = false;

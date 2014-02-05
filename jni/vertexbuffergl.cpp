@@ -1,3 +1,6 @@
+#include "predefines.h"
+#include "tools.h"
+#include ENGINE_PLATFORM_INCLUDE_OPENGL
 #include "vertexbuffergl.h"
 #include "renderer.h"
 #include "eventtypes.h"
@@ -17,7 +20,7 @@ VertexBufferGL::~VertexBufferGL() {
 
 void VertexBufferGL::OnBeforeRender( Listener* listener, Producer *producer, int eventId, void *data ) {
   VertexBufferGL *isThis = ( VertexBufferGL* ) listener;
-  LOGI( "VertexBufferGL::OnBeforeRender => vertices[%d] this[%p]", isThis->verticesList.size(), isThis );
+  LOGI( "VertexBufferGL::OnBeforeRender => vertices[%d] this[%p]", ( int ) isThis->verticesList.size(), isThis );
   if( isThis->verticesList.empty() ) {
     return;
   }

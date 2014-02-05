@@ -30,5 +30,17 @@ extern FILE *__logFile;
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
 //__ANDROID__
+#elif IS_LINUX
+#define ENGINE_MAIN void main()
+#define ENGINE_CORE CoreLinux
+#define ENGINE_CORE_ARGUMENTS void
+#define ENGINE_PLATFORM_NAME "linux"
+#define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_LINUX
+#define ENGINE_PLATFORM_INCLUDE_OPENGL "linux/opengl.h"
+#define LOGI(format, ...) ( printf( format"\n", ##__VA_ARGS__ ) )
+#define LOGW(format, ...) ( printf( "[Warn] " format"\n", ##__VA_ARGS__ ) )
+#define LOGE(format, ...) ( printf( "[Error] " format"\n", ##__VA_ARGS__ ) )
+extern FILE *__logFile;
+//__ANDROID__
 #endif
 //platform case
