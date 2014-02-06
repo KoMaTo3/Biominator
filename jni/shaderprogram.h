@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+namespace Engine {
 
 class ShaderProgram
 {
@@ -27,4 +28,6 @@ private:
   ShaderProgram& operator=( ShaderProgram& );
   bool _CheckShaderError( const std::string& text, GLuint shader );
   bool _AttachShader( const GLchar *content, const GLint length, GLenum shaderType );
+};
+
 };

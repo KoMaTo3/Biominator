@@ -1,5 +1,7 @@
 #include "shaderprogram.h"
 
+using namespace Engine;
+
 ShaderProgram::ShaderProgram()
 : program( NULL ) {
   this->program = glCreateProgram();

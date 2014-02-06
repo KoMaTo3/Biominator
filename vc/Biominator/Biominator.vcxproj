@@ -91,6 +91,7 @@
     <ClCompile Include="..\..\jni\math\kvector.cpp" />
     <ClCompile Include="..\..\jni\producer.cpp" />
     <ClCompile Include="..\..\jni\renderer.cpp" />
+    <ClCompile Include="..\..\jni\shadermanager.cpp" />
     <ClCompile Include="..\..\jni\shaderprogram.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffer.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffergl.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="..\..\jni\predefines.h" />
     <ClInclude Include="..\..\jni\producer.h" />
     <ClInclude Include="..\..\jni\renderer.h" />
+    <ClInclude Include="..\..\jni\shadermanager.h" />
     <ClInclude Include="..\..\jni\shaderprogram.h" />
     <ClInclude Include="..\..\jni\tools.h" />
     <ClInclude Include="..\..\jni\vertexbuffer.h" />

@@ -75,6 +75,9 @@
     <ClCompile Include="..\..\jni\shaderprogram.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\shadermanager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -150,6 +153,9 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\shaderprogram.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\shadermanager.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
