@@ -72,6 +72,9 @@
     <ClCompile Include="..\..\jni\vertexbuffergl.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\shaderprogram.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\..\jni\win32\opengl.h">
       <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\shaderprogram.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
