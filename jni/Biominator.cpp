@@ -91,7 +91,7 @@ void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *pr
 }//OnKeyEvent
 
 void GameContainer::AppExit() {
-  this->core->Stop();
+  this->core->Destroy();
 }//AppExit
 
 void GameContainer::AppSuspend() {
