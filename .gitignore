@@ -41,3 +41,6 @@ vc/Biominator/log.txt
 
 #linux eclipse
 .metadata
+eclipse/Debug
+eclipse/Release
+eclipse/log.txt
