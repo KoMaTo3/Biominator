@@ -15,6 +15,8 @@
 
 //test
 #include "vertexbuffergl.h"
+#include "memory.h"
+#include "filemanager.h"
 
 namespace Game {
 
@@ -30,6 +32,7 @@ public:
   static void OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   void AppExit();
   void AppSuspend();
+  void _TestFile();
 
   Engine::Core *core;
 
@@ -73,6 +76,8 @@ GameContainer::GameContainer( Engine::Core *setCore )
   }
   this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
   this->core->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnGraphicsInit );
+
+  this->_TestFile();
 }
 
 GameContainer::~GameContainer() {
@@ -119,3 +124,12 @@ void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer
   game->buffer->New( 1204 );
   game->buffer->New( 3769 );
 }//OnGraphicsInit
+
+void GameContainer::_TestFile() {
+  Engine::Memory testmem;
+  if( this->core->GetFileManager()->GetFile( "qwe.tx", testmem, true ) ) {
+    LOGI( "File finded: size[%d] content[%s]", testmem.GetLength(), testmem.GetData() );
+  } else {
+    LOGE( "File not found" );
+  }
+}//_TestFile

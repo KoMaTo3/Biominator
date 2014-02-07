@@ -83,6 +83,7 @@
     <ClCompile Include="..\..\jni\eventmanager.cpp" />
     <ClCompile Include="..\..\jni\eventmanagercontainer.cpp" />
     <ClCompile Include="..\..\jni\eventtypes.cpp" />
+    <ClCompile Include="..\..\jni\filemanager.cpp" />
     <ClCompile Include="..\..\jni\listener.cpp" />
     <ClCompile Include="..\..\jni\math\kangles.cpp" />
     <ClCompile Include="..\..\jni\math\klib.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="..\..\jni\renderer.cpp" />
     <ClCompile Include="..\..\jni\shadermanager.cpp" />
     <ClCompile Include="..\..\jni\shaderprogram.cpp" />
+    <ClCompile Include="..\..\jni\tools.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffer.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffergl.cpp" />
     <ClCompile Include="..\..\jni\win32\core.cpp">
@@ -101,6 +103,9 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\win32\</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\jni\win32\entrypoint.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\win32\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\win32\filemanager.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\win32\</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\jni\win32\renderer.cpp">
@@ -115,6 +120,7 @@
     <ClInclude Include="..\..\jni\eventmanager.h" />
     <ClInclude Include="..\..\jni\eventmanagercontainer.h" />
     <ClInclude Include="..\..\jni\eventtypes.h" />
+    <ClInclude Include="..\..\jni\filemanager.h" />
     <ClInclude Include="..\..\jni\interngl.h" />
     <ClInclude Include="..\..\jni\listener.h" />
     <ClInclude Include="..\..\jni\math\kangles.h" />
@@ -134,6 +140,7 @@
     <ClInclude Include="..\..\jni\vertexbuffergl.h" />
     <ClInclude Include="..\..\jni\win32\core.h" />
     <ClInclude Include="..\..\jni\win32\entrypoint.h" />
+    <ClInclude Include="..\..\jni\win32\filemanager.h" />
     <ClInclude Include="..\..\jni\win32\opengl.h" />
     <ClInclude Include="..\..\jni\win32\renderer.h" />
   </ItemGroup>

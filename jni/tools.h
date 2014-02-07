@@ -2,6 +2,8 @@
 
 #include "stdio.h"
 #include "predefines.h"
+#include <deque>
+#include <string>
 
 #define SAFE_DELETE( q ) { if( q ) { delete q; q = 0; } }
 #define SAFE_DELETE_ARRAY( q ) { if( q ) { delete[] q; q = 0; }  }
@@ -44,3 +46,5 @@ extern FILE *__logFile;
 //__ANDROID__
 #endif
 //platform case
+
+std::deque< std::string > Explode( const std::string& source, const std::string& separator );

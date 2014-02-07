@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "../tools.h"
 #include "../eventtypes.h"
+#include "filemanager.h"
 
 #include <string>
 
@@ -12,6 +13,8 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   //this->state->onAppCmd = CoreWin32::HandleCmd;
   //this->state->onInputEvent = CoreWin32::HandleInput;
   //this->state->userData = this;
+
+  this->fileManager = new FileManagerWin32( "data/" );
 
   WNDCLASSEX wndClass;
   memset( &wndClass, 0, sizeof( wndClass ) );

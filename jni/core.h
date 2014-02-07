@@ -10,6 +10,7 @@ void OnEngineRun();
 namespace Engine {
 
 class Renderer;
+class FileManager;
 
 class Core: public Producer {
 public:
@@ -21,8 +22,10 @@ public:
   virtual void Stop() = 0;
   const std::string GetPlatformName() const;
   const PlatformType GetPlatformType() const;
+  FileManager *GetFileManager();
 
   Renderer *renderer;
+  FileManager *fileManager;
 
 protected:
   bool isValid;
