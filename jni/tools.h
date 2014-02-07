@@ -7,6 +7,9 @@
 
 #define SAFE_DELETE( q ) { if( q ) { delete q; q = 0; } }
 #define SAFE_DELETE_ARRAY( q ) { if( q ) { delete[] q; q = 0; }  }
+#define COLOR_RGBA( r, g, b, a ) ( (r) | (g<<8) | (b<<16) | a<<24 )
+#define COLOR_ARGB( a, r, g, b ) ( (a<<24) | (r<<16) | (g<<8) | b )
+
 
 #if IS_WIN32
 #define ENGINE_MAIN int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )

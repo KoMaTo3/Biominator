@@ -4,6 +4,9 @@
 
 namespace Engine {
 
+class FileManagerWin32;
+typedef FileManagerWin32 FileManagerType;
+
 class FileManagerWin32: public FileManager {
 public:
   FileManagerWin32( const std::string& setRootDir );

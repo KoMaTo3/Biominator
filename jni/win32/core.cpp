@@ -14,7 +14,7 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   //this->state->onInputEvent = CoreWin32::HandleInput;
   //this->state->userData = this;
 
-  this->fileManager = new FileManagerWin32( "data/" );
+  this->fileManager = new FileManagerType( "data/" );
 
   WNDCLASSEX wndClass;
   memset( &wndClass, 0, sizeof( wndClass ) );

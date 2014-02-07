@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\jni\eventmanagercontainer.cpp" />
     <ClCompile Include="..\..\jni\eventtypes.cpp" />
     <ClCompile Include="..\..\jni\filemanager.cpp" />
+    <ClCompile Include="..\..\jni\imageloader.cpp" />
     <ClCompile Include="..\..\jni\listener.cpp" />
     <ClCompile Include="..\..\jni\math\kangles.cpp" />
     <ClCompile Include="..\..\jni\math\klib.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="..\..\jni\eventmanagercontainer.h" />
     <ClInclude Include="..\..\jni\eventtypes.h" />
     <ClInclude Include="..\..\jni\filemanager.h" />
+    <ClInclude Include="..\..\jni\imageloader.h" />
     <ClInclude Include="..\..\jni\interngl.h" />
     <ClInclude Include="..\..\jni\listener.h" />
     <ClInclude Include="..\..\jni\math\kangles.h" />

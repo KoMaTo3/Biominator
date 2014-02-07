@@ -90,6 +90,9 @@
     <ClCompile Include="..\..\jni\tools.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\imageloader.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="..\..\jni\win32\filemanager.h">
       <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\imageloader.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

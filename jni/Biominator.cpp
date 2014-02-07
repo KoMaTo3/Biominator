@@ -17,6 +17,7 @@
 #include "vertexbuffergl.h"
 #include "memory.h"
 #include "filemanager.h"
+#include "imageloader.h"
 
 namespace Game {
 
@@ -33,6 +34,7 @@ public:
   void AppExit();
   void AppSuspend();
   void _TestFile();
+  void _TestImageLoader();
 
   Engine::Core *core;
 
@@ -78,6 +80,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
   this->core->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnGraphicsInit );
 
   this->_TestFile();
+  this->_TestImageLoader();
 }
 
 GameContainer::~GameContainer() {
@@ -133,3 +136,16 @@ void GameContainer::_TestFile() {
     LOGE( "File not found" );
   }
 }//_TestFile
+
+void GameContainer::_TestImageLoader() {
+  Engine::Memory imageFile;
+  if( this->core->GetFileManager()->GetFile( "glow.tga", imageFile ) ) {
+    Engine::ImageLoader loader;
+    if( loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
+      LOGI( "loaded image: size[%dx%d] type[%d]", loader.imageWidth, loader.imageHeight, loader.imageType );
+    } else {
+      LOGE( "failed to load image" );
+    }
+  }
+}//_TestImageLoader
+
