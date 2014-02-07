@@ -78,6 +78,9 @@
     <ClCompile Include="..\..\jni\shadermanager.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\memory.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -156,6 +159,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\shadermanager.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\memory.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
