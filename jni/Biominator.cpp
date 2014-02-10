@@ -130,6 +130,7 @@ void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer
 
 void GameContainer::_TestFile() {
   Engine::Memory testmem;
+  LOGI( "_TestFile... fileManager[%p]", this->core->GetFileManager() );
   if( this->core->GetFileManager()->GetFile( "qwe.tx", testmem, true ) ) {
     LOGI( "File finded: size[%d] content[%s]", testmem.GetLength(), testmem.GetData() );
   } else {
@@ -146,6 +147,8 @@ void GameContainer::_TestImageLoader() {
     } else {
       LOGE( "failed to load image" );
     }
+  } else {
+    LOGE( "_TestImageLoader => file not found" );
   }
 }//_TestImageLoader
 

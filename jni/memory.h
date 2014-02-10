@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tools.h"
+
 namespace Engine {
 
 class Memory {

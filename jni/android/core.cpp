@@ -3,6 +3,7 @@
 #include "../tools.h"
 #include "../types.h"
 #include "../eventtypes.h"
+#include "filemanager.h"
 
 using namespace Engine;
 
@@ -13,6 +14,7 @@ CoreAndroid::CoreAndroid( android_app *setApp )
   this->app->onInputEvent = CoreAndroid::HandleInput;
   this->app->userData = this;
   this->app->inputPollSource.process = CoreAndroid::ProcessInput;
+  this->fileManager = new FileManagerType( this->app->activity->assetManager );
 
   //this->savedState.angle = 0.0f;
   //this->savedState.x = 0;
@@ -24,6 +26,7 @@ CoreAndroid::CoreAndroid( android_app *setApp )
 }
 
 CoreAndroid::~CoreAndroid() {
+  SAFE_DELETE( this->fileManager );
   //SAFE_DELETE( this->renderer );
 }
 

@@ -70,6 +70,7 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 
 CoreWin32::~CoreWin32() {
+  SAFE_DELETE( this->fileManager );
 }
 
 void CoreWin32::Update() {

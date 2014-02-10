@@ -9,7 +9,10 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     event.cpp \
                     eventmanager.cpp \
                     eventmanagercontainer.cpp \
+                    filemanager.cpp \
+                    imageloader.cpp \
                     listener.cpp \
+                    memory.cpp \
                     producer.cpp \
                     renderer.cpp \
                     types.cpp \
@@ -17,6 +20,7 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     vertexbuffergl.cpp \
                     android/core.cpp \
                     android/entrypoint.cpp \
+                    android/filemanager.cpp \
                     android/renderer.cpp
 LOCAL_CFLAGS += -std=c++11
 

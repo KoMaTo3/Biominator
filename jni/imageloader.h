@@ -1,6 +1,7 @@
 #pragma once
 
 #include "memory.h"
+#include "tools.h"
 
 namespace Engine {
 
