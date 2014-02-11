@@ -3,6 +3,7 @@
 #include "../tools.h"
 #include "../eventtypes.h"
 #include "X11/X.h"
+#include "filemanager.h"
 //#include "X11/Xlib.h"
 
 
@@ -23,6 +24,7 @@ CoreLinux::CoreLinux()
   this->windowAttr = tmpAttr;
   this->screenWidth = 320;
   this->screenHeight = 200;
+  this->fileManager = new FileManagerType( "data/" );
 
   this->display = XOpenDisplay( NULL );
   if( !this->display ) {
@@ -39,7 +41,8 @@ CoreLinux::CoreLinux()
   this->setWndAttr.colormap = this->colormap;
   this->setWndAttr.event_mask =
       ExposureMask | KeyPressMask | KeyReleaseMask | VisibilityChangeMask | StructureNotifyMask
-      | SubstructureNotifyMask | FocusChangeMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | KeymapStateMask;
+      | SubstructureNotifyMask | FocusChangeMask | ButtonPressMask | ButtonReleaseMask
+      | PointerMotionMask /* | KeymapStateMask */ ;
   this->window = XCreateWindow(
       this->display,
       this->windowRoot,
@@ -70,6 +73,7 @@ CoreLinux::CoreLinux()
 
 
 CoreLinux::~CoreLinux() {
+  SAFE_DELETE( this->fileManager );
 }
 
 void CoreLinux::Update() {
@@ -137,11 +141,24 @@ void CoreLinux::HandleCmd( XEvent *event ) {
   //LOGI( "cmd: %d", event->type );
   switch( event->type ) {
   case KeyPress: {
-    this->isValid = false;
-    /*
-    glXMakeCurrent( this->display, None, NULL );
-    //glXDestroyContext( this->display, this->context );
-    */
+    this->OnKeyEvent( event, true );
+  }
+  break;
+  case KeyRelease: {
+    bool isRepeat = false;
+    if( XEventsQueued( this->display, QueuedAfterReading ) ) {
+      XEvent nev;
+      XPeekEvent( this->display, &nev );
+      if( nev.type == KeyPress && nev.xkey.time == event->xkey.time &&
+          nev.xkey.keycode == event->xkey.keycode ) {
+        XNextEvent( this->display, event );
+        isRepeat = true;
+      }
+    }
+    if( !isRepeat ) {
+      this->OnKeyEvent( event, false );
+      //XLookupKeysym (&report.xkey, 0));
+    }
   }
   break;
   case Expose: {
@@ -150,7 +167,8 @@ void CoreLinux::HandleCmd( XEvent *event ) {
   }
   break;
   case ClientMessage: {
-    this->isValid = false;
+    this->TouchEvent( Engine::EVENT_TYPE_CORE_CLOSE, NULL );
+    //this->isValid = false;
   }
   break;
   case FocusIn: {
@@ -163,6 +181,20 @@ void CoreLinux::HandleCmd( XEvent *event ) {
     this->animating = false;
   }
   break;
+  case ButtonPress: {
+    this->OnMouseEvent( event, true );
+  }
+  break;
+  case ButtonRelease: {
+    this->OnMouseEvent( event, false );
+  }
+  break;
+  case MotionNotify: {
+  }
+  break;
+  default: {
+    LOGI( "unknown event x%X", event->type );
+  }
     /*
     case WM_ACTIVATE: {
       //core->Signal( 1, !HIWORD( wParam ) );
@@ -173,18 +205,6 @@ void CoreLinux::HandleCmd( XEvent *event ) {
       core->animating = core->isFocused && core->isVisible;
     }
     return 0;
-
-    case WM_KILLFOCUS: {
-      core->isFocused = false;
-      core->animating = false;
-    }
-    break;
-
-    case WM_SETFOCUS: {
-      core->isFocused = true;
-      core->animating = core->isFocused && core->isVisible;
-    }
-    break;
 
     case WM_CLOSE: {
       if( core ) {
@@ -207,70 +227,11 @@ void CoreLinux::HandleCmd( XEvent *event ) {
     }
     break;
 
-    case WM_KEYDOWN: {
-      if( !( lParam & 0x40000000 ) ) {  //prevent auto-repeating
-        EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
-        key.keyCode = wParam;
-        core->TouchEvent( &key );
-      }
-      return 0;
-    }
-
-    case WM_KEYUP: {
-      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
-      key.keyCode = wParam;
-      core->TouchEvent( &key );
-      return 0;
-    }
-
     case WM_MOUSEMOVE: {
       EventMouseMove event;
       event.x = LOWORD( lParam );
       event.y = HIWORD( lParam );
       core->TouchEvent( &event );
-      return 0;
-    }
-
-    case WM_LBUTTONDOWN: {
-      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
-      key.keyCode = VK_LBUTTON;
-      core->TouchEvent( &key );
-      return 0;
-    }
-
-    case WM_LBUTTONUP: {
-      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
-      key.keyCode = VK_LBUTTON;
-      core->TouchEvent( &key );
-      //}
-      return 0;
-    }
-
-    case WM_RBUTTONDOWN: {
-      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
-      key.keyCode = VK_RBUTTON;
-      core->TouchEvent( &key );
-      return 0;
-    }
-
-    case WM_RBUTTONUP: {
-      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
-      key.keyCode = VK_RBUTTON;
-      core->TouchEvent( &key );
-      return 0;
-    }
-
-    case WM_MBUTTONDOWN: {
-      EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
-      key.keyCode = VK_MBUTTON;
-      core->TouchEvent( &key );
-      return 0;
-    }
-
-    case WM_MBUTTONUP: {
-      EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
-      key.keyCode = VK_MBUTTON;
-      core->TouchEvent( &key );
       return 0;
     }
 
@@ -301,3 +262,94 @@ void CoreLinux::HandleCmd( XEvent *event ) {
     */
   }
 }//HandleCmd
+
+void CoreLinux::OnKeyEvent( XEvent *event, bool isPressed ) {
+  char buffer[ 128 ] = { 0 };
+  KeySym key;
+  //int length =
+  XLookupString( &event->xkey, buffer, sizeof( buffer ), &key, NULL );
+  LOGI( "Pressed: x%X", ( int ) key );
+  int code = 0;
+  switch( key ) {
+    case XK_Escape: code = KEY_CODE_ESCAPE; break;
+    case XK_BackSpace: code = KEY_CODE_BACKSPACE; break;
+    case XK_Tab: code = KEY_CODE_TAB; break;
+    case XK_Return: code = KEY_CODE_ENTER; break;
+    case XK_Shift_L: code = KEY_CODE_SHIFT; break;
+    case XK_Shift_R: code = KEY_CODE_SHIFT; break;
+    case XK_Control_L: code = KEY_CODE_CONTROL; break;
+    case XK_Control_R: code = KEY_CODE_CONTROL; break;
+    case XK_Alt_L: code = KEY_CODE_ALT; break;
+    case XK_Alt_R: code = KEY_CODE_ALT; break;
+    case XK_space: code = KEY_CODE_SPACE; break;
+    case XK_Delete: code = KEY_CODE_DELETE; break;
+    case XK_0: code = KEY_CODE_CHAR_0; break;
+    case XK_1: code = KEY_CODE_CHAR_1; break;
+    case XK_2: code = KEY_CODE_CHAR_2; break;
+    case XK_3: code = KEY_CODE_CHAR_3; break;
+    case XK_4: code = KEY_CODE_CHAR_4; break;
+    case XK_5: code = KEY_CODE_CHAR_5; break;
+    case XK_6: code = KEY_CODE_CHAR_6; break;
+    case XK_7: code = KEY_CODE_CHAR_7; break;
+    case XK_8: code = KEY_CODE_CHAR_8; break;
+    case XK_9: code = KEY_CODE_CHAR_9; break;
+    case XK_A: code = KEY_CODE_CHAR_A; break;
+    case XK_B: code = KEY_CODE_CHAR_B; break;
+    case XK_C: code = KEY_CODE_CHAR_C; break;
+    case XK_D: code = KEY_CODE_CHAR_D; break;
+    case XK_E: code = KEY_CODE_CHAR_E; break;
+    case XK_F: code = KEY_CODE_CHAR_F; break;
+    case XK_G: code = KEY_CODE_CHAR_G; break;
+    case XK_H: code = KEY_CODE_CHAR_H; break;
+    case XK_I: code = KEY_CODE_CHAR_I; break;
+    case XK_J: code = KEY_CODE_CHAR_J; break;
+    case XK_K: code = KEY_CODE_CHAR_K; break;
+    case XK_L: code = KEY_CODE_CHAR_L; break;
+    case XK_M: code = KEY_CODE_CHAR_M; break;
+    case XK_N: code = KEY_CODE_CHAR_N; break;
+    case XK_O: code = KEY_CODE_CHAR_O; break;
+    case XK_P: code = KEY_CODE_CHAR_P; break;
+    case XK_Q: code = KEY_CODE_CHAR_Q; break;
+    case XK_R: code = KEY_CODE_CHAR_R; break;
+    case XK_S: code = KEY_CODE_CHAR_S; break;
+    case XK_T: code = KEY_CODE_CHAR_T; break;
+    case XK_U: code = KEY_CODE_CHAR_U; break;
+    case XK_V: code = KEY_CODE_CHAR_V; break;
+    case XK_W: code = KEY_CODE_CHAR_W; break;
+    case XK_X: code = KEY_CODE_CHAR_X; break;
+    case XK_Y: code = KEY_CODE_CHAR_Y; break;
+    case XK_Z: code = KEY_CODE_CHAR_Z; break;
+    case XK_F1: code = KEY_CODE_F1; break;
+    case XK_F2: code = KEY_CODE_F2; break;
+    case XK_F3: code = KEY_CODE_F3; break;
+    case XK_F4: code = KEY_CODE_F4; break;
+    case XK_F5: code = KEY_CODE_F5; break;
+    case XK_F6: code = KEY_CODE_F6; break;
+    case XK_F7: code = KEY_CODE_F7; break;
+    case XK_F8: code = KEY_CODE_F8; break;
+    case XK_F9: code = KEY_CODE_F9; break;
+    case XK_F10: code = KEY_CODE_F10; break;
+    case XK_F11: code = KEY_CODE_F11; break;
+    case XK_F12: code = KEY_CODE_F12; break;
+    case XK_minus: code = KEY_CODE_MINUS; break;
+    case XK_equal: code = KEY_CODE_EQUAL; break;
+    case XK_grave: code = KEY_CODE_TILDE; break;
+  }
+  if( code ) {
+    EventType type = isPressed ? EVENT_TYPE_KEY_PRESSED : EVENT_TYPE_KEY_RELEASED;
+    EventKey engineEvent( type );
+    engineEvent.keyCode = code;
+    this->TouchEvent( type, &engineEvent );
+  }
+}//OnKeyPress
+
+void CoreLinux::OnMouseEvent( XEvent *event, bool isPressed ) {
+  EventKey key( isPressed ? Engine::EVENT_TYPE_KEY_PRESSED : Engine::EVENT_TYPE_KEY_RELEASED );
+  switch( event->xbutton.button ) {
+  case 1: key.keyCode = KEY_CODE_MOUSE_LEFT; break;
+  case 2: key.keyCode = KEY_CODE_MOUSE_MIDDLE; break;
+  case 3: key.keyCode = KEY_CODE_MOUSE_RIGHT; break;
+  default: key.keyCode = KEY_CODE_MOUSE_OTHER_0 + event->xbutton.button - 3; break;
+  }
+  this->TouchEvent( &key );
+}//OnMouseEvent

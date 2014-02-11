@@ -25,6 +25,8 @@ public:
 private:
   CoreLinux( const CoreLinux& );
   CoreLinux& operator=( const CoreLinux& );
+  void OnKeyEvent( XEvent *event, bool isPressed );
+  void OnMouseEvent( XEvent *event, bool isPressed );
 
   Display *display;
   Window windowRoot;

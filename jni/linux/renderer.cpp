@@ -59,6 +59,9 @@ void RendererLinuxGL::DestroyNativeDisplay() {
   this->TouchEvent( Engine::EVENT_TYPE_RENDERER_AFTER_DESTROY, NULL );
 }//DestroyNativeDisplay
 
+void RendererLinuxGL::InitExtensions() {
+}//InitExtensions
+
 void RendererLinuxGL::InitViewport() {
   glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
   glClearDepth( 1.0f );

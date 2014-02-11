@@ -69,6 +69,10 @@ GameContainer::GameContainer( Engine::Core *setCore )
     }
     break;
     case Engine::PLATFORM_TYPE_LINUX: {
+      this->core->Listen( this, Engine::EVENT_TYPE_KEY_PRESSED, GameContainer::OnKeyEvent );
+      this->core->Listen( this, Engine::EVENT_TYPE_KEY_RELEASED, GameContainer::OnKeyEvent );
+      this->core->Listen( this, Engine::EVENT_TYPE_KEY_CLICKED, GameContainer::OnKeyEvent );
+      this->core->Listen( this, Engine::EVENT_TYPE_KEY_DBLCLICKED, GameContainer::OnKeyEvent );
     }
     break;
     default: {
@@ -132,7 +136,7 @@ void GameContainer::_TestFile() {
   Engine::Memory testmem;
   LOGI( "_TestFile... fileManager[%p]", this->core->GetFileManager() );
   if( this->core->GetFileManager()->GetFile( "qwe.tx", testmem, true ) ) {
-    LOGI( "File finded: size[%d] content[%s]", testmem.GetLength(), testmem.GetData() );
+    LOGI( "File finded: size[%d] content[%s]", ( int ) testmem.GetLength(), testmem.GetData() );
   } else {
     LOGE( "File not found" );
   }
@@ -143,7 +147,7 @@ void GameContainer::_TestImageLoader() {
   if( this->core->GetFileManager()->GetFile( "glow.tga", imageFile ) ) {
     Engine::ImageLoader loader;
     if( loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
-      LOGI( "loaded image: size[%dx%d] type[%d] transparent[%d]", loader.imageWidth, loader.imageHeight, loader.imageType, loader.isTransparent );
+      LOGI( "loaded image: size[%dx%d] type[%d] transparent[%d]", ( int ) loader.imageWidth, ( int ) loader.imageHeight, ( int ) loader.imageType, ( int ) loader.isTransparent );
     } else {
       LOGE( "failed to load image" );
     }

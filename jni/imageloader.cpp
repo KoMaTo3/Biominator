@@ -22,6 +22,7 @@ bool ImageLoader::Load( const unsigned char *data, const size_t dataLength ) {
     return this->LoadPNG( data, dataLength );
   case IMAGE_TYPE_JPG: 
     return this->LoadJPG( data, dataLength );
+  default:;
   }
   LOGE( "ImageLoader::Load => unknown format" );
 
