@@ -28,6 +28,7 @@ public:
   ImageType imageType;
   size_t imageWidth;
   size_t imageHeight;
+  bool isTransparent;
 
 private:
   ImageLoader( ImageLoader& );

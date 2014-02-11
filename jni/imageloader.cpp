@@ -4,7 +4,7 @@
 using namespace Engine;
 
 ImageLoader::ImageLoader()
-: imageType( IMAGE_TYPE_UNKNOWN ), imageWidth( 0 ), imageHeight( 0 ) {
+: imageType( IMAGE_TYPE_UNKNOWN ), imageWidth( 0 ), imageHeight( 0 ), isTransparent( false ) {
 }
 
 ImageLoader::~ImageLoader() {
@@ -87,6 +87,7 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
   switch( infoHeader->biBitCount )
   {
     case 24: {
+      this->isTransparent = false;
       for( y = 0; y < this->imageHeight; ++y ) {
         for( x = 0; x < this->imageWidth; ++x ) {
           destPos = ( this->imageHeight - y - 1 ) * this->imageWidth + x;
@@ -106,6 +107,9 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
         for( x = 0; x < this->imageWidth; ++x ) {
           destPos = ( this->imageHeight - y - 1 ) * this->imageWidth + x;
           srcPos  = fileHeader->bfOffBits + (y * this->imageWidth + x) * 4;
+          if( data[ srcPos + 4 ] != 0xFF ) {
+            this->isTransparent = true;
+          }
           ( ( unsigned long* ) this->imageDataRGBA.GetData() )[ destPos ] = COLOR_ARGB(
               data[ srcPos + 4 ], //255
               data[ srcPos + 0 ],
@@ -158,6 +162,7 @@ bool ImageLoader::LoadTGA( const unsigned char *data, const size_t dataLength ) 
 
   this->imageWidth = *w;
   this->imageHeight = *h;
+  this->isTransparent = false;
   this->imageDataRGBA.Alloc( this->imageWidth * this->imageHeight * 4 );
   unsigned char *dest = this->imageDataRGBA.GetData();
 
@@ -173,6 +178,9 @@ bool ImageLoader::LoadTGA( const unsigned char *data, const size_t dataLength ) 
         dest[ dest_pos + 1 ] = data[ src_pos + 1 ];
         dest[ dest_pos + 2 ] = data[ src_pos + 0 ];
         dest[ dest_pos + 3 ] = ( bpp == 32 ? data[ src_pos + 3 ] : 255);
+        if( bpp == 32 && data[ src_pos + 3 ] != 0xFF ) {
+          this->isTransparent = true;
+        }
       }//x
     }//y
   } else { //RLE-compression 0x0A
@@ -201,6 +209,9 @@ bool ImageLoader::LoadTGA( const unsigned char *data, const size_t dataLength ) 
           dest[ dest_pos + 1 ] = g;
           dest[ dest_pos + 2 ] = b;
           dest[ dest_pos + 3 ] = a;
+          if( a != 0xFF ) {
+            this->isTransparent = true;
+          }
 
           x = ( x + 1 ) % this->imageWidth;
           if( !x ) {
@@ -225,6 +236,9 @@ bool ImageLoader::LoadTGA( const unsigned char *data, const size_t dataLength ) 
           dest[ dest_pos + 1 ] = g;
           dest[ dest_pos + 2 ] = b;
           dest[ dest_pos + 3 ] = a;
+          if( a != 0xFF ) {
+            this->isTransparent = true;
+          }
 
           x = ( x + 1 ) % this->imageWidth;
           if( !x ) {

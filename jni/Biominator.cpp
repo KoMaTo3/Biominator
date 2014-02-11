@@ -143,7 +143,7 @@ void GameContainer::_TestImageLoader() {
   if( this->core->GetFileManager()->GetFile( "glow.tga", imageFile ) ) {
     Engine::ImageLoader loader;
     if( loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
-      LOGI( "loaded image: size[%dx%d] type[%d]", loader.imageWidth, loader.imageHeight, loader.imageType );
+      LOGI( "loaded image: size[%dx%d] type[%d] transparent[%d]", loader.imageWidth, loader.imageHeight, loader.imageType, loader.isTransparent );
     } else {
       LOGE( "failed to load image" );
     }
