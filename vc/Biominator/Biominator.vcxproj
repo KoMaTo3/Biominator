@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\jni\shaderprogram.h" />
     <ClInclude Include="..\..\jni\texture.h" />
     <ClInclude Include="..\..\jni\tools.h" />
+    <ClInclude Include="..\..\jni\types.h" />
     <ClInclude Include="..\..\jni\vertexbuffer.h" />
     <ClInclude Include="..\..\jni\vertexbuffergl.h" />
     <ClInclude Include="..\..\jni\win32\core.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="..\..\jni\win32\opengl.h" />
     <ClInclude Include="..\..\jni\win32\renderer.h" />
     <ClInclude Include="..\..\jni\win32\texture.h" />
+    <ClInclude Include="..\..\jni\win32\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

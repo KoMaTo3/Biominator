@@ -18,6 +18,7 @@
 #include "memory.h"
 #include "filemanager.h"
 #include "imageloader.h"
+#include "types.h"
 
 namespace Game {
 

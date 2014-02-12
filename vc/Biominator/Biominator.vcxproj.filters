@@ -197,5 +197,11 @@
     <ClInclude Include="..\..\jni\win32\texture.h">
       <Filter>win32</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\jni\win32\types.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\types.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

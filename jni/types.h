@@ -1,5 +1,7 @@
 #pragma once
 
+#include "predefines.h"
+
 namespace Engine {
 
 class Position {
@@ -25,3 +27,14 @@ public:
 };
 
 };
+
+#if IS_WIN32
+#include "win32/types.h"
+//WIN32
+#elif IS_ANDROID
+#include "android/types.h"
+//WIN32
+#elif IS_LINUX
+#include "linux/types.h"
+//WIN32
+#endif
