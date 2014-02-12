@@ -93,6 +93,7 @@
     <ClCompile Include="..\..\jni\math\kmatrix.cpp" />
     <ClCompile Include="..\..\jni\math\kvector.cpp" />
     <ClCompile Include="..\..\jni\memory.cpp" />
+    <ClCompile Include="..\..\jni\mesh.cpp" />
     <ClCompile Include="..\..\jni\producer.cpp" />
     <ClCompile Include="..\..\jni\renderer.cpp" />
     <ClCompile Include="..\..\jni\shadermanager.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="..\..\jni\math\ktypes.h" />
     <ClInclude Include="..\..\jni\math\kvector.h" />
     <ClInclude Include="..\..\jni\memory.h" />
+    <ClInclude Include="..\..\jni\mesh.h" />
     <ClInclude Include="..\..\jni\predefines.h" />
     <ClInclude Include="..\..\jni\producer.h" />
     <ClInclude Include="..\..\jni\renderer.h" />
