@@ -10,7 +10,7 @@ typedef TextureWin32 TextureType;
 
 class TextureWin32: public Texture {
 public:
-  TextureWin32( size_t setWidth, size_t setHeight, unsigned char *data );
+  TextureWin32( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false );
   virtual ~TextureWin32();
   virtual void ReInitialize();
 

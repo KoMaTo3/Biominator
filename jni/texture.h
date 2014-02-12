@@ -7,9 +7,18 @@ namespace Engine {
 
 class Texture {
 public:
-  Texture( size_t setWidth, size_t setHeight, unsigned char *data );
+  Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false );
   virtual ~Texture();
   virtual void ReInitialize() = 0;
+  inline bool IsTransparent() const { return this->isTransparent; };
+
+protected:
+  void MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *data );
+
+  size_t
+    width,
+    height;
+  bool isTransparent;
 
 private:
   Texture();
@@ -17,9 +26,6 @@ private:
   Texture& operator=( Texture& );
 
   GLuint textureId;
-  size_t
-    width,
-    height;
 };
 
 };

@@ -35,6 +35,7 @@ public:
   void AppSuspend();
   void _TestFile();
   void _TestImageLoader();
+  void _TestTexture();
 
   Engine::Core *core;
 
@@ -85,6 +86,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
 
   this->_TestFile();
   this->_TestImageLoader();
+  this->_TestTexture();
 }
 
 GameContainer::~GameContainer() {
@@ -156,3 +158,17 @@ void GameContainer::_TestImageLoader() {
   }
 }//_TestImageLoader
 
+void GameContainer::_TestTexture() {
+  Engine::Memory imageFile;
+  if( this->core->GetFileManager()->GetFile( "glow.tga", imageFile ) ) {
+    Engine::ImageLoader loader;
+    if( loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
+      LOGI( "loaded image: size[%dx%d] type[%d] transparent[%d]", ( int ) loader.imageWidth, ( int ) loader.imageHeight, ( int ) loader.imageType, ( int ) loader.isTransparent );
+      TextureType tex( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+    } else {
+      LOGE( "failed to load image" );
+    }
+  } else {
+    LOGE( "_TestTexture => file not found" );
+  }
+}//_TestTexture

@@ -279,8 +279,7 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       return 0;
     }
 
-    case WM_SYSCOMMAND:
-    {
+    case WM_SYSCOMMAND: {
       switch( wParam ) {
         case SC_SCREENSAVE:   // Пытается ли запустится скринсейвер?
         case SC_MONITORPOWER: // Пытается ли монитор перейти в режим сбережения энергии?
