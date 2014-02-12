@@ -23,7 +23,14 @@ private:
   CoreWin32( const CoreWin32& );
   CoreWin32& operator=( const CoreWin32& );
 
+  bool IsKeyLeft( WPARAM wParam, LPARAM lParam );
+
   HWND windowHandle;
+  struct {
+    int leftShift;
+    int leftControl;
+    int leftAlt;
+  } mapVirtualKeys;
 };
 
 };

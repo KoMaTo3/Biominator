@@ -15,6 +15,9 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   //this->state->userData = this;
 
   this->fileManager = new FileManagerType( "data/" );
+  this->mapVirtualKeys.leftShift = MapVirtualKey( VK_LSHIFT, 0 );
+  this->mapVirtualKeys.leftControl = MapVirtualKey( VK_LCONTROL, 0 );
+  this->mapVirtualKeys.leftAlt = MapVirtualKey( VK_LMENU, 0 );
 
   WNDCLASSEX wndClass;
   memset( &wndClass, 0, sizeof( wndClass ) );
@@ -102,6 +105,37 @@ void CoreWin32::Stop() {
   ::ShowWindow( this->windowHandle, SW_MINIMIZE );
 }//Stop
 
+bool CoreWin32::IsKeyLeft( WPARAM wParam, LPARAM lParam ) {
+  switch( wParam ) {
+    case VK_SHIFT: {
+      return ( ( ( lParam & 0xFF0000 ) >> 16 ) == this->mapVirtualKeys.leftShift );
+    }
+    break;
+    case VK_CONTROL: {
+      if( lParam & 0x01000000 ) {
+        return false;
+      } else {
+        LONG msg_time = GetMessageTime();
+        MSG nextMsg;
+        if( PeekMessage( &nextMsg, NULL, 0, 0, PM_NOREMOVE ) ) {
+          if( nextMsg.message == WM_KEYDOWN || nextMsg.message == WM_SYSKEYDOWN ) {
+            if( nextMsg.wParam == VK_MENU && ( nextMsg.lParam & 0x01000000 ) && nextMsg.time == msg_time ) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+    }
+    break;
+    case VK_MENU: {
+      return !( lParam & 0x01000000 );
+    }
+    break;
+  }
+  return true;
+}//IsKeyLeft
+
 LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
   CoreWin32 *core = ( CoreWin32* ) GetWindowLong( hWnd, GWL_USERDATA );
   switch( message ) {
@@ -152,6 +186,7 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       if( !( lParam & 0x40000000 ) ) {  //prevent auto-repeating
         EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
         key.keyCode = wParam;
+        key.isLeft = core->IsKeyLeft( wParam, lParam );
         core->TouchEvent( &key );
       }
       return 0;
@@ -160,6 +195,7 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
     case WM_KEYUP: {
       EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
       key.keyCode = wParam;
+        key.isLeft = core->IsKeyLeft( wParam, lParam );
       core->TouchEvent( &key );
       return 0;
     }
@@ -224,13 +260,16 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       }
       if( message == WM_SYSKEYDOWN ) {
         if( !( lParam & 0x40000000 ) ) {
-          EventKey key( Engine::EVENT_TYPE_SYSTEM_KEY );
-          key.keyCode = wParam;
+          EventKey key( Engine::EVENT_TYPE_KEY_PRESSED );
+          key.keyCode = KEY_CODE_ALT;
+          key.isLeft = core->IsKeyLeft( wParam, lParam );
           core->TouchEvent( &key );
-          //core->keyboard.DoPress( wParam );
         }
       } else {
-        //core->keyboard.DoRelease( wParam );
+        EventKey key( Engine::EVENT_TYPE_KEY_RELEASED );
+        key.keyCode = KEY_CODE_ALT;
+        key.isLeft = core->IsKeyLeft( wParam, lParam );
+        core->TouchEvent( &key );
       }
       return 0;
     }
@@ -239,12 +278,6 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       PostQuitMessage( 0 );
       return 0;
     }
-
-    /*
-    case WM_SIZE:
-      if( core )
-        core->Signal( CORE_SIGNAL_RESIZE, lParam );
-    return 0;
 
     case WM_SYSCOMMAND:
     {
@@ -255,6 +288,12 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
       }
       break;
     }
+
+    /*
+    case WM_SIZE:
+      if( core )
+        core->Signal( CORE_SIGNAL_RESIZE, lParam );
+    return 0;
 
     case WM_SETCURSOR:
       return 0;

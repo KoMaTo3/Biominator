@@ -123,6 +123,7 @@ enum PlatformType {
 class EventKey: public Event {
 public:
   int keyCode;
+  bool isLeft;
 
   EventKey();
   EventKey( const int setEventId );
