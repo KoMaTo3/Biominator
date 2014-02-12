@@ -99,6 +99,9 @@
     <ClCompile Include="..\..\jni\win32\texture.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\material.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -201,6 +204,9 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\types.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\material.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

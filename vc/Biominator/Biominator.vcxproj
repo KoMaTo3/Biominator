@@ -86,6 +86,7 @@
     <ClCompile Include="..\..\jni\filemanager.cpp" />
     <ClCompile Include="..\..\jni\imageloader.cpp" />
     <ClCompile Include="..\..\jni\listener.cpp" />
+    <ClCompile Include="..\..\jni\material.cpp" />
     <ClCompile Include="..\..\jni\math\kangles.cpp" />
     <ClCompile Include="..\..\jni\math\klib.cpp" />
     <ClCompile Include="..\..\jni\math\kmath.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="..\..\jni\imageloader.h" />
     <ClInclude Include="..\..\jni\interngl.h" />
     <ClInclude Include="..\..\jni\listener.h" />
+    <ClInclude Include="..\..\jni\material.h" />
     <ClInclude Include="..\..\jni\math\kangles.h" />
     <ClInclude Include="..\..\jni\math\klib.h" />
     <ClInclude Include="..\..\jni\math\kmath.h" />
