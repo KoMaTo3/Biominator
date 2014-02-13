@@ -1,4 +1,5 @@
 #include "texture.h"
+#include "tools.h"
 
 using namespace Engine;
 
@@ -24,6 +25,6 @@ void Texture::MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-  glTexImage2D( GL_TEXTURE_2D, 0, 4, setWidth, setHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+  glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, setWidth, setHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
   LOGI( "Texture::MakeFromBuffer => size[%dx%d] data[x%p] id[%d] err[x%X]", setWidth, setHeight, data, this->textureId, glGetError() );
 }//MakeFromBuffer

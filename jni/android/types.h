@@ -2,4 +2,4 @@
 
 #include "texture.h"
 
-typedef Engine::TextureAndroid TextureType;
+using namespace Engine;

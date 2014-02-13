@@ -1,8 +1,7 @@
 #pragma once
 
 #include "math/kvector.h"
-#include "tools.h"
-#include ENGINE_PLATFORM_INCLUDE_OPENGL
+#include "platform/opengl.h"
 #include <vector>
 
 namespace Engine {

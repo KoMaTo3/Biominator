@@ -16,6 +16,7 @@ enum EventType {
 
   /* ���� */
   EVENT_TYPE_CORE_CLOSE,
+  EVENT_TYPE_CORE_CREATED_RENDERER,
 
   /* ���-��� */
   EVENT_TYPE_MOTION,

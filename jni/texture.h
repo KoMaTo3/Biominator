@@ -1,7 +1,6 @@
 #pragma once
 
-#include "tools.h"
-#include ENGINE_PLATFORM_INCLUDE_OPENGL
+#include "platform/opengl.h"
 
 namespace Engine {
 

@@ -1,6 +1,6 @@
 #include "predefines.h"
 #include "tools.h"
-#include ENGINE_PLATFORM_INCLUDE_OPENGL
+#include "platform/opengl.h"
 #include "vertexbuffergl.h"
 #include "renderer.h"
 #include "eventtypes.h"

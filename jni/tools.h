@@ -29,11 +29,15 @@ extern FILE *__logFile;
 #define ENGINE_CORE_ARGUMENTS state
 #define ENGINE_PLATFORM_NAME "android"
 #define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_ANDROID
-#define ENGINE_PLATFORM_INCLUDE_OPENGL "android/opengl.h"
+#define QUOTEME(M)       #M
+#define INCLUDE_FILE(M)  QUOTEME(M##)
 #include <android/log.h>
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "native-activity", __VA_ARGS__))
+#ifndef __GXX_EXPERIMENTAL_CXX0X__
+#define __GXX_EXPERIMENTAL_CXX0X__
+#endif
 #define __need_size_t
 #include <stddef.h>
 //__ANDROID__

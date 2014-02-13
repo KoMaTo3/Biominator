@@ -9,20 +9,29 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     event.cpp \
                     eventmanager.cpp \
                     eventmanagercontainer.cpp \
+                    eventtypes.cpp \
                     filemanager.cpp \
                     imageloader.cpp \
                     listener.cpp \
+                    material.cpp \
                     memory.cpp \
+                    mesh.cpp \
                     producer.cpp \
                     renderer.cpp \
+                    shadermanager.cpp \
+                    shaderprogram.cpp \
+                    texture.cpp \
+                    tools.cpp \
                     types.cpp \
                     vertexbuffer.cpp \
                     vertexbuffergl.cpp \
                     android/core.cpp \
                     android/entrypoint.cpp \
                     android/filemanager.cpp \
-                    android/renderer.cpp
-LOCAL_CFLAGS += -std=c++11
+                    android/renderer.cpp \
+                    android/texture.cpp
+#LOCAL_CFLAGS += -std=c++11
+LOCAL_CFLAGS += -std=gnu++11
 
 LOCAL_LDLIBS:= -landroid -llog -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES:= android_native_app_glue

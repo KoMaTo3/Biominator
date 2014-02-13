@@ -14,15 +14,18 @@
 #include "producer.h"
 
 //test
-#include "vertexbuffergl.h"
+#include "renderer.h"
 #include "memory.h"
 #include "filemanager.h"
 #include "imageloader.h"
-#include "types.h"
-#include "mesh.h"
-#include "renderer.h"
+#include "vertexbuffergl.h"
 #include "material.h"
 #include "shaderprogram.h"
+#include "mesh.h"
+#include "platform/texture.h"
+/*
+#include "types.h"
+*/
 
 namespace Game {
 
@@ -53,7 +56,7 @@ private:
   GameContainer& operator=( GameContainer& );
 
   //test
-  Engine::VertexBufferGL *buffer;
+  //Engine::VertexBufferGL *buffer;
 };
 
 GameContainer *game = NULL;
@@ -64,7 +67,7 @@ using namespace Game;
 
 
 GameContainer::GameContainer( Engine::Core *setCore )
-:core( setCore ), buffer( NULL ) {
+:core( setCore ) {
   switch( this->core->GetPlatformType() ) {
     case Engine::PLATFORM_TYPE_WIN32: {
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_PRESSED, GameContainer::OnKeyEvent );
@@ -77,6 +80,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
     break;
     case Engine::PLATFORM_TYPE_ANDROID: {
       this->core->Listen( this, Engine::EVENT_TYPE_SYSTEM_KEY, GameContainer::OnKeyEvent );
+      this->core->Listen( this, Engine::EVENT_TYPE_CORE_CREATED_RENDERER, GameContainer::OnInitRender );
     }
     break;
     case Engine::PLATFORM_TYPE_LINUX: {
@@ -97,11 +101,9 @@ GameContainer::GameContainer( Engine::Core *setCore )
   //this->_TestFile();
   //this->_TestImageLoader();
   //this->_TestTexture();
-  //this->_TestMesh();
 }
 
 GameContainer::~GameContainer() {
-  SAFE_DELETE( this->buffer );
 }
 
 void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
@@ -140,9 +142,6 @@ void Engine::EntryPoint::Destroy() {
 
 void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
   GameContainer *game = ( GameContainer* ) listener;
-  game->buffer = new Engine::VertexBufferGL( game->core->renderer );
-  game->buffer->New( 1204 );
-  game->buffer->New( 3769 );
 }//OnGraphicsInit
 
 void GameContainer::_TestFile() {
@@ -175,7 +174,7 @@ void GameContainer::_TestTexture() {
     Engine::ImageLoader loader;
     if( loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
       LOGI( "loaded image: size[%dx%d] type[%d] transparent[%d]", ( int ) loader.imageWidth, ( int ) loader.imageHeight, ( int ) loader.imageType, ( int ) loader.isTransparent );
-      TextureType tex( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+      //TextureType tex( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
     } else {
       LOGE( "failed to load image" );
     }
@@ -197,27 +196,28 @@ void GameContainer::_TestMesh() {
     shader = new Engine::ShaderProgram();
     Engine::Memory mem;
 
-    game->core->GetFileManager()->GetFile( "test.vs", mem, true );
+    LOGI( "attach shaders..." );
+    this->core->GetFileManager()->GetFile( "test.vs", mem, true );
     shader->AttachVertexShader( ( char* ) mem.GetData(), mem.GetLength() );
-    game->core->GetFileManager()->GetFile( "test.fs", mem, true );
+    this->core->GetFileManager()->GetFile( "test.fs", mem, true );
     shader->AttachFragmentShader( ( char* ) mem.GetData(), mem.GetLength() );
 
     LOGI( "new texture" );
     Engine::Memory imageFile;
-    game->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
+    this->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
     Engine::ImageLoader loader;
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
-    game->core->GetFileManager()->GetFile( "glow.tga", imageFile );
+    this->core->GetFileManager()->GetFile( "glow.tga", imageFile );
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
     LOGI( "new material..." );
     material = new Engine::Material( "test", shader );
     material->AddTexture( texture0 );
     material->AddTexture( texture1 );
-    material->AddColor( Vec4( 1.0f, 0.0f, 0.0f, 0.5f ) );
+    material->AddColor( Vec4( 1.0f, 0.0f, 0.0f, 0.8f ) );
     LOGI( "new mesh..." );
-    mesh = new Engine::Mesh( game->core->renderer, material );
+    mesh = new Engine::Mesh( this->core->renderer, material );
     LOGI( "new buffer..." );
     auto vertices = mesh->ResizeVertexBuffer( 6 );
     LOGI( "init buffer..." );
@@ -250,4 +250,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
 
 void GameContainer::OnInitRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
   LOGI( "OnInitRender" );
+  GameContainer *game = ( GameContainer* ) listener;
+  game->core->renderer->Listen( game, Engine::EVENT_TYPE_RENDERER_AFTER_RENDER, GameContainer::OnAfterRender );
+  game->core->renderer->Listen( game, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnInitRender );
 }//OnInitRender

@@ -1,5 +1,6 @@
 #include "shadermanager.h"
 #include "shaderprogram.h"
+#include "tools.h"
 
 using namespace Engine;
 

@@ -2,4 +2,8 @@
 
 #include "texture.h"
 
-typedef Engine::TextureLinux TextureType;
+using namespace Engine;
+
+class TextureLinux;
+
+typedef TextureLinux TextureType;

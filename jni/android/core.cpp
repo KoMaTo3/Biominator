@@ -14,7 +14,7 @@ CoreAndroid::CoreAndroid( android_app *setApp )
   this->app->onInputEvent = CoreAndroid::HandleInput;
   this->app->userData = this;
   this->app->inputPollSource.process = CoreAndroid::ProcessInput;
-  this->fileManager = new FileManagerType( this->app->activity->assetManager );
+  this->fileManager = new FileManagerAndroid( this->app->activity->assetManager );
 
   //this->savedState.angle = 0.0f;
   //this->savedState.x = 0;
@@ -75,6 +75,7 @@ void CoreAndroid::HandleCmd( struct android_app* app, int cmd ) {
       SAFE_DELETE( core->renderer );
       core->renderer = new Engine::RendererAndroid( core->app->window, core->screenWidth, core->screenHeight );
       core->animating = core->isVisible && core->isFocused;
+      core->TouchEvent( EVENT_TYPE_CORE_CREATED_RENDERER, NULL );
     }
     break;
     case APP_CMD_TERM_WINDOW: {

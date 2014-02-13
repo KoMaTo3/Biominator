@@ -1,16 +1,17 @@
 #include "shaderprogram.h"
+#include "tools.h"
 
 using namespace Engine;
 
 ShaderProgram::ShaderProgram()
-: program( NULL ) {
+: program( 0 ) {
   this->program = glCreateProgram();
 }
 
 
 bool ShaderProgram::_AttachShader( const GLchar *content, const GLint length, GLenum shaderType ) {
   if( !content ) {
-    LOGE( "ShaderProgram::_AttachShader => content is NULL, shaderType[x%X]", shaderType );
+    LOGE( "ShaderProgram::_AttachShader => content is NULL, shaderType[x%X]", ( int ) shaderType );
     return false;
   }
 

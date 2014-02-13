@@ -83,9 +83,10 @@ void RendererAndroid::InitNativeDisplay() {
     this->screenHeight = m_height;
 
     glClearColor( 0.5f, 1.0f, 0.5f, 1.0f );
-    this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT, NULL );
-
     this->isValid = true;
+    this->InitViewport();
+
+    this->TouchEvent( Engine::EVENT_TYPE_RENDERER_INIT, NULL );
   } else {
     LOGE( "InitNativeDisplay => already initialized" );
   }
@@ -116,11 +117,26 @@ void RendererAndroid::InitViewport() {
   }
   glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
   glDepthFunc( GL_LEQUAL );
+  //glDepthFunc( GL_NICEST );
+  glEnable( GL_DEPTH_TEST );
+  glEnable( GL_CULL_FACE );
+  glFrontFace( GL_CW );
+  glCullFace( GL_BACK );
+  //glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glEnable( GL_BLEND );
+  glViewport( 0, 0, this->screenWidth, this->screenHeight );
+  /*
+  glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+  glDepthFunc( GL_LEQUAL );
   glEnable( GL_DEPTH_TEST );
   glEnable( GL_TEXTURE_2D );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
   glEnable( GL_BLEND );
   glViewport( 0, 0, this->screenWidth, this->screenHeight );
+  */
+  LOGI( "RendererAndroid::InitViewport => done" );
 } //InitViewport
 
 void RendererAndroid::InitExtensions() {

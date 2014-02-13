@@ -1,6 +1,6 @@
 //#define GL_GLEXT_PROTOTYPES
 #include "tools.h"
-#include ENGINE_PLATFORM_INCLUDE_OPENGL
+#include "platform/opengl.h"
 #include "vertexbuffer.h"
 #include "math/kmath.h"
 
