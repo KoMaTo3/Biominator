@@ -28,3 +28,7 @@ void VertexBufferGL::OnBeforeRender( Listener* listener, Producer *producer, int
   glBufferData( GL_ARRAY_BUFFER, isThis->verticesList.size() * sizeof( Vertice ), &isThis->verticesList[ 0 ], GL_STATIC_DRAW );
   LOGI( "VertexBufferGL::OnBeforeRender => vertices committed" );
 }//OnBeforeRender
+
+void VertexBufferGL::Bind() {
+  glBindBuffer( GL_ARRAY_BUFFER, this->vbo );
+}//Bind

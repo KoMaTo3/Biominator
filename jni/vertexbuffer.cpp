@@ -72,6 +72,9 @@ void VertexBuffer::Delete( VertexBufferWriter* buffer ) {
   delete buffer;
 }//Delete
 
+void VertexBuffer::Bind() {
+}//Bind
+
 void VertexBufferWriter::PushToBuffer( IndicesVector& buffer ) {
   buffer.push_back( IndicesBlock( this->begin, this->size ) );
   LOGI( "VertexBufferWriter::PushToBuffer => new free index[%d; %d]", this->begin, this->size );

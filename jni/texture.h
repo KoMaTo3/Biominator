@@ -11,6 +11,7 @@ public:
   virtual ~Texture();
   virtual void ReInitialize() = 0;
   inline bool IsTransparent() const { return this->isTransparent; };
+  inline GLuint GetTextureId() const { return this->textureId; };
 
 protected:
   void MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *data );

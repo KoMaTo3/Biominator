@@ -140,7 +140,6 @@ LRESULT APIENTRY CoreWin32::HandleCmd( HWND hWnd, UINT message, WPARAM wParam, L
   CoreWin32 *core = ( CoreWin32* ) GetWindowLong( hWnd, GWL_USERDATA );
   switch( message ) {
     case WM_ACTIVATE: {
-      //core->Signal( 1, !HIWORD( wParam ) );
       if( !core->renderer ) {
         core->renderer = new Engine::RendererWin32gl( core->GetWindow(), core->screenWidth, core->screenHeight );
       }

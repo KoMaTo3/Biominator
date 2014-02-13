@@ -102,7 +102,9 @@
     <ClCompile Include="..\..\jni\material.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\jni\mesh.cpp" />
+    <ClCompile Include="..\..\jni\mesh.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -210,6 +212,8 @@
     <ClInclude Include="..\..\jni\material.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\jni\mesh.h" />
+    <ClInclude Include="..\..\jni\mesh.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

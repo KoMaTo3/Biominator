@@ -11,6 +11,7 @@ Texture::Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool s
 
 Texture::~Texture() {
   if( this->textureId ) {
+    LOGI( "~Texture => id[%d]", this->textureId );
     glDeleteTextures( 1, &this->textureId );
   }
 }
@@ -21,5 +22,8 @@ void Texture::MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *
   glBindTexture( GL_TEXTURE_2D, this->textureId );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
   glTexImage2D( GL_TEXTURE_2D, 0, 4, setWidth, setHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+  LOGI( "Texture::MakeFromBuffer => size[%dx%d] data[x%p] id[%d] err[x%X]", setWidth, setHeight, data, this->textureId, glGetError() );
 }//MakeFromBuffer

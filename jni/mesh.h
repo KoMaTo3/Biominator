@@ -9,10 +9,11 @@ class Renderer;
 
 class Mesh {
 public:
-  Mesh( Renderer *setRenderer );
+  Mesh( Renderer *setRenderer, Material *setMaterial );
   virtual ~Mesh();
-
-  VertexBufferGL vertexBuffer;
+  virtual void Render();
+  VertexBufferWriter *vertices;
+  VertexBufferWriter* ResizeVertexBuffer( unsigned short setSize );
 
 private:
   Mesh();
@@ -20,6 +21,7 @@ private:
   Mesh& operator=( Mesh& );
 
   Material *material;
+  VertexBufferGL vertexBuffer;
 };
 
 };

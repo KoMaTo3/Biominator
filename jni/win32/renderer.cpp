@@ -32,12 +32,8 @@ void RendererWin32gl::Render() {
   f += 0.01f;
   glClearColor( sinf( f ) * 0.5f + 0.5f, cosf( f ) * 0.5f + 0.5f, 0.5f, 1.0f );
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glEnable( GL_DEPTH_TEST );
-  glEnable( GL_CULL_FACE );
-  glFrontFace( GL_CW );
-  glCullFace( GL_BACK );
-  SwapBuffers( this->display );
   this->TouchEvent( EVENT_TYPE_RENDERER_AFTER_RENDER, NULL );
+  SwapBuffers( this->display );
 }//Render
 
 bool RendererWin32gl::InitNativeDisplay() {
@@ -139,9 +135,9 @@ void RendererWin32gl::InitViewport() {
   glDepthFunc( GL_LEQUAL );
   //glDepthFunc( GL_NICEST );
   glEnable( GL_DEPTH_TEST );
-
-  glEnable( GL_TEXTURE_2D );
-
+  glEnable( GL_CULL_FACE );
+  glFrontFace( GL_CW );
+  glCullFace( GL_BACK );
   //glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );

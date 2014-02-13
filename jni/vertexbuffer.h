@@ -33,12 +33,14 @@ public:
   virtual ~IVertexBufferPool();
 };
 
+
 class VertexBuffer: public IVertexBufferPool {
 public:
   VertexBuffer();
   virtual ~VertexBuffer();
   VertexBufferWriter* New( unsigned short size );
   virtual void Delete( VertexBufferWriter* buffer );
+  virtual void Bind();
 
 protected:
   VerticesVector verticesList;
@@ -60,6 +62,8 @@ public:
   Vertice& operator[]( unsigned short index );
   Vertice& Get( unsigned short index );
   KM_INLINE bool IsValid() { return ( this->size > 0 ); }
+  KM_INLINE unsigned short GetSize() { return this->size; }
+  KM_INLINE unsigned short GetBeginIndex() { return this->begin; }
 
 private:
   VertexBufferWriter();

@@ -19,13 +19,14 @@ public:
   void AddColor( const Vec4& newColor );
   void Apply();
 
+  ShaderProgram *shaderProgram;
+
 private:
   Material();
   Material( Material& );
   Material& operator=( Material& );
 
   std::string name;
-  ShaderProgram *shaderProgram;
   MaterialColorsList colorsList;
   MaterialTexturesList texturesList;
 };

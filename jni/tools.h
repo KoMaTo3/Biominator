@@ -18,9 +18,9 @@
 #define ENGINE_PLATFORM_NAME "win32"
 #define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_WIN32
 #define ENGINE_PLATFORM_INCLUDE_OPENGL "win32/opengl.h"
-#define LOGI(format, ...) ( fprintf( __logFile, format "\n", __VA_ARGS__ ) )
-#define LOGW(format, ...) ( fprintf( __logFile, "[W] " format "\n", __VA_ARGS__ ) )
-#define LOGE(format, ...) ( fprintf( __logFile, "[E] " format "\n", __VA_ARGS__ ) )
+#define LOGI(format, ...) ( fprintf( __logFile, format "\n", __VA_ARGS__ ) ); fflush( __logFile )
+#define LOGW(format, ...) ( fprintf( __logFile, "[W] " format "\n", __VA_ARGS__ ) ); fflush( __logFile )
+#define LOGE(format, ...) ( fprintf( __logFile, "[E] " format "\n", __VA_ARGS__ ) ); fflush( __logFile )
 extern FILE *__logFile;
 //_WIN32
 #elif IS_ANDROID

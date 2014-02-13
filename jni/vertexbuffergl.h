@@ -15,6 +15,7 @@ public:
   VertexBufferGL( Renderer* setRenderer );
   virtual ~VertexBufferGL();
   static void OnBeforeRender( Listener* listener, Producer *producer, int eventId, void *data );
+  virtual void Bind();
 
 private:
   VertexBufferGL();

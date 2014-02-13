@@ -33,8 +33,8 @@ void RendererAndroid::Render() {
   glEnable( GL_CULL_FACE );
   glFrontFace( GL_CW );
   glCullFace( GL_BACK );
-  eglSwapBuffers( this->display, this->renderSurface );
   this->TouchEvent( EVENT_TYPE_RENDERER_AFTER_RENDER, NULL );
+  eglSwapBuffers( this->display, this->renderSurface );
 } //Render
 
 void RendererAndroid::InitNativeDisplay() {

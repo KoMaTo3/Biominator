@@ -34,8 +34,8 @@ void RendererLinuxGL::Render() {
   glEnable( GL_CULL_FACE );
   glFrontFace( GL_CW );
   glCullFace( GL_BACK );
-  glXSwapBuffers( this->display, *this->window );
   this->TouchEvent( EVENT_TYPE_RENDERER_AFTER_RENDER, NULL );
+  glXSwapBuffers( this->display, *this->window );
 }//Render
 
 bool RendererLinuxGL::InitNativeDisplay() {

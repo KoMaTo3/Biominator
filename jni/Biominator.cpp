@@ -19,6 +19,10 @@
 #include "filemanager.h"
 #include "imageloader.h"
 #include "types.h"
+#include "mesh.h"
+#include "renderer.h"
+#include "material.h"
+#include "shaderprogram.h"
 
 namespace Game {
 
@@ -32,11 +36,14 @@ public:
   static void OnMobileKeyPressed( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnAppClose( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+  static void OnAfterRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+  static void OnInitRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   void AppExit();
   void AppSuspend();
   void _TestFile();
   void _TestImageLoader();
   void _TestTexture();
+  void _TestMesh();
 
   Engine::Core *core;
 
@@ -64,6 +71,8 @@ GameContainer::GameContainer( Engine::Core *setCore )
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_RELEASED, GameContainer::OnKeyEvent );
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_CLICKED, GameContainer::OnKeyEvent );
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_DBLCLICKED, GameContainer::OnKeyEvent );
+      this->core->renderer->Listen( this, Engine::EVENT_TYPE_RENDERER_AFTER_RENDER, GameContainer::OnAfterRender );
+      this->core->renderer->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnInitRender );
     }
     break;
     case Engine::PLATFORM_TYPE_ANDROID: {
@@ -85,9 +94,10 @@ GameContainer::GameContainer( Engine::Core *setCore )
   this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
   this->core->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnGraphicsInit );
 
-  this->_TestFile();
-  this->_TestImageLoader();
-  this->_TestTexture();
+  //this->_TestFile();
+  //this->_TestImageLoader();
+  //this->_TestTexture();
+  //this->_TestMesh();
 }
 
 GameContainer::~GameContainer() {
@@ -173,3 +183,71 @@ void GameContainer::_TestTexture() {
     LOGE( "_TestTexture => file not found" );
   }
 }//_TestTexture
+
+void GameContainer::_TestMesh() {
+  static bool doInit = true;
+  static Engine::Mesh *mesh = 0;
+  static Engine::Material *material;
+  static Engine::ShaderProgram *shader;
+  static Engine::TextureType *texture0;
+  static Engine::TextureType *texture1;
+  if( doInit ) {
+    LOGI( "init..." );
+    doInit = false;
+    shader = new Engine::ShaderProgram();
+    Engine::Memory mem;
+
+    game->core->GetFileManager()->GetFile( "test.vs", mem, true );
+    shader->AttachVertexShader( ( char* ) mem.GetData(), mem.GetLength() );
+    game->core->GetFileManager()->GetFile( "test.fs", mem, true );
+    shader->AttachFragmentShader( ( char* ) mem.GetData(), mem.GetLength() );
+
+    LOGI( "new texture" );
+    Engine::Memory imageFile;
+    game->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
+    Engine::ImageLoader loader;
+    loader.Load( imageFile.GetData(), imageFile.GetLength() );
+    texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+    game->core->GetFileManager()->GetFile( "glow.tga", imageFile );
+    loader.Load( imageFile.GetData(), imageFile.GetLength() );
+    texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+    LOGI( "new material..." );
+    material = new Engine::Material( "test", shader );
+    material->AddTexture( texture0 );
+    material->AddTexture( texture1 );
+    material->AddColor( Vec4( 1.0f, 0.0f, 0.0f, 0.5f ) );
+    LOGI( "new mesh..." );
+    mesh = new Engine::Mesh( game->core->renderer, material );
+    LOGI( "new buffer..." );
+    auto vertices = mesh->ResizeVertexBuffer( 6 );
+    LOGI( "init buffer..." );
+    vertices->Get( 0 ).pos.Set( 0.0f, 0.0f, 0.0f );
+    vertices->Get( 0 ).tex.Set( 0.0f, 1.0f );
+    vertices->Get( 1 ).pos.Set( 1.0f, 1.0f, 0.0f );
+    vertices->Get( 1 ).tex.Set( 1.0f, 0.0f );
+    vertices->Get( 2 ).pos.Set( 1.0f, 0.0f, 0.0f );
+    vertices->Get( 2 ).tex.Set( 1.0f, 1.0f );
+
+    vertices->Get( 3 ).pos.Set( 0.0f, 0.0f, 0.0f );
+    vertices->Get( 3 ).tex.Set( 0.0f, 1.0f );
+    vertices->Get( 4 ).pos.Set( 0.0f, 1.0f, 0.0f );
+    vertices->Get( 4 ).tex.Set( 0.0f, 0.0f );
+    vertices->Get( 5 ).pos.Set( 1.0f, 1.0f, 0.0f );
+    vertices->Get( 5 ).tex.Set( 1.0f, 0.0f );
+    LOGI( "ok" );
+  } else {
+    if( mesh ) {
+      mesh->Render();
+    }
+  }
+}//_TestMesh
+
+void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  LOGI( "OnAfterRender" );
+  GameContainer *game = ( GameContainer* ) listener;
+  game->_TestMesh();
+}//OnAfterRender
+
+void GameContainer::OnInitRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  LOGI( "OnInitRender" );
+}//OnInitRender
