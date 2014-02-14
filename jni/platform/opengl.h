@@ -4,7 +4,10 @@
 
 #if IS_WIN32
 
-#include "../win32/opengl.h"
+#include <windows.h>
+#include "../win32/opengl/gl.h"
+#include "../win32/opengl/glext.h"
+#include "../win32/opengl/wglext.h"
 
 #elif IS_ANDROID
 

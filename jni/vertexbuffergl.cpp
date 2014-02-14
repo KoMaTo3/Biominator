@@ -4,6 +4,7 @@
 #include "vertexbuffergl.h"
 #include "renderer.h"
 #include "eventtypes.h"
+#include "interngl.h"
 
 using namespace Engine;
 

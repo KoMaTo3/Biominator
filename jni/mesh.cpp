@@ -2,6 +2,7 @@
 #include "material.h"
 #include "shaderprogram.h"
 #include "tools.h"
+#include "interngl.h"
 
 using namespace Engine;
 
