@@ -8,8 +8,8 @@
 using namespace Engine;
 
 Core::Core()
-:Producer(), renderer( 0 ), isValid( true ), isFocused( false ), isVisible( true )
-,animating( false ), screenWidth( 0 ), screenHeight( 0 ), fileManager( 0 ) {
+:Producer(), renderer( 0 ), fileManager( 0 ), isValid( true ), isFocused( false ), isVisible( true )
+,animating( false ), screenWidth( 0 ), screenHeight( 0 ) {
 }
 
 Core::~Core() {

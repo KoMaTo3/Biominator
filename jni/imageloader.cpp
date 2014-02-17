@@ -14,13 +14,17 @@ bool ImageLoader::Load( const unsigned char *data, const size_t dataLength ) {
   ImageType format = this->GetImageType( data, dataLength );
 
   switch( format ) {
-  case IMAGE_TYPE_BMP: 
+  case IMAGE_TYPE_BMP:
+    LOGI( "ImageLoader::Load => BMP" );
     return this->LoadBMP( data, dataLength );
   case IMAGE_TYPE_TGA: 
+    LOGI( "ImageLoader::Load => TGA" );
     return this->LoadTGA( data, dataLength );
   case IMAGE_TYPE_PNG: 
+    LOGI( "ImageLoader::Load => PNG" );
     return this->LoadPNG( data, dataLength );
   case IMAGE_TYPE_JPG: 
+    LOGI( "ImageLoader::Load => JPG" );
     return this->LoadJPG( data, dataLength );
   default:;
   }
@@ -47,17 +51,18 @@ ImageType ImageLoader::GetImageType( const unsigned char *data, const size_t dat
     }
   }
   if( dataLength >= 4 ) {
-    unsigned long *sign = ( unsigned long* ) data;
+    uint32_t *sign = ( uint32_t* ) data;
     if( *sign == 0x474E5089 ) { //0x89 PNG
       return IMAGE_TYPE_PNG;
     }
   }
   if( dataLength >= 10 ) {
-    unsigned long *sign = ( unsigned long* ) ( data + 6 );
+    uint32_t *sign = ( uint32_t* ) ( data + 6 );
     if( *sign == 0x4649464A ) { //JFIF
       return IMAGE_TYPE_JPG;
     }
   }
+  LOGE( "ImageLoader::GetImageType => unknown format" );
 
   return IMAGE_TYPE_UNKNOWN;
 }//GetImageType
@@ -80,11 +85,13 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
 
   fileHeader = (ImageType_BMP_FileHeader*) data;
   infoHeader = (ImageType_BMP_InfoHeader*) ( data + sizeof( ImageType_BMP_FileHeader ) );
+  LOGI( "sizeof(ImageType_BMP_FileHeader) = %d", ( int ) sizeof( ImageType_BMP_FileHeader ) );
 
   this->imageWidth = infoHeader->biWidth;
   this->imageHeight = infoHeader->biHeight;
   this->imageDataRGBA.Alloc( this->imageWidth * this->imageHeight * 4 );
 
+  LOGI( "BMP: bpp[%d] size[%dx%d]", infoHeader->biBitCount, ( int ) this->imageWidth, ( int ) this->imageHeight );
   switch( infoHeader->biBitCount )
   {
     case 24: {
@@ -93,7 +100,7 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
         for( x = 0; x < this->imageWidth; ++x ) {
           destPos = ( this->imageHeight - y - 1 ) * this->imageWidth + x;
           srcPos  = fileHeader->bfOffBits + (y * this->imageWidth + x) * 3;
-          ( ( unsigned long* ) this->imageDataRGBA.GetData() )[ destPos ] = COLOR_ARGB(
+          ( ( uint32_t* ) this->imageDataRGBA.GetData() )[ destPos ] = COLOR_ARGB(
               0xFF,
               data[ srcPos + 0 ],
               data[ srcPos + 1 ],
@@ -111,7 +118,7 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
           if( data[ srcPos + 4 ] != 0xFF ) {
             this->isTransparent = true;
           }
-          ( ( unsigned long* ) this->imageDataRGBA.GetData() )[ destPos ] = COLOR_ARGB(
+          ( ( uint32_t* ) this->imageDataRGBA.GetData() )[ destPos ] = COLOR_ARGB(
               data[ srcPos + 4 ], //255
               data[ srcPos + 0 ],
               data[ srcPos + 1 ],
@@ -120,6 +127,10 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
         }
       }
     }
+    break;
+    default:
+      LOGE( "BMP Failed: bpp %d", infoHeader->biBitCount );
+      return false;
     break;
   }//switch
 

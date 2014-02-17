@@ -48,10 +48,13 @@ extern FILE *__logFile;
 #define ENGINE_PLATFORM_NAME "linux"
 #define ENGINE_PLATFORM_TYPE PLATFORM_TYPE_LINUX
 #define ENGINE_PLATFORM_INCLUDE_OPENGL "linux/opengl.h"
-#define LOGI(format, ...) ( printf( format"\n", ##__VA_ARGS__ ) )
-#define LOGW(format, ...) ( printf( "[Warn] " format"\n", ##__VA_ARGS__ ) )
-#define LOGE(format, ...) ( printf( "[Error] " format"\n", ##__VA_ARGS__ ) )
+#define LOGI(format, ...) ( printf( format"\n", ##__VA_ARGS__ ) ); fflush( __logFile )
+#define LOGW(format, ...) ( printf( "[Warn] " format"\n", ##__VA_ARGS__ ) ); fflush( __logFile )
+#define LOGE(format, ...) ( printf( "[Error] " format"\n", ##__VA_ARGS__ ) ); fflush( __logFile )
 extern FILE *__logFile;
+#ifndef __GXX_EXPERIMENTAL_CXX0X__
+#define __GXX_EXPERIMENTAL_CXX0X__
+#endif
 //__ANDROID__
 #endif
 //platform case
