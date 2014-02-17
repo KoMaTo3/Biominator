@@ -11,11 +11,12 @@ public:
   void Listen( Listener *listener, const int eventId, ListenerProc *listenerProc );
 
 protected:
-  EventManager eventManager;
+  EventManager* GetEventManager();
 
 private:
   EventManagerContainer( EventManagerContainer& );
   EventManagerContainer& operator=( EventManagerContainer& );
+  EventManager *eventManager;
 };
 
 };

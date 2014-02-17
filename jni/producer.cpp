@@ -11,9 +11,9 @@ Producer::~Producer() {
 }
 
 void Producer::TouchEvent( const int eventId, void *data ) {
-  this->eventManager.TouchEvent( eventId, this, data );
+  this->GetEventManager()->TouchEvent( eventId, this, data );
 }//TouchEvent
 
 void Producer::TouchEvent( Event* event ) {
-  this->eventManager.TouchEvent( event->GetID(), this, event );
+  this->GetEventManager()->TouchEvent( event->GetID(), this, event );
 }//TouchEvent
