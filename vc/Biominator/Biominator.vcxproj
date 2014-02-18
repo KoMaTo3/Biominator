@@ -153,7 +153,6 @@
     <ClInclude Include="..\..\jni\win32\core.h" />
     <ClInclude Include="..\..\jni\win32\entrypoint.h" />
     <ClInclude Include="..\..\jni\win32\filemanager.h" />
-    <ClInclude Include="..\..\jni\win32\opengl.h" />
     <ClInclude Include="..\..\jni\win32\renderer.h" />
     <ClInclude Include="..\..\jni\win32\texture.h" />
     <ClInclude Include="..\..\jni\win32\types.h" />

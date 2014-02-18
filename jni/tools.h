@@ -22,6 +22,7 @@
 #define LOGW(format, ...) ( fprintf( __logFile, "[W] " format "\n", __VA_ARGS__ ) ); fflush( __logFile )
 #define LOGE(format, ...) ( fprintf( __logFile, "[E] " format "\n", __VA_ARGS__ ) ); fflush( __logFile )
 extern FILE *__logFile;
+#include <stdint.h>
 //_WIN32
 #elif IS_ANDROID
 #define ENGINE_MAIN void android_main( struct android_app* state )

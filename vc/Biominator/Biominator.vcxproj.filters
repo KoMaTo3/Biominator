@@ -176,9 +176,6 @@
     <ClInclude Include="..\..\jni\interngl.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\jni\win32\opengl.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\jni\shaderprogram.h">
       <Filter>core</Filter>
     </ClInclude>
