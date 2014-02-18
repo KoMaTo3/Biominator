@@ -2,11 +2,9 @@
 
 #include "../texture.h"
 #include "../memory.h"
+#include <string>
 
 namespace Engine {
-
-class TextureAndroid;
-typedef TextureAndroid TextureType;
 
 class TextureAndroid: public Texture {
 public:

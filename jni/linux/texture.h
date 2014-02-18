@@ -1,12 +1,15 @@
 #pragma once
+#include "predefines.h"
+#if IS_LINUX
 
 #include "../texture.h"
 #include "../memory.h"
+#include <string>
 
 namespace Engine {
 
-class TextureLinux;
-typedef TextureLinux TextureType;
+//class TextureLinux;
+//typedef TextureLinux TextureType;
 
 class TextureLinux: public Texture {
 public:
@@ -23,3 +26,5 @@ private:
 };
 
 };
+
+#endif
