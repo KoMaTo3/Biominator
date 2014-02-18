@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Mesh::Mesh( Renderer *setRenderer, Material *setMaterial )
-:vertexBuffer( setRenderer ), material( setMaterial ), vertices( NULL ) {
+:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ) {
 }
 
 

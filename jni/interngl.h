@@ -8,7 +8,7 @@
 #define INTERNGL_H_POSTFIX
 #endif
 
-#if IS_WIN32 || IS_LINUX
+#if IS_WIN32
 
 /* Shaders */
 INTERNGL_H_PREFIX PFNGLATTACHSHADERPROC       glAttachShader      INTERNGL_H_POSTFIX;

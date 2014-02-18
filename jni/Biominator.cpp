@@ -88,6 +88,8 @@ GameContainer::GameContainer( Engine::Core *setCore )
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_RELEASED, GameContainer::OnKeyEvent );
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_CLICKED, GameContainer::OnKeyEvent );
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_DBLCLICKED, GameContainer::OnKeyEvent );
+      this->core->renderer->Listen( this, Engine::EVENT_TYPE_RENDERER_AFTER_RENDER, GameContainer::OnAfterRender );
+      this->core->renderer->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnInitRender );
     }
     break;
     default: {
@@ -141,7 +143,7 @@ void Engine::EntryPoint::Destroy() {
 }//Destroy
 
 void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
-  GameContainer *game = ( GameContainer* ) listener;
+  //GameContainer *game = ( GameContainer* ) listener;
 }//OnGraphicsInit
 
 void GameContainer::_TestFile() {
@@ -193,6 +195,7 @@ void GameContainer::_TestMesh() {
   if( doInit ) {
     LOGI( "init..." );
     doInit = false;
+    LOGI( "shader..." );
     shader = new Engine::ShaderProgram();
     Engine::Memory mem;
 
@@ -204,11 +207,14 @@ void GameContainer::_TestMesh() {
 
     LOGI( "new texture" );
     Engine::Memory imageFile;
-    this->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
+    bool res;
+    res = this->core->GetFileManager()->GetFile( "glow.tga", imageFile );
+    LOGI( "GetFile : %d", ( int ) res );
     Engine::ImageLoader loader;
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
-    this->core->GetFileManager()->GetFile( "glow.tga", imageFile );
+    res = this->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
+    LOGI( "GetFile : %d", ( int ) res );
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
     LOGI( "new material..." );

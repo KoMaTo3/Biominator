@@ -1,6 +1,6 @@
 #pragma once
 
-#include "predefines.h"
+#include "../predefines.h"
 
 #if IS_WIN32
 
@@ -16,11 +16,13 @@
 
 #elif IS_LINUX
 
+#define GL_GLEXT_PROTOTYPES
+#include<X11/X.h>
+#include<X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
-#define GL_GLEXT_PROTOTYPES
-#include "../interngl.h"
+//#include "../interngl.h"
 
 #endif

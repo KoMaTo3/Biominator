@@ -6,7 +6,7 @@
 
 #include "renderer.h"
 #include "../eventtypes.h"
-#include "opengl.h"
+//#include "opengl.h"
 
 using namespace Engine;
 

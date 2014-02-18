@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tools.h"
 #include "math/kvector.h"
 #include <unordered_map>
 #include <string>
@@ -8,6 +9,7 @@ namespace Engine {
 
 class Texture;
 class ShaderProgram;
+
 typedef std::unordered_map< std::string, Vec4 > MaterialColorsList;
 typedef std::unordered_map< std::string, Texture* > MaterialTexturesList;
 
