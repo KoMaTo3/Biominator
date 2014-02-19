@@ -50,3 +50,8 @@ eclipse/log.txt
 vc/Biominator/data/
 assets/
 eclipse/data/
+
+#scripts
+scripts/resources/data
+scripts/resources/release-*
+scripts/resources/~release-*
