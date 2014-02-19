@@ -1,5 +1,9 @@
 #pragma once
+#include "predefines.h"
+#if IS_LINUX
 
 #include "texture.h"
 
-using namespace Engine;
+typedef Engine::TextureLinux TextureType;
+
+#endif

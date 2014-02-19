@@ -1,5 +1,7 @@
 #pragma once
 
-#include "texture.h"
+#include "android/texture.h"
 
-using namespace Engine;
+namespace Engine {
+  typedef TextureAndroid TextureType;
+};

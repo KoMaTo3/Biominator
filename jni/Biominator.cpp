@@ -14,18 +14,19 @@
 #include "producer.h"
 
 //test
-#include "renderer.h"
+/*
 #include "memory.h"
-#include "filemanager.h"
-#include "imageloader.h"
 #include "vertexbuffergl.h"
+#include "platform/texture.h"
+*/
 #include "material.h"
 #include "shaderprogram.h"
 #include "mesh.h"
+#include "imageloader.h"
+#include "filemanager.h"
+#include "renderer.h"
 #include "platform/texture.h"
-/*
 #include "types.h"
-*/
 
 namespace Game {
 
