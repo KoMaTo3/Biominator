@@ -1,7 +1,7 @@
 Biominator
 ==========
 
-Cross-patform casual game.
+Cross-platform casual game.
 
 Current platforms:
 - android 2.3+
