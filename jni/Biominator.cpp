@@ -201,20 +201,20 @@ void GameContainer::_TestMesh() {
     Engine::Memory mem;
 
     LOGI( "attach shaders..." );
-    this->core->GetFileManager()->GetFile( "test.vs", mem, true );
+    this->core->GetFileManager()->GetFile( "shaders/test.vs", mem, true );
     shader->AttachVertexShader( ( char* ) mem.GetData(), mem.GetLength() );
-    this->core->GetFileManager()->GetFile( "test.fs", mem, true );
+    this->core->GetFileManager()->GetFile( "shaders/test.fs", mem, true );
     shader->AttachFragmentShader( ( char* ) mem.GetData(), mem.GetLength() );
 
     LOGI( "new texture" );
     Engine::Memory imageFile;
     bool res;
-    res = this->core->GetFileManager()->GetFile( "glow.tga", imageFile );
+    res = this->core->GetFileManager()->GetFile( "textures/glow.tga", imageFile );
     LOGI( "GetFile : %d", ( int ) res );
     Engine::ImageLoader loader;
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
-    res = this->core->GetFileManager()->GetFile( "cat.bmp", imageFile );
+    res = this->core->GetFileManager()->GetFile( "textures/cat.bmp", imageFile );
     LOGI( "GetFile : %d", ( int ) res );
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
     texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
