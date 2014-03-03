@@ -1,5 +1,9 @@
 import os, shutil, re
 
+import all_parse_shader
+import imagecompress
+import struct
+
 def Run( fileParser ):
     print( 'Resources package manager[ '+( fileParser.platform )+' ]' )
     print( '=========================' )
@@ -54,7 +58,6 @@ class FileParser:
     def __init__( self ):
         self.platform = 'unknown'
         self.parseByExt = {
-            '.fs': self.ParseShaderFragment,
         }
     #def __init__
 
@@ -77,7 +80,7 @@ class FileParser:
         fileInfo = os.path.splitext( pathSrc )
         ext = fileInfo[ 1 ]
         if ext in self.parseByExt:
-            self.parseByExt[ ext ]( pathSrc, pathDest )
+            self.parseByExt[ ext ]( pathSrc, pathDest, self )
         else:
             self.RawCopy( pathSrc, pathDest )
 
@@ -90,6 +93,18 @@ class FileParser:
         self.MakePath( self.releaseDir + pathDest )
         shutil.copyfile( self.rootDir + pathSrc, self.releaseDir + pathDest )
 
+    def TGA2DXT( self, pathSrc, pathDest, _ ):
+        rgba = imagecompress.tga2rgba( self.rootDir + pathSrc )
+        dxt = imagecompress.rgba2dxt1( rgba )
+        self.WriteDXTCompressedFile( dxt, self.releaseDir + pathDest, 1 )
+
+    def WriteDXTCompressedFile( self, dxtData, fileDest, dxtFormat ):
+        self.MakePath( fileDest )
+        fileDest = open( fileDest, 'wb' )
+        fileDest.write( struct.pack( '4s', str.encode( 'DXT%d' % dxtFormat ) ) )
+        fileDest.write( dxtData['data'] )
+        fileDest.close()
+
     def ParseShader( self, pathSrc, pathDest ):
         self.MakePath( self.releaseDir + pathDest )
         fileSrc = open( self.rootDir + pathSrc, 'r' )
@@ -100,7 +115,7 @@ class FileParser:
         fileDest = open( self.releaseDir + pathDest, 'w' )
         fileDest.write( fileContent )
         fileDest.close()
-        print( '[android/fragment-shader] file: ' + pathDest )
+        print( '[shader] file: ' + pathDest )
 
 #class FileParser
 
@@ -114,8 +129,9 @@ class FileParserWin32( FileParser ):
         self.dataSrcName = setDataSrcName
         self.dataDestName = setDataDestName
         self.parseByExt = {
-            '.fs': self.ParseShader,
-            '.vs': self.ParseShader,
+            '.fs': all_parse_shader.Do,
+            '.vs': all_parse_shader.Do,
+            '.tga': self.TGA2DXT,
         }
     #def __init__
 #class FileParserWin32
@@ -130,8 +146,8 @@ class FileParserLinux( FileParser ):
         self.dataSrcName = setDataSrcName
         self.dataDestName = setDataDestName
         self.parseByExt = {
-            '.fs': self.ParseShader,
-            '.vs': self.ParseShader,
+            '.fs': all_parse_shader.Do,
+            '.vs': all_parse_shader.Do,
         }
     #def __init__
 #class FileParserLinux
@@ -146,8 +162,8 @@ class FileParserAndroid( FileParser ):
         self.dataSrcName = setDataSrcName
         self.dataDestName = setDataDestName
         self.parseByExt = {
-            '.fs': self.ParseShader,
-            '.vs': self.ParseShader,
+            '.fs': all_parse_shader.Do,
+            '.vs': all_parse_shader.Do,
             #'.tga': self.ParseImage,
             #'.bmp': self.ParseImage,
         }

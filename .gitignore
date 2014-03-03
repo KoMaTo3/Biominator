@@ -55,3 +55,4 @@ eclipse/data/
 scripts/resources/data
 scripts/resources/release-*
 scripts/resources/~release-*
+scripts/resources/__pycache__/
