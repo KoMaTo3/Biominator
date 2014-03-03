@@ -15,9 +15,22 @@ def Run( fileParser ):
 
     if os.path.isdir( releaseDir ):
         if os.path.isdir( releaseDirBackup ):
-            shutil.rmtree( releaseDirBackup )
-        shutil.move( releaseDir, releaseDirBackup )
-    os.mkdir( releaseDir )
+            try:
+                shutil.rmtree( releaseDirBackup )
+            except:
+                print( '[Warning] Can\'t remove directory '+( releaseDirBackup ) )
+        try:
+            shutil.move( releaseDir, releaseDirBackup )
+        except:
+            print( '[Warning] Can\'t move directory "%s" to "%s"' % ( releaseDir, releaseDirBackup ) )
+            try:
+                shutil.copy( releaseDir, releaseDirBackup )
+            except:
+                print( '[Warning] can\'t copy directory "%s" to "%s"' % ( releaseDir, releaseDirBackup ) )
+    try:
+        os.mkdir( releaseDir )
+    except:
+        print( '[Warning] Can\'t create directory "%s"' % ( releaseDir ) )
 
     itemsList = ScanDir( dataDir, fileParser.GetDataSrcName(), fileParser.GetDataDestName(), [ '~release_backup', 'release' ] )
     NextDir( itemsList, '', '', fileParser )
@@ -164,6 +177,7 @@ class FileParserAndroid( FileParser ):
         self.parseByExt = {
             '.fs': all_parse_shader.Do,
             '.vs': all_parse_shader.Do,
+            '.tga': self.TGA2DXT,
             #'.tga': self.ParseImage,
             #'.bmp': self.ParseImage,
         }
@@ -177,7 +191,7 @@ class FileParserAndroid( FileParser ):
 
 #Begin
 Run( FileParserWin32( 'C:/temp/git/Biominator/vc/Biominator/', 'data', 'data' ) )
-#Run( FileParserAndroid( 'j:/android/projects/Biominator/', 'data', 'Assets' ) )
+Run( FileParserAndroid( 'j:/android/projects/Biominator/', 'data', 'assets' ) )
 #Run( FileParserLinux( '/home/komato3/workspace/Biominator/linux/', 'data', 'data' ) )
 
 input( '\nDone' )
