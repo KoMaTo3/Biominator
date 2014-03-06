@@ -2,7 +2,7 @@
 # .vs
 import re
 
-def Do( pathSrc, pathDest, fileParser ):
+def Do( pathSrc, pathDest, fileParser, rules ):
     fileParser.MakePath( fileParser.releaseDir + pathDest )
     fileSrc = open( fileParser.rootDir + pathSrc, 'r' )
     fileContent = fileSrc.read()
@@ -12,4 +12,5 @@ def Do( pathSrc, pathDest, fileParser ):
     fileDest = open( fileParser.releaseDir + pathDest, 'w' )
     fileDest.write( fileContent )
     fileDest.close()
-    print( '[shader] file: ' + pathDest )
+
+    return pathDest

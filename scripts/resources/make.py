@@ -1,12 +1,13 @@
-import os, shutil, re
+import os, shutil, re, struct, time, datetime
+import all_parse_shader, all_parse_picture
 
-import all_parse_shader
-import imagecompress
-import struct
+#config
+platform = 'win32'
 
 def Run( fileParser ):
     print( 'Resources package manager[ '+( fileParser.platform )+' ]' )
-    print( '=========================' )
+    print( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) )
+    print( '=========================\n' )
     rootDir = os.path.dirname( __file__ )
     dataDir = rootDir + '/' + fileParser.GetDataSrcName()
     releaseDirBackup = rootDir + '/~release-'+( fileParser.platform )+'_backup'
@@ -32,9 +33,13 @@ def Run( fileParser ):
     except:
         print( '[Warning] Can\'t create directory "%s"' % ( releaseDir ) )
 
-    itemsList = ScanDir( dataDir, fileParser.GetDataSrcName(), fileParser.GetDataDestName(), [ '~release_backup', 'release' ] )
-    NextDir( itemsList, '', '', fileParser )
+    itemsList = ScanDir( dataDir, fileParser.GetDataSrcName(), fileParser.GetDataDestName(), [ '~release_backup', 'release', '.rules-win32', '.rules-android', '.rules-linux' ] )
+    ParseDir( itemsList, '', '', fileParser )
+    fileParser.WriteFilesList()
 #def Run
+
+def GetCurrentTime():
+    return int( round( time.time() * 1000 ) )
 
 def ScanDir( rootDir, setSrcName = 'root', setDestName = 'root', excludeNames = [] ):
     res = { 'name': setSrcName, 'nameDest': setDestName, 'dirs': [], 'files': [] }
@@ -49,20 +54,21 @@ def ScanDir( rootDir, setSrcName = 'root', setDestName = 'root', excludeNames = 
     return res
 #def ScanDir
 
-def NextDir( dir, currentDirName = '', currentDestDirName = '', fileParser = {} ):
+def ParseDir( dir, currentDirName = '', currentDestDirName = '', fileParser = {} ):
     pathSrc = ( currentDirName + '/' if len( currentDirName ) else '' ) + dir['name']
     pathDest = ( currentDestDirName + '/' if len( currentDestDirName ) else '' ) + dir['nameDest']
     for fileName in dir['files']:
-        NextFile( pathSrc + '/' + fileName, pathDest + '/' + fileName, fileParser )
+        resultFileName = ParseFile( pathSrc + '/' + fileName, pathDest + '/' + fileName, fileParser )
+        fileParser.filesList[ pathSrc + '/' + fileName ] = resultFileName
 
     if len( dir['dirs'] ):
         for subDir in dir['dirs']:
-            NextDir( subDir, pathSrc, pathDest, fileParser )
-#def NextDir
+            ParseDir( subDir, pathSrc, pathDest, fileParser )
+#def ParseDir
 
-def NextFile( pathSrc, pathDest, fileParser ):
-    fileParser.Parse( pathSrc, pathDest )
-#def NextFile
+def ParseFile( pathSrc, pathDest, fileParser ):
+    return fileParser.Parse( pathSrc, pathDest )
+#def ParseFile
 
 #
 #
@@ -70,9 +76,41 @@ def NextFile( pathSrc, pathDest, fileParser ):
 class FileParser:
     def __init__( self ):
         self.platform = 'unknown'
+        self.filesList = {}
         self.parseByExt = {
         }
-    #def __init__
+
+    def SetConfig( self, config = {} ):
+        defaultConfig = dict(
+            release_dir = None,
+            data_src_name = 'data',
+            data_dest_name = 'data',
+            rules = None,
+        )
+        defaultConfig.update( config )
+        config = defaultConfig
+        self.releaseDir = config['release_dir']
+        self.dataSrcName = config['data_src_name']
+        self.dataDestName = config['data_dest_name']
+        self.rulesFile = config['rules']
+        self.rootDir = os.path.dirname( __file__ )
+        self.rules = {}
+        if self.rulesFile is not None:
+            self.ParseRules()
+
+    def ParseRules( self ):
+        f = open( self.rootDir + '/' + self.dataSrcName + '/' + self.rulesFile, 'r' )
+        for line in f:
+            tmp = re.search( '^(.+):(.+)$', line.strip() )
+            if tmp:
+                fileName = self.dataSrcName + '/' + tmp.group( 1 ).strip()
+                params = {}
+                parmsTmp = tmp.group( 2 ).strip().split( ' ' )
+                for item in parmsTmp:
+                    tmp = item.strip().split( '=' )
+                    params[ tmp[ 0 ] ] = tmp[ 1 ]
+                self.rules[ fileName ] = params
+        f.close()
 
     def SetRoot( self, dir ):
         self.rootDir = dir + '/'
@@ -93,9 +131,10 @@ class FileParser:
         fileInfo = os.path.splitext( pathSrc )
         ext = fileInfo[ 1 ]
         if ext in self.parseByExt:
-            self.parseByExt[ ext ]( pathSrc, pathDest, self )
+            pathDest = self.parseByExt[ ext ]( pathSrc, pathDest, self, self.rules[ pathDest ] if pathDest in self.rules else None )
         else:
             self.RawCopy( pathSrc, pathDest )
+        return pathDest
 
     def MakePath( self, path ):
         dir = os.path.dirname( path )
@@ -105,18 +144,6 @@ class FileParser:
     def RawCopy( self, pathSrc, pathDest ):
         self.MakePath( self.releaseDir + pathDest )
         shutil.copyfile( self.rootDir + pathSrc, self.releaseDir + pathDest )
-
-    def TGA2DXT( self, pathSrc, pathDest, _ ):
-        rgba = imagecompress.tga2rgba( self.rootDir + pathSrc )
-        dxt = imagecompress.rgba2dxt1( rgba )
-        self.WriteDXTCompressedFile( dxt, self.releaseDir + pathDest, 1 )
-
-    def WriteDXTCompressedFile( self, dxtData, fileDest, dxtFormat ):
-        self.MakePath( fileDest )
-        fileDest = open( fileDest, 'wb' )
-        fileDest.write( struct.pack( '4s', str.encode( 'DXT%d' % dxtFormat ) ) )
-        fileDest.write( dxtData['data'] )
-        fileDest.close()
 
     def ParseShader( self, pathSrc, pathDest ):
         self.MakePath( self.releaseDir + pathDest )
@@ -130,21 +157,31 @@ class FileParser:
         fileDest.close()
         print( '[shader] file: ' + pathDest )
 
+    def WriteFilesList( self ):
+        fileName = self.releaseDir + self.dataDestName + '/' + '.list'
+        f = open( fileName, 'w+' )
+        f.write( '//Generated: %s\n' % ( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) ) )
+        for file in self.filesList:
+            f.write( file + ':' + self.filesList[ file ] + '\n' )
+            print( file + '\t=> ' + self.filesList[ file ] )
+        f.close()
+
 #class FileParser
 
 #
 #
 #
 class FileParserWin32( FileParser ):
-    def __init__( self, setReleaseDir, setDataSrcName, setDataDestName ):
+    def __init__( self, config = {} ):
+        self.SetConfig( config )
         self.platform = 'win32'
-        self.releaseDir = setReleaseDir
-        self.dataSrcName = setDataSrcName
-        self.dataDestName = setDataDestName
+        self.filesList = {}
         self.parseByExt = {
             '.fs': all_parse_shader.Do,
             '.vs': all_parse_shader.Do,
-            '.tga': self.TGA2DXT,
+            '.tga': all_parse_picture.Do,
+            '.jpg': all_parse_picture.Do,
+            '.png': all_parse_picture.Do,
         }
     #def __init__
 #class FileParserWin32
@@ -153,14 +190,16 @@ class FileParserWin32( FileParser ):
 #
 #
 class FileParserLinux( FileParser ):
-    def __init__( self, setReleaseDir, setDataSrcName, setDataDestName ):
+    def __init__( self, config = {} ):
+        self.SetConfig( config )
         self.platform = 'linux'
-        self.releaseDir = setReleaseDir
-        self.dataSrcName = setDataSrcName
-        self.dataDestName = setDataDestName
+        self.filesList = {}
         self.parseByExt = {
             '.fs': all_parse_shader.Do,
             '.vs': all_parse_shader.Do,
+            '.tga': all_parse_picture.Do,
+            '.jpg': all_parse_picture.Do,
+            '.png': all_parse_picture.Do,
         }
     #def __init__
 #class FileParserLinux
@@ -169,17 +208,16 @@ class FileParserLinux( FileParser ):
 #
 #
 class FileParserAndroid( FileParser ):
-    def __init__( self, setReleaseDir, setDataSrcName, setDataDestName ):
+    def __init__( self, config = {} ):
+        self.SetConfig( config )
         self.platform = 'android'
-        self.releaseDir = setReleaseDir
-        self.dataSrcName = setDataSrcName
-        self.dataDestName = setDataDestName
+        self.filesList = {}
         self.parseByExt = {
             '.fs': all_parse_shader.Do,
             '.vs': all_parse_shader.Do,
-            '.tga': self.TGA2DXT,
-            #'.tga': self.ParseImage,
-            #'.bmp': self.ParseImage,
+            '.tga': all_parse_picture.Do,
+            '.jpg': all_parse_picture.Do,
+            '.png': all_parse_picture.Do,
         }
     #def __init__
 
@@ -190,8 +228,24 @@ class FileParserAndroid( FileParser ):
 #class FileParserAndroid
 
 #Begin
-Run( FileParserWin32( 'C:/temp/git/Biominator/vc/Biominator/', 'data', 'data' ) )
-Run( FileParserAndroid( 'j:/android/projects/Biominator/', 'data', 'assets' ) )
-#Run( FileParserLinux( '/home/komato3/workspace/Biominator/linux/', 'data', 'data' ) )
 
-input( '\nDone' )
+def CreateWin32Parser():
+    return FileParserWin32( dict( release_dir = 'C:/temp/git/Biominator/vc/Biominator/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-win32' ) )
+
+def CreateAndroidParser():
+    return FileParserAndroid( dict( release_dir = 'j:/android/projects/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
+
+def CreateLinuxParser():
+    return FileParserLinux( dict( release_dir = '/home/komato3/workspace/Biominator/linux/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-linux' ) )
+
+moduleTimerStart = GetCurrentTime()
+Run( dict(
+        win32 = CreateWin32Parser,
+        android = CreateAndroidParser,
+        linux = CreateLinuxParser,
+    ).get( platform )() )
+moduleTime = GetCurrentTime() - moduleTimerStart
+print( '\n=========================' )
+print( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) )
+print( 'Elapsed time: %.3fs\nDone' % ( moduleTime / 1000 ) )
+input()
