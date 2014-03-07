@@ -21,7 +21,7 @@ def Do( pathSrc, pathDest, fileParser, rules ):
             print( '[Error] unknown compression method "%s"' % rules['compress'] )
             return
         image = imagecompress.picture2dxt( fileParser.rootDir + pathSrc, rules['compress'] )
-        fileContent = rules['compress'].encode() + image['data']
+        fileContent = rules['compress'].encode() + struct.pack( 'I', image['width'] ) + struct.pack( 'I', image['height'] ) + image['data']
         pathDest = pathDest.replace( fileExtension, '.' + rules['compress'] )
     else:
         fileSrc = open( fileParser.rootDir + pathSrc, 'rb' )

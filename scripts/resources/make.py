@@ -179,9 +179,10 @@ class FileParser:
         fileName = self.releaseDir + self.dataDestName + '/' + '.list'
         f = open( fileName, 'w+' )
         f.write( '//Generated: %s\n' % ( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) ) )
+        offset = len( self.dataSrcName ) + 1
         for file in self.filesList:
             if file != self.filesList[ file ]:
-                f.write( file + ':' + self.filesList[ file ] + '\n' )
+                f.write( file[offset:] + ':' + self.filesList[ file ][offset:] + '\n' )
                 print( file + '\t=> ' + self.filesList[ file ] + ' [%d.ms]' % ( self.timing[ file ] ) )
         f.close()
 
@@ -244,4 +245,5 @@ moduleTime = GetCurrentTime() - moduleTimerStart
 print( '\n=========================' )
 print( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) )
 print( 'Elapsed time: %.3fs\nDone' % ( moduleTime / 1000 ) )
+
 input()
