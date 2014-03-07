@@ -74,10 +74,17 @@ def ParseFile( pathSrc, pathDest, fileParser ):
 #
 #
 class FileParser:
-    def __init__( self ):
+    def __init__( self, config ):
         self.platform = 'unknown'
+        self.SetConfig( config )
         self.filesList = {}
         self.parseByExt = {
+            '.fs': all_parse_shader.Do,
+            '.vs': all_parse_shader.Do,
+            '.tga': all_parse_picture.Do,
+            '.jpg': all_parse_picture.Do,
+            '.png': all_parse_picture.Do,
+            '.bmp': all_parse_picture.Do,
         }
 
     def SetConfig( self, config = {} ):
@@ -92,9 +99,10 @@ class FileParser:
         self.releaseDir = config['release_dir']
         self.dataSrcName = config['data_src_name']
         self.dataDestName = config['data_dest_name']
-        self.rulesFile = config['rules']
         self.rootDir = os.path.dirname( __file__ )
-        self.rules = {}
+        self.rulesFile = config['rules']
+        self.rules = {} #правила обработки файлов
+        self.timing = {} #время обработки файлов
         if self.rulesFile is not None:
             self.ParseRules()
 
@@ -130,10 +138,13 @@ class FileParser:
     def Parse( self, pathSrc, pathDest ):
         fileInfo = os.path.splitext( pathSrc )
         ext = fileInfo[ 1 ]
+        timeStart = GetCurrentTime()
         if ext in self.parseByExt:
             pathDest = self.parseByExt[ ext ]( pathSrc, pathDest, self, self.rules[ pathDest ] if pathDest in self.rules else None )
         else:
             self.RawCopy( pathSrc, pathDest )
+        timeElapsed = GetCurrentTime() - timeStart
+        self.timing[ pathSrc ] = timeElapsed
         return pathDest
 
     def MakePath( self, path ):
@@ -141,11 +152,18 @@ class FileParser:
         if not os.path.isdir( dir ):
             os.mkdir( dir )
 
-    def RawCopy( self, pathSrc, pathDest ):
+    def RawCopy( self, pathSrc, pathDest, _self, rules = {} ):
+        """
+        parse function
+        """
         self.MakePath( self.releaseDir + pathDest )
         shutil.copyfile( self.rootDir + pathSrc, self.releaseDir + pathDest )
+        return pathDest
 
-    def ParseShader( self, pathSrc, pathDest ):
+    def ParseShader( self, pathSrc, pathDest, _self, rules = {} ):
+        """
+        parse function
+        """
         self.MakePath( self.releaseDir + pathDest )
         fileSrc = open( self.rootDir + pathSrc, 'r' )
         fileContent = fileSrc.read()
@@ -155,16 +173,20 @@ class FileParser:
         fileDest = open( self.releaseDir + pathDest, 'w' )
         fileDest.write( fileContent )
         fileDest.close()
-        print( '[shader] file: ' + pathDest )
+        return pathDest
 
     def WriteFilesList( self ):
         fileName = self.releaseDir + self.dataDestName + '/' + '.list'
         f = open( fileName, 'w+' )
         f.write( '//Generated: %s\n' % ( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) ) )
         for file in self.filesList:
-            f.write( file + ':' + self.filesList[ file ] + '\n' )
-            print( file + '\t=> ' + self.filesList[ file ] )
+            if file != self.filesList[ file ]:
+                f.write( file + ':' + self.filesList[ file ] + '\n' )
+                print( file + '\t=> ' + self.filesList[ file ] + ' [%d.ms]' % ( self.timing[ file ] ) )
         f.close()
+
+    def NullProc( self ):
+        pass
 
 #class FileParser
 
@@ -173,17 +195,12 @@ class FileParser:
 #
 class FileParserWin32( FileParser ):
     def __init__( self, config = {} ):
-        self.SetConfig( config )
+        super().__init__( config )
         self.platform = 'win32'
-        self.filesList = {}
-        self.parseByExt = {
-            '.fs': all_parse_shader.Do,
-            '.vs': all_parse_shader.Do,
-            '.tga': all_parse_picture.Do,
-            '.jpg': all_parse_picture.Do,
-            '.png': all_parse_picture.Do,
-        }
-    #def __init__
+        self.parseByExt.update({
+            #'.tga': self.RawCopy
+        })
+
 #class FileParserWin32
 
 #
@@ -191,17 +208,9 @@ class FileParserWin32( FileParser ):
 #
 class FileParserLinux( FileParser ):
     def __init__( self, config = {} ):
-        self.SetConfig( config )
+        super().__init__()
         self.platform = 'linux'
-        self.filesList = {}
-        self.parseByExt = {
-            '.fs': all_parse_shader.Do,
-            '.vs': all_parse_shader.Do,
-            '.tga': all_parse_picture.Do,
-            '.jpg': all_parse_picture.Do,
-            '.png': all_parse_picture.Do,
-        }
-    #def __init__
+
 #class FileParserLinux
 
 #
@@ -209,22 +218,9 @@ class FileParserLinux( FileParser ):
 #
 class FileParserAndroid( FileParser ):
     def __init__( self, config = {} ):
-        self.SetConfig( config )
+        super().__init__()
         self.platform = 'android'
-        self.filesList = {}
-        self.parseByExt = {
-            '.fs': all_parse_shader.Do,
-            '.vs': all_parse_shader.Do,
-            '.tga': all_parse_picture.Do,
-            '.jpg': all_parse_picture.Do,
-            '.png': all_parse_picture.Do,
-        }
-    #def __init__
 
-    def ParseImage( self, pathSrc, pathDest ):
-        print( '[android/pack-image] file: ' + pathDest )
-        pass
-    #def ParseImage
 #class FileParserAndroid
 
 #Begin

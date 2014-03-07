@@ -1,32 +1,26 @@
-# .tga
-# .png
-# .bmp
-
 import imagecompress, os.path, struct
+
+supportedFormats = imagecompress.supportedFormats()
 
 def Do( pathSrc, pathDest, fileParser, rules ):
     fileParser.MakePath( fileParser.releaseDir + pathDest )
     if type( rules ) is not dict:
         rules = {}
 
+    fileName, fileExtension = os.path.splitext( pathSrc )
+    if fileExtension[1:] not in supportedFormats:
+        fileSrc = open( fileParser.rootDir + pathSrc, 'rb' )
+        fileContent = fileSrc.read()
+        fileSrc.close()
+        CopyContentToFile( fileParser.releaseDir + pathDest, fileContent )
+        return pathDest
+
     if 'compress' in rules:
-        print( '=> '+pathSrc )
         compressList = [ 'dxt1', 'dxt3', 'dxt5' ]
         if rules['compress'] not in compressList:
             print( '[Error] unknown compression method "%s"' % rules['compress'] )
             return
-        fileName, fileExtension = os.path.splitext( pathSrc )
-        if fileExtension == '.tga':
-            image = imagecompress.tga2rgba( fileParser.rootDir + pathSrc )
-        elif fileExtension == '.jpg':
-            image = imagecompress.jpg2rgba( fileParser.rootDir + pathSrc )
-        elif fileExtension == '.png':
-            image = imagecompress.png2rgba( fileParser.rootDir + pathSrc )
-        image = dict(
-                dxt1 = imagecompress.rgba2dxt1,
-                dxt3 = imagecompress.rgba2dxt3,
-                dxt5 = imagecompress.rgba2dxt5,
-            ).get( rules['compress'] )( image )
+        image = imagecompress.picture2dxt( fileParser.rootDir + pathSrc, rules['compress'] )
         fileContent = rules['compress'].encode() + image['data']
         pathDest = pathDest.replace( fileExtension, '.' + rules['compress'] )
     else:
@@ -34,8 +28,11 @@ def Do( pathSrc, pathDest, fileParser, rules ):
         fileContent = fileSrc.read()
         fileSrc.close()
 
-    fileDest = open( fileParser.releaseDir + pathDest, 'wb' )
-    fileDest.write( fileContent )
-    fileDest.close()
+    CopyContentToFile( fileParser.releaseDir + pathDest, fileContent )
 
     return pathDest
+
+def CopyContentToFile( destPath, content ):
+    fileDest = open( destPath, 'wb' )
+    fileDest.write( content )
+    fileDest.close()
