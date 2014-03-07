@@ -4,7 +4,7 @@
 using namespace Engine;
 
 ImageLoader::ImageLoader()
-: imageType( IMAGE_TYPE_UNKNOWN ), imageWidth( 0 ), imageHeight( 0 ), isTransparent( false ) {
+: imageType( IMAGE_TYPE_UNKNOWN ), imageWidth( 0 ), imageHeight( 0 ), isTransparent( false ), isCompressed( false ) {
 }
 
 ImageLoader::~ImageLoader() {
@@ -26,14 +26,23 @@ bool ImageLoader::Load( const unsigned char *data, const size_t dataLength ) {
   case IMAGE_TYPE_JPG: 
     LOGI( "ImageLoader::Load => JPG" );
     return this->LoadJPG( data, dataLength );
+  case IMAGE_TYPE_DXT1: 
+    LOGW( "ImageLoader::Load => DXT1" );
+    return this->LoadDXT1( data, dataLength );
+  case IMAGE_TYPE_DXT3: 
+    LOGW( "ImageLoader::Load => DXT3" );
+    return this->LoadDXT3( data, dataLength );
+  case IMAGE_TYPE_DXT5: 
+    LOGW( "ImageLoader::Load => DXT5" );
+    return this->LoadDXT5( data, dataLength );
   default:;
   }
-  LOGE( "ImageLoader::Load => unknown format" );
+  LOGE( "ImageLoader::Load => unknown format, data length[%d]", dataLength );
 
   return false;
 }//Load
 
-ImageType ImageLoader::GetImageType( const unsigned char *data, const size_t dataLength ) {
+ImageType ImageLoader::GetImageType( const unsigned char *data, const size_t dataLength ) const {
   if( !data || !dataLength ) {
     return IMAGE_TYPE_UNKNOWN;
   }
@@ -55,6 +64,18 @@ ImageType ImageLoader::GetImageType( const unsigned char *data, const size_t dat
     if( *sign == 0x474E5089 ) { //0x89 PNG
       return IMAGE_TYPE_PNG;
     }
+
+    if( *sign == 0x31747864 ) { //DXT1
+      return IMAGE_TYPE_DXT1;
+    }
+
+    if( *sign == 0x33747864 ) { //DXT3
+      return IMAGE_TYPE_DXT3;
+    }
+
+    if( *sign == 0x35747864 ) { //DXT5
+      return IMAGE_TYPE_DXT5;
+    }
   }
   if( dataLength >= 10 ) {
     uint32_t *sign = ( uint32_t* ) ( data + 6 );
@@ -72,6 +93,7 @@ bool ImageLoader::LoadBMP( const unsigned char *data, const size_t dataLength ) 
   this->imageWidth = 0;
   this->imageHeight = 0;
   this->imageType = IMAGE_TYPE_BMP;
+  this->isCompressed = false;
 
   ImageType_BMP_FileHeader *fileHeader;
   ImageType_BMP_InfoHeader *infoHeader;
@@ -142,6 +164,7 @@ bool ImageLoader::LoadTGA( const unsigned char *data, const size_t dataLength ) 
   this->imageWidth = 0;
   this->imageHeight = 0;
   this->imageType = IMAGE_TYPE_TGA;
+  this->isCompressed = false;
 
   if( !data || !dataLength ) {
     LOGE( "ImageLoader::LoadTGA => no data or too short" );
@@ -269,6 +292,7 @@ bool ImageLoader::LoadPNG( const unsigned char *data, const size_t dataLength ) 
   this->imageWidth = 0;
   this->imageHeight = 0;
   this->imageType = IMAGE_TYPE_PNG;
+  this->isCompressed = false;
 
   return false;
 }//LoadPNG
@@ -278,6 +302,85 @@ bool ImageLoader::LoadJPG( const unsigned char *data, const size_t dataLength ) 
   this->imageWidth = 0;
   this->imageHeight = 0;
   this->imageType = IMAGE_TYPE_JPG;
+  this->isCompressed = false;
 
   return false;
 }//LoadJPG
+
+bool ImageLoader::LoadDXT1( const unsigned char *data, const size_t dataLength ) {
+  uint32_t
+    *width,
+    *height;
+  this->imageDataRGBA.Free();
+  const size_t FOURCCSIZE = 4;
+  const size_t MINIMAL_DXT1_FILE_SIZE = FOURCCSIZE + sizeof( *width ) * 2 + 8;
+  this->imageType = IMAGE_TYPE_DXT1;
+  this->isCompressed = true;
+  if( dataLength < MINIMAL_DXT1_FILE_SIZE ) {
+    LOGE( "ImageLoader::LoadDXT1 => dataLength[%d] minimal[%d]", dataLength, MINIMAL_DXT1_FILE_SIZE );
+    return false;
+  }
+
+  width   = ( uint32_t* ) ( data + FOURCCSIZE );
+  height  = ( uint32_t* ) ( data + FOURCCSIZE + sizeof( *width ) );
+  this->imageWidth = *width;
+  this->imageHeight = *height;
+
+  size_t dataSize = ( this->imageWidth * this->imageHeight ) >> 1;
+  this->imageDataRGBA.Alloc( dataSize );
+  memcpy( this->imageDataRGBA.GetData(), data + FOURCCSIZE + sizeof( *width ) * 2, dataSize );
+
+  return true;
+}//LoadDXT1
+
+bool ImageLoader::LoadDXT3( const unsigned char *data, const size_t dataLength ) {
+  uint32_t
+    *width,
+    *height;
+  this->imageDataRGBA.Free();
+  const size_t FOURCCSIZE = 4;
+  const size_t MINIMAL_DXT3_FILE_SIZE = FOURCCSIZE + sizeof( *width ) * 2 + 16;
+  this->imageType = IMAGE_TYPE_DXT3;
+  this->isCompressed = true;
+  if( dataLength < MINIMAL_DXT3_FILE_SIZE ) {
+    LOGE( "ImageLoader::LoadDXT3 => dataLength[%d] minimal[%d]", dataLength, MINIMAL_DXT3_FILE_SIZE );
+    return false;
+  }
+
+  width   = ( uint32_t* ) ( data + FOURCCSIZE );
+  height  = ( uint32_t* ) ( data + FOURCCSIZE + sizeof( *width ) );
+  this->imageWidth = *width;
+  this->imageHeight = *height;
+
+  size_t dataSize = this->imageWidth * this->imageHeight;
+  this->imageDataRGBA.Alloc( dataSize );
+  memcpy( this->imageDataRGBA.GetData(), data + FOURCCSIZE + sizeof( *width ) * 2, dataSize );
+
+  return true;
+}//LoadDXT3
+
+bool ImageLoader::LoadDXT5( const unsigned char *data, const size_t dataLength ) {
+  uint32_t
+    *width,
+    *height;
+  this->imageDataRGBA.Free();
+  const size_t FOURCCSIZE = 4;
+  const size_t MINIMAL_DXT5_FILE_SIZE = FOURCCSIZE + sizeof( *width ) * 2 + 16;
+  this->imageType = IMAGE_TYPE_DXT5;
+  this->isCompressed = true;
+  if( dataLength < MINIMAL_DXT5_FILE_SIZE ) {
+    LOGE( "ImageLoader::LoadDXT5 => dataLength[%d] minimal[%d]", dataLength, MINIMAL_DXT5_FILE_SIZE );
+    return false;
+  }
+
+  width   = ( uint32_t* ) ( data + FOURCCSIZE );
+  height  = ( uint32_t* ) ( data + FOURCCSIZE + sizeof( *width ) );
+  this->imageWidth = *width;
+  this->imageHeight = *height;
+
+  size_t dataSize = this->imageWidth * this->imageHeight;
+  this->imageDataRGBA.Alloc( dataSize );
+  memcpy( this->imageDataRGBA.GetData(), data + FOURCCSIZE + sizeof( *width ) * 2, dataSize );
+
+  return true;
+}//LoadDXT5

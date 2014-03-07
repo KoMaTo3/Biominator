@@ -7,7 +7,7 @@
 
 using namespace Engine;
 
-RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight )
+RendererAndroid::RendererAndroid( ANativeWindow *setWindow, const unsigned int setScreenWidth, const unsigned int setScreenHeight, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat )
 :Renderer( setScreenWidth, setScreenHeight ), display( EGL_NO_DISPLAY ), renderSurface( EGL_NO_SURFACE )
 ,context( EGL_NO_CONTEXT ), window( setWindow ) {
   LOGI( "+RendererAndroid" );

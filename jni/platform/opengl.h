@@ -8,6 +8,7 @@
 #include "../win32/opengl/gl.h"
 #include "../win32/opengl/glext.h"
 #include "../win32/opengl/wglext.h"
+#include "../interngl.h"
 
 #elif IS_ANDROID
 

@@ -16,7 +16,7 @@ public:
   void Resize( size_t setLength, bool nullNewMemory = false );
   inline unsigned char* GetData() const { return this->data; }
   inline unsigned char& operator[]( size_t index ) { return this->data[ index ]; };
-  inline size_t GetLength(){ return this->length; };
+  inline size_t GetLength() const { return this->length; };
 
 private:
 

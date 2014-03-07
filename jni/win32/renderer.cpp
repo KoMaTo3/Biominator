@@ -198,6 +198,7 @@ void RendererWin32gl::InitExtensions() {
   this->LoadExtension( "glDrawBuffers", ( void** ) &glDrawBuffers );
   this->LoadExtension( "glDeleteBuffers", ( void** ) &glDeleteBuffers );
   this->LoadExtension( "glDeleteVertexArrays", ( void** ) &glDeleteVertexArrays );
+  this->LoadExtension( "glCompressedTexImage2D", ( void** ) &glCompressedTexImage2D );
 }//InitExtensions
 
 bool RendererWin32gl::LoadExtension( const std::string &name, void** function ) {

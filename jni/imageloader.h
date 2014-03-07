@@ -11,6 +11,9 @@ enum ImageType {
   IMAGE_TYPE_TGA     = 2,
   IMAGE_TYPE_PNG     = 3,
   IMAGE_TYPE_JPG     = 4,
+  IMAGE_TYPE_DXT1    = 5,
+  IMAGE_TYPE_DXT3    = 6,
+  IMAGE_TYPE_DXT5    = 7,
 };
 
 class ImageLoader {
@@ -22,13 +25,18 @@ public:
   bool LoadTGA( const unsigned char *data, const size_t dataLength );
   bool LoadPNG( const unsigned char *data, const size_t dataLength );
   bool LoadJPG( const unsigned char *data, const size_t dataLength );
-  ImageType GetImageType( const unsigned char *data, const size_t dataLength );
+  bool LoadDXT1( const unsigned char *data, const size_t dataLength );
+  bool LoadDXT3( const unsigned char *data, const size_t dataLength );
+  bool LoadDXT5( const unsigned char *data, const size_t dataLength );
+  ImageType GetImageType( const unsigned char *data, const size_t dataLength ) const;
+  inline bool IsCompressed() const { return this->isCompressed; }
 
   Memory imageDataRGBA;
   ImageType imageType;
   size_t imageWidth;
   size_t imageHeight;
   bool isTransparent;
+  bool isCompressed;
 
 private:
   ImageLoader( ImageLoader& );

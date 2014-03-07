@@ -6,6 +6,10 @@ using namespace Engine;
 FileManagerAndroid::FileManagerAndroid( AAssetManager *setAssetManager )
 :FileManager(), assetManager( setAssetManager ) {
   LOGI( "+FileManagerAndroid" );
+  Memory fileContent;
+  if( this->GetFile( "data/.list", fileContent, true ) ) {
+    this->InitList( fileContent );
+  }
 }
 
 FileManagerAndroid::~FileManagerAndroid() {
@@ -23,10 +27,16 @@ bool FileManagerAndroid::FileExists( const std::string &fileName ) const {
 }//FileExists
 
 bool FileManagerAndroid::GetFile( const std::string& fileName, Memory& fileContent, bool endZeroByte ) const {
+  std::string name, nameReplaced;
+  if( this->FileHasOtherName( fileName, nameReplaced ) ) {
+    name = nameReplaced;
+  } else {
+    name = fileName;
+  }
   fileContent.Free();
-  AAsset* file = AAssetManager_open( this->assetManager, fileName.c_str(), AASSET_MODE_BUFFER );
+  AAsset* file = AAssetManager_open( this->assetManager, name.c_str(), AASSET_MODE_BUFFER );
   if( !file ) {
-    LOGE( "FileManagerAndroid::GetFile => file '%s' not found", fileName.c_str() );
+    LOGE( "FileManagerAndroid::GetFile => file '%s' not found", name.c_str() );
     return false;
   }
   off_t fileLength = AAsset_getLength( file );

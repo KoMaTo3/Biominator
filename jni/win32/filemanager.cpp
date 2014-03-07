@@ -5,10 +5,15 @@
 using namespace Engine;
 
 FileManagerWin32::FileManagerWin32( const std::string& setRootDir )
-:FileManager() {
-  this->rootDir = setRootDir;
+:FileManager( setRootDir ) {
   if( !this->rootDir.empty() ) {
     _mkdir( this->rootDir.c_str() );
+  }
+
+  Memory fileContent;
+  if( this->GetFile( ".list", fileContent, true ) ) {
+    LOGI( "FileManagerWin32 => loaded .list => parse" );
+    this->InitList( fileContent );
   }
 }
 
@@ -29,7 +34,12 @@ bool FileManagerWin32::FileExists( const std::string &fileName ) const {
 }//FileExists
 
 bool FileManagerWin32::GetFile( const std::string& fileName, Memory& fileContent, bool endZeroByte ) const {
-  std::string name = this->rootDir + fileName;
+  std::string name, nameReplaced;
+  if( this->FileHasOtherName( fileName, nameReplaced ) ) {
+    name = this->rootDir + nameReplaced;
+  } else {
+    name = this->rootDir + fileName;
+  }
   FILE *file;
   fileContent.Free();
   fopen_s( &file, name.c_str(), "rb" );

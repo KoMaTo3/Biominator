@@ -6,10 +6,14 @@
 using namespace Engine;
 
 FileManagerLinux::FileManagerLinux( const std::string& setRootDir )
-:FileManager() {
-  this->rootDir = setRootDir;
+:FileManager( setRootDir ) {
   if( !this->rootDir.empty() ) {
     mkdir( this->rootDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+  }
+
+  Memory fileContent;
+  if( this->GetFile( ".list", fileContent, true ) ) {
+    this->InitList( fileContent );
   }
 }
 
@@ -30,7 +34,12 @@ bool FileManagerLinux::FileExists( const std::string &fileName ) const {
 }//FileExists
 
 bool FileManagerLinux::GetFile( const std::string& fileName, Memory& fileContent, bool endZeroByte ) const {
-  std::string name = this->rootDir + fileName;
+  std::string name, nameReplaced;
+  if( this->FileHasOtherName( fileName, nameReplaced ) ) {
+    name = this->rootDir + nameReplaced;
+  } else {
+    name = this->rootDir + fileName;
+  }
   FILE *file;
   fileContent.Free();
   file = fopen( name.c_str(), "rb" );

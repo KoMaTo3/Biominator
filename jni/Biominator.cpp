@@ -209,15 +209,15 @@ void GameContainer::_TestMesh() {
     LOGI( "new texture" );
     Engine::Memory imageFile;
     bool res;
-    res = this->core->GetFileManager()->GetFile( "textures/glow.tga", imageFile );
+    res = this->core->GetFileManager()->GetFile( "textures/AUCHINDOUN_VORTEXCLOUD01.png", imageFile );
     LOGI( "GetFile : %d", ( int ) res );
     Engine::ImageLoader loader;
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
-    texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+    texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
     res = this->core->GetFileManager()->GetFile( "textures/cat.bmp", imageFile );
     LOGI( "GetFile : %d", ( int ) res );
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
-    texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent );
+    texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
     LOGI( "new material..." );
     material = new Engine::Material( "test", shader );
     material->AddTexture( texture0 );
