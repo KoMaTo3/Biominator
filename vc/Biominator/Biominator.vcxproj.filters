@@ -105,6 +105,9 @@
     <ClCompile Include="..\..\jni\mesh.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\camera.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -210,6 +213,12 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\mesh.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\Biominator.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\camera.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

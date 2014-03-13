@@ -34,6 +34,10 @@ void Material::AddColor( const Vec4& newColor ) {
 }//AddColor
 
 void Material::Apply() {
+  if( !this->shaderProgram ) {
+    LOGE( "Material::Apply => shader is NULL" );
+    return;
+  }
   this->shaderProgram->UseProgram();
 
   size_t num = 0;
