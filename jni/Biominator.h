@@ -31,6 +31,7 @@
 #include "types.h"
 #include "math/kmatrix.h"
 #include "camera.h"
+#include "camera3d.h"
 
 
 namespace Game {
@@ -68,6 +69,8 @@ public:
   Engine::Camera
     cameraMain,
     cameraGUI;
+  Engine::Camera3d
+    camera3D;
 
 private:
   GameContainer();

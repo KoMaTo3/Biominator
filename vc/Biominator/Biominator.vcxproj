@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\jni\Biominator.cpp" />
     <ClCompile Include="..\..\jni\camera.cpp" />
+    <ClCompile Include="..\..\jni\camera3d.cpp" />
     <ClCompile Include="..\..\jni\core.cpp" />
     <ClCompile Include="..\..\jni\entrypoint.cpp" />
     <ClCompile Include="..\..\jni\event.cpp" />
@@ -124,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\jni\Biominator.h" />
     <ClInclude Include="..\..\jni\camera.h" />
+    <ClInclude Include="..\..\jni\camera3d.h" />
     <ClInclude Include="..\..\jni\core.h" />
     <ClInclude Include="..\..\jni\entrypoint.h" />
     <ClInclude Include="..\..\jni\event.h" />

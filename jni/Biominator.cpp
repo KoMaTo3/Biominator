@@ -1,4 +1,5 @@
 #include "Biominator.h"
+#include "time.h"
 
 using namespace Game;
 
@@ -201,13 +202,35 @@ void GameContainer::_TestMesh() {
     this->cameraGUI.SetScale( Vec2( 1.0f, 1.0f ) );
     this->cameraGUI.SetRotation( 0.0f );
 
+    //this->camera3D
+
     shader = this->CreateShader( "sprite-tc", "shaders/sprite-tc.vs", "shaders/sprite-tc.fs" );
     material = this->CreateMaterial( "sprite-black", shader, "textures/blank.bmp" );
     material->AddColor( Vec4( 0.0f, 0.0f, 0.0f, 1.0f ) );
+    srand(time(0));
     if( isLandscape ) {
       float width = 1.0f - screenScale.x;
-      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
-      this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
+      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( 10.0f, 10.0f ), Vec3( 0.0f, 0.0f, 10.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      object = this->CreateObject( "/test/te123", "sprite-black", Vec3Null, Vec2One, 0.0f );
+      object->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      auto buf = object->ResizeVertexBuffer( 12 );
+      buf->Get( 0 ).pos.Set( -10, -10, -10 );
+        buf->Get( 1 ).pos.Set(  10, -10, -10 );
+        buf->Get( 2 ).pos.Set( 0, 10, 0 );
+      buf->Get( 3 ).pos.Set( -10, -10, 10 );
+        buf->Get( 4 ).pos.Set(  10, -10, 10 );
+        buf->Get( 5 ).pos.Set( 0, 10, 0 );
+      buf->Get( 6 ).pos.Set( -10, -10, -10 );
+        buf->Get( 7 ).pos.Set( -10, -10, 10 );
+        buf->Get( 8 ).pos.Set( 0, 10, 0 );
+      buf->Get( 9 ).pos.Set( 10, -10, -10 );
+        buf->Get( 10 ).pos.Set( 10, -10, 10 );
+        buf->Get( 11 ).pos.Set( 0, 10, 0 );
+      //buf->Get( 0 ).pos.Set( ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f, ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f, ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f );
+      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      //this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
+      //this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
     } else {
       float height = 1.0f - screenScale.y;
       this->CreateSprite( "/screen/border/bottom", "sprite-black", Vec2( 2.0f, height ), Vec3( 0.0f, -1.0f + height * 0.5f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
@@ -229,6 +252,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   GameContainer *game = ( GameContainer* ) listener;
   game->cameraMain.Update();
   game->cameraGUI.Update();
+  game->camera3D.Update();
 
   //test animation
   static float t = 0.0f;

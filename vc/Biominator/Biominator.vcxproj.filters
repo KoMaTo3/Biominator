@@ -108,6 +108,9 @@
     <ClCompile Include="..\..\jni\camera.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\camera3d.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -219,6 +222,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\camera.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\camera3d.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
