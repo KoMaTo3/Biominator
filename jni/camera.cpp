@@ -41,8 +41,8 @@ void Camera::Update() {
     matTranslate.Identity();
     matRotation.Identity();
 
-    matTranslate[ 0 ][ 3 ] = this->position.x;
-    matTranslate[ 1 ][ 3 ] = this->position.y;
+    matTranslate[ 0 ][ 3 ] = -this->position.x;
+    matTranslate[ 1 ][ 3 ] = -this->position.y;
 
     float cosa = Math::Cos16( this->rotation );
     float sina = Math::Sin16( this->rotation );

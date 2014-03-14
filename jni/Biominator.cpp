@@ -230,9 +230,24 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   game->cameraMain.Update();
   game->cameraGUI.Update();
 
+  //test animation
   static float t = 0.0f;
+  static Vec3 pos( Vec3Null ), posCenter( -0.5f, -0.5f, 0.0f );
   t += 0.01f;
-  game->cameraMain.SetRotation( t );
+  if( ( pos - posCenter ).LengthFast() < 0.02f ) {
+    float
+      a = ( ( float ) ( rand() % 1000 ) ) / 1000.0f * 3.141592f * 2.0f,
+      r = 2.0f;
+    pos.Set( Math::Sin16( a ) * r, Math::Cos16( a ) * r, 0.0f );
+  }
+  float speed = 0.02f;
+  pos += ( posCenter - pos ) * speed;
+  game->cameraMain.SetPosition( pos );
+  //
+
+  if( !game->objectsList.empty() ) {
+    game->objectsList.begin()->second->SetRotation( Math::Sin16( t * 3.0f ) * 3.141592f );
+  }
 
   game->_TestMesh();
 
