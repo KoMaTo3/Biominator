@@ -4,7 +4,7 @@
 using namespace Engine;
 
 Camera3d::Camera3d()
-:position( Vec3Null ), matrixChanged( true ) {
+:position( Vec3Null ), matrixChanged( true ), rotation( 0.0f, 0.0f, 0.0f, 1.0f ), FOV( Math::HALF_PI ), planeNear( 0.01f ), planeFar( 1000.0f ), aspect( 1.0f ) {
 }
 
 Camera3d::~Camera3d() {
@@ -16,138 +16,78 @@ Camera3d* Camera3d::SetPosition( const Vec3& setPosition ) {
     this->matrixChanged = true;
   }
   this->position = setPosition;
+
   return this;
 }//SetPosition
 
+
+Camera3d* Camera3d::SetFOV( const float radians ) {
+  if( radians != this->FOV ) {
+    this->matrixChanged = true;
+  }
+  this->FOV = radians;
+
+  return this;
+}//SetFOV
+
+
+Camera3d* Camera3d::SetRotation( const float yaw, const float pitch, const float roll ) {
+	float sx, cx, sy, cy, sz, cz;
+	float sxcy, cxcy, sxsy, cxsy;
+
+	Math::SinCos( DEG2RAD( yaw ) * 0.5f, sz, cz );
+	Math::SinCos( DEG2RAD( pitch ) * 0.5f, sy, cy );
+	Math::SinCos( DEG2RAD( roll ) * 0.5f, sx, cx );
+
+	sxcy = sx * cy;
+	cxcy = cx * cy;
+	sxsy = sx * sy;
+	cxsy = cx * sy;
+
+  Quat oldQuat( this->rotation );
+
+	this->rotation.x = cxsy * sz - sxcy * cz;
+  this->rotation.y = -cxsy * cz - sxcy * sz;
+  this->rotation.z = sxsy * cz - cxcy * sz;
+  this->rotation.w = cxcy * cz + sxsy * sz;
+
+  if( this->rotation.x != oldQuat.x ||
+    this->rotation.y != oldQuat.y ||
+    this->rotation.z != oldQuat.z ||
+    this->rotation.w != oldQuat.w ) {
+      this->matrixChanged = true;
+  }
+
+  return this;
+}//SetRotation
+
+
 void Camera3d::Update() {
   if( this->matrixChanged ) {
+    Mat4 matTranslation;
+    matTranslation.Identity();
+    matTranslation[3][0] = this->position.x;
+    matTranslation[3][1] = this->position.y;
+    matTranslation[3][2] = this->position.z;
 
-    /*
-    float
-      left = -100.0f,
-      right = 100.0f,
-      top = 100.0f,
-      bottom = -100.0f,
-      far = 100.0f,
-      near = 1.0f;
-
-    this->matrix[0][0] = 2.0f*near/(right-left);
-    this->matrix[0][1] = 0;
-    this->matrix[0][2] = 0;
-    this->matrix[0][3] = 0;
-
-    this->matrix[1][0] = 0;
-    this->matrix[1][1] = 2.0f*near/(top-bottom);
-    this->matrix[1][2] = 0;
-    this->matrix[1][3] = 0;
-
-    this->matrix[2][0] = 0;
-    this->matrix[2][1] = 0;
-    this->matrix[2][2] = (far+near)/(far-near);
-    this->matrix[2][3] = -2.0f * far* near /(far-near);
-
-    this->matrix[3][0] = 0;
-    this->matrix[3][1] = 0;
-    this->matrix[3][2] = -1.0f;
-    this->matrix[3][3] = 0;
-    */
-
-    Mat4 matScale;
-    matScale.Identity();
-    matScale[ 0 ][ 0 ] = 2.0f;
-
-    Mat4 matTrans;
-    matTrans.Identity();
-    static float ttt = -2.5f;
-    ttt -= 0.01f;
-    matTrans[3][2] = ttt;
-
-    static float rotation = 0.5f;
-    rotation += 0.01f;
-    float cosa = Math::Cos16( rotation );
-    float sina = Math::Sin16( rotation );
-    Mat4 matRotZ;
-    matRotZ.Identity();
-    matRotZ[ 0 ][ 0 ] = cosa;
-    matRotZ[ 1 ][ 0 ] = -sina;
-    matRotZ[ 0 ][ 1 ] = sina;
-    matRotZ[ 1 ][ 1 ] = cosa;
-
-    Mat4 matRotX;
-    matRotX.Identity();
-    matRotX[ 1 ][ 1 ] = cosa;
-    matRotX[ 1 ][ 2 ] = -sina;
-    matRotX[ 2 ][ 1 ] = sina;
-    matRotX[ 2 ][ 2 ] = cosa;
-
-    static float
-      fov = 90.0f,
-      zNear = 0.01f,
-      zFar = 10000.0f,
-      aspect = 1.0f;
-    const float h = 1.0f/tan(fov*Math::PI/360.0f);
-    float neg_depth = zNear-zFar;
+    const float h = 1.0f / Math::Tan16( this->FOV * 0.5f );
+    float negDepth = this->planeNear - this->planeFar;
  
-    float *m = this->GetMatrixPointer();
-    //fov += 0.1f;
+    this->matrixProjection.Identity();
+    this->matrixWorld.Identity();
 
-    m[0] = h / aspect;
-    m[1] = 0;
-    m[2] = 0;
-    m[3] = 0;
- 
-    m[4] = 0;
-    m[5] = h;
-    m[6] = 0;
-    m[7] = 0;
- 
-    m[8] = 0;
-    m[9] = 0;
-    m[10] = (zFar + zNear)/neg_depth;
-    m[11] = -1;
- 
-    m[12] = 0;
-    m[13] = 0;
-    m[14] = 2.0f*(zNear*zFar)/neg_depth;
-    m[15] = 0;
+    this->matrixProjection[ 0 ][ 0 ] = h / this->aspect;
+    this->matrixProjection[ 1 ][ 1 ] = h;
+    this->matrixProjection[ 2 ][ 2 ] = ( this->planeFar + this->planeNear ) / negDepth;
+    this->matrixProjection[ 2 ][ 3 ] = -1.0f;
+    this->matrixProjection[ 3 ][ 2 ] = 2.0f * ( this->planeNear * this->planeFar ) / negDepth;
+    this->matrixProjection[ 3 ][ 3 ] = 0.0f;
 
-    //this->matrix = matScale * matTrans * this->matrix;
-    this->matrix = matRotX * matScale * matTrans * this->matrix;
+    Mat4 matRotFromQuat( this->rotation.ToMat4() );
 
-    //this->matrix = this->matrix.Transpose();
-    //this->matrix = matScale * this->matrix;
-    //this->matrix = this->matrix * matScale * matTrans;
-    LOGI("3d test");
+    this->matrixWorld = matTranslation * matRotFromQuat;
 
-    LOGI( "3d:\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]",
-      this->matrix[0][0], this->matrix[0][1], this->matrix[0][2], this->matrix[0][3],
-      this->matrix[1][0], this->matrix[1][1], this->matrix[1][2], this->matrix[1][3],
-      this->matrix[2][0], this->matrix[2][1], this->matrix[2][2], this->matrix[2][3],
-      this->matrix[3][0], this->matrix[3][1], this->matrix[3][2], this->matrix[3][3]
-      );
- 
-    /*
-    Mat4 matScale, matTranslate, matRotation;
-    matScale.Identity();
-    matTranslate.Identity();
-    matRotation.Identity();
-
-    matTranslate[ 0 ][ 3 ] = -this->position.x;
-    matTranslate[ 1 ][ 3 ] = -this->position.y;
-
-    float cosa = Math::Cos16( this->rotation );
-    float sina = Math::Sin16( this->rotation );
-    matRotation[ 0 ][ 0 ] = cosa;
-    matRotation[ 1 ][ 0 ] = -sina;
-    matRotation[ 0 ][ 1 ] = sina;
-    matRotation[ 1 ][ 1 ] = cosa;
-
-    matScale[ 0 ][ 0 ] = this->scale.x;
-    matScale[ 1 ][ 1 ] = this->scale.y;
-
-    this->matrix = matScale * matRotation * matTranslate;
-    */
-
-    //this->matrixChanged = false;
+    //this->matrixProjection = matTranslation * matRotFromQuat * this->matrixProjection;
+    this->matrixChanged = false;
   }
 }//Update

@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\jni\Biominator.cpp" />
     <ClCompile Include="..\..\jni\camera.cpp" />
+    <ClCompile Include="..\..\jni\camera2d.cpp" />
     <ClCompile Include="..\..\jni\camera3d.cpp" />
     <ClCompile Include="..\..\jni\core.cpp" />
     <ClCompile Include="..\..\jni\entrypoint.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="..\..\jni\math\klib.cpp" />
     <ClCompile Include="..\..\jni\math\kmath.cpp" />
     <ClCompile Include="..\..\jni\math\kmatrix.cpp" />
+    <ClCompile Include="..\..\jni\math\kquat.cpp" />
     <ClCompile Include="..\..\jni\math\kvector.cpp" />
     <ClCompile Include="..\..\jni\memory.cpp" />
     <ClCompile Include="..\..\jni\mesh.cpp" />
@@ -125,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\jni\Biominator.h" />
     <ClInclude Include="..\..\jni\camera.h" />
+    <ClInclude Include="..\..\jni\camera2d.h" />
     <ClInclude Include="..\..\jni\camera3d.h" />
     <ClInclude Include="..\..\jni\core.h" />
     <ClInclude Include="..\..\jni\entrypoint.h" />
@@ -141,6 +144,7 @@
     <ClInclude Include="..\..\jni\math\klib.h" />
     <ClInclude Include="..\..\jni\math\kmath.h" />
     <ClInclude Include="..\..\jni\math\kmatrix.h" />
+    <ClInclude Include="..\..\jni\math\kquat.h" />
     <ClInclude Include="..\..\jni\math\ktypes.h" />
     <ClInclude Include="..\..\jni\math\kvector.h" />
     <ClInclude Include="..\..\jni\memory.h" />

@@ -162,24 +162,7 @@ void GameContainer::_TestMesh() {
     material->AddTexture( texture0 );
     material->AddTexture( texture1 );
     material->AddColor( Vec4( 1.0f, 0.0f, 0.0f, 0.8f ) );
-    LOGI( "new mesh..." );
-    mesh = new Engine::Mesh( this->core->renderer, material );
-    LOGI( "new buffer..." );
-    auto vertices = mesh->ResizeVertexBuffer( 6 );
-    LOGI( "init buffer..." );
-    vertices->Get( 0 ).pos.Set( 0.0f, 0.0f, 0.0f );
-    vertices->Get( 0 ).tex.Set( 0.0f, 1.0f );
-    vertices->Get( 1 ).pos.Set( 1.0f, 1.0f, 0.0f );
-    vertices->Get( 1 ).tex.Set( 1.0f, 0.0f );
-    vertices->Get( 2 ).pos.Set( 1.0f, 0.0f, 0.0f );
-    vertices->Get( 2 ).tex.Set( 1.0f, 1.0f );
-
-    vertices->Get( 3 ).pos.Set( 0.0f, 0.0f, 0.0f );
-    vertices->Get( 3 ).tex.Set( 0.0f, 1.0f );
-    vertices->Get( 4 ).pos.Set( 0.0f, 1.0f, 0.0f );
-    vertices->Get( 4 ).tex.Set( 0.0f, 0.0f );
-    vertices->Get( 5 ).pos.Set( 1.0f, 1.0f, 0.0f );
-    vertices->Get( 5 ).tex.Set( 1.0f, 0.0f );
+    this->materialsList.insert( std::make_pair( "test", material ) );
 
     shader = this->CreateShader( "sprite-t", "shaders/sprite-t.vs", "shaders/sprite-t.fs" );
     material = this->CreateMaterial( "sprite-t", shader, "textures/cat.bmp" );
@@ -201,8 +184,12 @@ void GameContainer::_TestMesh() {
     this->cameraGUI.SetPosition( Vec3( 0.0f, 0.0f, 0.0f ) );
     this->cameraGUI.SetScale( Vec2( 1.0f, 1.0f ) );
     this->cameraGUI.SetRotation( 0.0f );
+    this->camera3D.SetPosition( Vec3( 0.0f, 0.0f, -20.0f ) );
+    this->camera3D.SetRotation( 0.0f, 0.0f, 0.0f );
 
     //this->camera3D
+    shader = this->CreateShader( "mesh-3d", "shaders/mesh.vs", "shaders/mesh.fs" );
+    material = this->CreateMaterial( "mesh-3d", shader, "textures/cat.bmp" );
 
     shader = this->CreateShader( "sprite-tc", "shaders/sprite-tc.vs", "shaders/sprite-tc.fs" );
     material = this->CreateMaterial( "sprite-black", shader, "textures/blank.bmp" );
@@ -210,9 +197,12 @@ void GameContainer::_TestMesh() {
     srand(time(0));
     if( isLandscape ) {
       float width = 1.0f - screenScale.x;
-      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( 10.0f, 10.0f ), Vec3( 0.0f, 0.0f, 10.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
-      object = this->CreateObject( "/test/te123", "sprite-black", Vec3Null, Vec2One, 0.0f );
-      object->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      this->CreateSprite( "/test-3d-mesh", "mesh-3d", Vec2( 10.0f, 10.0f ), Vec3( 0.0f, 0.0f, 10.0f ), Vec2( 1.0f, 1.0f ), 0.0f )
+        ->SetWorldMatrix( this->camera3D.GetWorldMatrixPointer() )
+        ->SetProjectionMatrix( this->camera3D.GetProjectionMatrixPointer() );
+      object = this->CreateObject( "/test/te123", "mesh-3d", Vec3Null, Vec2One, 0.0f );
+      object->SetWorldMatrix( this->camera3D.GetWorldMatrixPointer() );
+      object->SetProjectionMatrix( this->camera3D.GetProjectionMatrixPointer() );
       auto buf = object->ResizeVertexBuffer( 12 );
       buf->Get( 0 ).pos.Set( -10, -10, -10 );
         buf->Get( 1 ).pos.Set(  10, -10, -10 );
@@ -227,15 +217,35 @@ void GameContainer::_TestMesh() {
         buf->Get( 10 ).pos.Set( 10, -10, 10 );
         buf->Get( 11 ).pos.Set( 0, 10, 0 );
       //buf->Get( 0 ).pos.Set( ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f, ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f, ( float( rand() % 1000 ) / 100.0f - 0.5f ) * 50.0f );
-      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
-      this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
-      //this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
-      //this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
+      //this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      //this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->camera3D.GetMatrixPointer() );
+      this->CreateSprite( "/screen/border/left", "sprite-black", Vec2( width, 2.0f ), Vec3( -1.0f + width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
+      this->CreateSprite( "/screen/border/right", "sprite-black", Vec2( width, 2.0f ), Vec3( 1.0f - width * 0.5f, 0.0f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
     } else {
       float height = 1.0f - screenScale.y;
       this->CreateSprite( "/screen/border/bottom", "sprite-black", Vec2( 2.0f, height ), Vec3( 0.0f, -1.0f + height * 0.5f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
       this->CreateSprite( "/screen/border/top", "sprite-black", Vec2( 2.0f, height ), Vec3( 0.0f, 1.0f - height * 0.5f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
     }
+
+    //test static sprite
+    LOGI( "new mesh..." );
+    mesh = new Engine::Mesh( this->core->renderer, this->materialsList.find( "test" )->second );
+    LOGI( "new buffer..." );
+    auto vertices = mesh->ResizeVertexBuffer( 6 );
+    LOGI( "init buffer..." );
+    vertices->Get( 0 ).pos.Set( 0.0f, 0.0f, 1.0f );
+    vertices->Get( 0 ).tex.Set( 0.0f, 1.0f );
+    vertices->Get( 1 ).pos.Set( 1.0f, 1.0f, 1.0f );
+    vertices->Get( 1 ).tex.Set( 1.0f, 0.0f );
+    vertices->Get( 2 ).pos.Set( 1.0f, 0.0f, 1.0f );
+    vertices->Get( 2 ).tex.Set( 1.0f, 1.0f );
+
+    vertices->Get( 3 ).pos.Set( 0.0f, 0.0f, 1.0f );
+    vertices->Get( 3 ).tex.Set( 0.0f, 1.0f );
+    vertices->Get( 4 ).pos.Set( 0.0f, 1.0f, 1.0f );
+    vertices->Get( 4 ).tex.Set( 0.0f, 0.0f );
+    vertices->Get( 5 ).pos.Set( 1.0f, 1.0f, 1.0f );
+    vertices->Get( 5 ).tex.Set( 1.0f, 0.0f );
 
     LOGI( "ok" );
   } else {
@@ -269,8 +279,16 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   game->cameraMain.SetPosition( pos );
   //
 
-  if( !game->objectsList.empty() ) {
-    game->objectsList.begin()->second->SetRotation( Math::Sin16( t * 3.0f ) * 3.141592f );
+  game->camera3D.SetPosition( Vec3( Math::Sin16( t * 3.0f ) * 10.0f, 0.0f, -20.0f ) );
+  if( game->objectsList.find( "/test-3d-mesh" ) != game->objectsList.end() ) {
+    game->objectsList.find( "/test-3d-mesh" )->second->SetRotation( t * 4.0f );
+  }
+  //game->camera3D.SetRotation( 0.0f, 0.0f, 0.0f );
+  //game->camera3D.SetRotation( t * 100.0f, 0.0f, 0.0f );
+  game->camera3D.SetRotation( 0.0f, Math::Sin16( t ) * 30.0f, Math::Cos16( t ) * 30.0f );
+
+  if( game->objectsList.find( "test" ) != game->objectsList.end() ) {
+    game->objectsList.find( "test" )->second->SetRotation( Math::Sin16( t * 3.0f ) * 3.141592f );
   }
 
   game->_TestMesh();

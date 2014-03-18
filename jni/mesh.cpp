@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Mesh::Mesh( Renderer *setRenderer, Material *setMaterial )
-:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), objectMatrix( NULL ), customWorldMatrix( NULL ) {
+:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), objectMatrix( NULL ), customWorldMatrix( NULL ), customProjectionMatrix( NULL ) {
 }
 
 
@@ -36,6 +36,11 @@ void Mesh::Render( float *worldMatrix ) {
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vPosition" ) );
   glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + sizeof( Vec3 ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTex" ) );
+
+  if( this->customProjectionMatrix ) {
+    glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "projMatrix" ), 1, false, this->customProjectionMatrix );
+    LOGI( "projMatrix uniform = %d", this->material->shaderProgram->GetUniformLocation( "projMatrix" ) );
+  }
 
   if( this->customWorldMatrix ) {
     glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "worldMatrix" ), 1, false, this->customWorldMatrix );

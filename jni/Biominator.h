@@ -30,7 +30,7 @@
 #include "platform/texture.h"
 #include "types.h"
 #include "math/kmatrix.h"
-#include "camera.h"
+#include "camera2d.h"
 #include "camera3d.h"
 
 
@@ -66,7 +66,7 @@ public:
   Engine::ShaderProgram* CreateShader( const std::string& name, const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName );
 
   Engine::Core *core;
-  Engine::Camera
+  Engine::Camera2d
     cameraMain,
     cameraGUI;
   Engine::Camera3d

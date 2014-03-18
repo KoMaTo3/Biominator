@@ -1160,9 +1160,9 @@ KM_INLINE bool Vec2::TestIntersect( const Vec2& a, const Vec2& b, const Vec2& c,
 }
 
 
-extern Vec2 Vec2Null;
-extern Vec2 Vec2One;
-extern Vec3 Vec3Null;
-extern Vec3 Vec3One;
-extern Vec4 Vec4Null;
-extern Vec4 Vec4One;
+extern const Vec2 Vec2Null;
+extern const Vec2 Vec2One;
+extern const Vec3 Vec3Null;
+extern const Vec3 Vec3One;
+extern const Vec4 Vec4Null;
+extern const Vec4 Vec4One;

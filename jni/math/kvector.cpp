@@ -2,12 +2,12 @@
 #include "kangles.h"
 
 
-Vec2 Vec2Null( 0.0f, 0.0f );
-Vec2 Vec2One ( 1.0f, 1.0f );
-Vec3 Vec3Null( 0.0f, 0.0f, 0.0f );
-Vec3 Vec3One ( 1.0f, 1.0f, 1.0f );
-Vec4 Vec4Null( 0.0f, 0.0f, 0.0f, 0.0f );
-Vec4 Vec4One ( 1.0f, 1.0f, 1.0f, 1.0f );
+Vec2 const Vec2Null( 0.0f, 0.0f );
+Vec2 const Vec2One ( 1.0f, 1.0f );
+Vec3 const Vec3Null( 0.0f, 0.0f, 0.0f );
+Vec3 const Vec3One ( 1.0f, 1.0f, 1.0f );
+Vec4 const Vec4Null( 0.0f, 0.0f, 0.0f, 0.0f );
+Vec4 const Vec4One ( 1.0f, 1.0f, 1.0f, 1.0f );
 
 /*
 =============

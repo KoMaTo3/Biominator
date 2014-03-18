@@ -105,10 +105,16 @@
     <ClCompile Include="..\..\jni\mesh.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\jni\camera.cpp">
+    <ClCompile Include="..\..\jni\camera3d.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\jni\camera3d.cpp">
+    <ClCompile Include="..\..\jni\math\kquat.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\camera2d.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\camera.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -221,10 +227,16 @@
     <ClInclude Include="..\..\jni\Biominator.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\jni\camera.h">
+    <ClInclude Include="..\..\jni\camera3d.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\jni\camera3d.h">
+    <ClInclude Include="..\..\jni\math\kquat.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\camera2d.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\camera.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
