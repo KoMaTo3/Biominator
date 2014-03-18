@@ -1,5 +1,6 @@
 #include "imageloader.h"
 #include "tools.h"
+#include "string.h"
 
 using namespace Engine;
 

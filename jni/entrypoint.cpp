@@ -1,8 +1,10 @@
 #include "entrypoint.h"
+#include "math/kmath.h"
 
 using namespace Engine;
 
 EntryPoint::EntryPoint() {
+  Math::Init();
 }
 
 EntryPoint::~EntryPoint() {

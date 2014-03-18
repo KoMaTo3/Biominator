@@ -1,4 +1,5 @@
 #include "filemanager.h"
+#include "string.h"
 
 using namespace Engine;
 
@@ -13,7 +14,7 @@ void FileManager::InitList( const Memory &fileData ) {
   ParseFileStruct parser( &fileData );
   std::string str;
   while( this->_GetNextString( parser, str ) ) {
-    if( str.empty() || str.length() > 1 && str[ 0 ] == '/' && str[ 1 ] == '/' ) {
+    if( str.empty() || ( str.length() > 1 && str[ 0 ] == '/' && str[ 1 ] == '/' ) ) {
       continue;
     }
     this->ParseAndAddStringToFileList( str );

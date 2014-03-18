@@ -1,5 +1,5 @@
-#include "texture.h"
 #include "../tools.h"
+#include "texture.h"
 
 using namespace Engine;
 

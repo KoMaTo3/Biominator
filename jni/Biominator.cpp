@@ -268,7 +268,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   static float t = 0.0f;
   static Vec3 pos( Vec3Null ), posCenter( -0.5f, -0.5f, 0.0f );
   t += 0.01f;
-  if( ( pos - posCenter ).LengthFast() < 0.02f ) {
+  if( ( pos - posCenter ).Length() < 0.02f ) {
     float
       a = ( ( float ) ( rand() % 1000 ) ) / 1000.0f * 3.141592f * 2.0f,
       r = 2.0f;
@@ -276,6 +276,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   }
   float speed = 0.02f;
   pos += ( posCenter - pos ) * speed;
+  LOGI( "=> pos: %3.3f; %3.3f; %3.3f", pos.x, pos.y, pos.z );
   game->cameraMain.SetPosition( pos );
   //
 
@@ -432,7 +433,7 @@ void GameContainer::DeleteObject( const std::string& objectName ) {
 
 
 Object::Object( const std::string &setName, Engine::Renderer *renderer, Engine::Material *material )
-:Mesh( renderer, material ), name( setName ), matrixChanged( true ), position( Vec3Null ), scale( Vec2One ), rotation( 0.0f ), size( Vec2One ) {
+:Mesh( renderer, material ), name( setName ), position( Vec3Null ), scale( Vec2One ), size( Vec2One ), rotation( 0.0f ), matrixChanged( true ) {
 }
 
 

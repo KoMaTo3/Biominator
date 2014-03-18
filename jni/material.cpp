@@ -7,6 +7,7 @@
 #include "shaderprogram.h"
 #include "texture.h"
 #include "interngl.h"
+#include "platform/opengl.h"
 
 using namespace Engine;
 
