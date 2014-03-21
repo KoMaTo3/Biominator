@@ -2,14 +2,23 @@
 
 #include "math/kvector.h"
 #include "platform/opengl.h"
+//#include "perobjectshaderbuffer.h"
+#include "types.h"
+#include "math/kmatrix.h"
 #include <vector>
 
 namespace Engine {
+
+typedef GLushort VerticeIndex;
 
 struct Vertice {
   Vec3 pos;
   Vec2 tex;
   Vec4 color;
+
+  Mat4 modelMatrix;
+  Vec2 texCoordsScale;
+  Vec2 texCoordsOffset;
 };
 
 class IndicesBlock {
@@ -43,7 +52,7 @@ public:
 
 protected:
   VerticesVector verticesList;
-  IndicesVector freeIndicesList;
+  IndicesVector freeVerticesList;
 
 private:
   VertexBuffer( VertexBuffer& );

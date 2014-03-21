@@ -120,6 +120,12 @@
     <ClCompile Include="..\..\jni\camera.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\jni\perobjectshaderbuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\squareatlas.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\jni\win32\core.h">
@@ -240,6 +246,18 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\camera.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\perobjectshaderbuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\platform\opengl.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\platform\texture.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\squareatlas.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

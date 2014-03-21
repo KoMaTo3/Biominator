@@ -18,8 +18,8 @@ VertexBufferWriter* VertexBuffer::New( unsigned short size ) {
   }
 
   IndicesVector::iterator
-    iter = this->freeIndicesList.begin(),
-    iterEnd = this->freeIndicesList.end();
+    iter = this->freeVerticesList.begin(),
+    iterEnd = this->freeVerticesList.end();
   bool finded = false;
   unsigned short begin;
 
@@ -29,7 +29,7 @@ VertexBufferWriter* VertexBuffer::New( unsigned short size ) {
       begin = iter->begin;
       if( iter->size == size ) {
         LOGI( "VertexBuffer::New => delete free index[%d; %d]", iter->begin, iter->size );
-        this->freeIndicesList.erase( iter );
+        this->freeVerticesList.erase( iter );
       } else {
         LOGI( "VertexBuffer::New => resize free index[%d; %d] to [%d; %d]", iter->begin, iter->size, iter->begin + size, iter->size - size );
         iter->begin += size;
@@ -58,7 +58,7 @@ void VertexBuffer::Delete( VertexBufferWriter* buffer ) {
   }
 
   bool finded = false;
-  for( auto& iter: this->freeIndicesList ) {
+  for( auto& iter: this->freeVerticesList ) {
     if( buffer->Congregate( &iter ) ) {
       finded = true;
       break;
@@ -66,7 +66,7 @@ void VertexBuffer::Delete( VertexBufferWriter* buffer ) {
   }
 
   if( !finded ) {
-    buffer->PushToBuffer( this->freeIndicesList );
+    buffer->PushToBuffer( this->freeVerticesList );
   }
 
   delete buffer;

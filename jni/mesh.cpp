@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Mesh::Mesh( Renderer *setRenderer, Material *setMaterial )
-:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), objectMatrix( NULL ), customWorldMatrix( NULL ), customProjectionMatrix( NULL ) {
+:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), objectMatrix( NULL ), customWorldMatrix( NULL ), customProjectionMatrix( NULL ), enabled( false ) {
 }
 
 
@@ -32,10 +32,22 @@ void Mesh::Render( float *worldMatrix ) {
   this->BeforeRender();
 
   LOGI( "apply attribs, vPosition[%d] vTex[%d]", this->material->shaderProgram->GetAttribLocation( "vPosition" ), this->material->shaderProgram->GetAttribLocation( "vTex" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, pos ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vPosition" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + sizeof( Vec3 ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, tex ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTex" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat0" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 0 ] ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat0" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat1" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 1 ] ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat1" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat2" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 2 ] ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat2" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat3" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 3 ] ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat3" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexScale" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, texCoordsScale ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexScale" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, texCoordsOffset ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ) );
 
   if( this->customProjectionMatrix ) {
     glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "projMatrix" ), 1, false, this->customProjectionMatrix );
@@ -48,10 +60,6 @@ void Mesh::Render( float *worldMatrix ) {
     glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "worldMatrix" ), 1, false, worldMatrix );
   }
 
-  if( this->objectMatrix ) {
-    glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "objMatrix" ), 1, false, this->objectMatrix );
-  }
-  
   LOGI( "draw %d points...", this->vertices->GetSize() );
   glDrawArrays( GL_TRIANGLES, this->vertices->GetBeginIndex(), this->vertices->GetSize() );
   LOGI( "Mesh::Render end" );
@@ -68,3 +76,7 @@ VertexBufferWriter* Mesh::ResizeVertexBuffer( unsigned short setSize ) {
 
 void Mesh::BeforeRender() {
 }
+
+void Mesh::EnableRender( bool setEnabled ) {
+  this->enabled = setEnabled;
+}//EnableRender

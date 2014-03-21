@@ -2,7 +2,6 @@
 
 #include "vertexbuffer.h"
 #include "listener.h"
-#include "platform/opengl.h"
 
 namespace Engine {
 
@@ -22,6 +21,7 @@ private:
   VertexBufferGL& operator=( VertexBufferGL& );
 
   GLuint vbo;
+  //GLuint ibo;
 };
 
 };

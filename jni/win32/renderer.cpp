@@ -163,6 +163,7 @@ void RendererWin32gl::InitExtensions() {
   this->LoadExtension( "glShaderSource", ( void** ) &glShaderSource );
   this->LoadExtension( "glUseProgram", ( void** ) &glUseProgram );
   this->LoadExtension( "glUniform1f", ( void** ) &glUniform1f );
+  this->LoadExtension( "glUniform1fv", ( void** ) &glUniform1fv );
   this->LoadExtension( "glUniform2f", ( void** ) &glUniform2f );
   this->LoadExtension( "glUniform3f", ( void** ) &glUniform3f );
   this->LoadExtension( "glUniform4f", ( void** ) &glUniform4f );

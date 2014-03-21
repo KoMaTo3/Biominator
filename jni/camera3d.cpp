@@ -82,10 +82,13 @@ void Camera3d::Update() {
     this->matrixProjection[ 2 ][ 3 ] = -1.0f;
     this->matrixProjection[ 3 ][ 2 ] = 2.0f * ( this->planeNear * this->planeFar ) / negDepth;
     this->matrixProjection[ 3 ][ 3 ] = 0.0f;
+    this->matrixProjection.TransposeSelf();
 
     Mat4 matRotFromQuat( this->rotation.ToMat4() );
 
-    this->matrixWorld = matTranslation * matRotFromQuat;
+    //this->matrixWorld = matTranslation * matRotFromQuat;
+    this->matrixWorld = matRotFromQuat * matTranslation;
+    this->matrixWorld.TransposeSelf();
 
     //this->matrixProjection = matTranslation * matRotFromQuat * this->matrixProjection;
     this->matrixChanged = false;
