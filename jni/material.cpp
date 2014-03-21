@@ -18,12 +18,30 @@ Material::Material( const std::string& setName, ShaderProgram *setShaderProgram 
 }
 
 Material::~Material() {
+  auto
+    iterTex = this->texturesList.begin(),
+    iterTexEnd = this->texturesList.end();
+  while( iterTex != iterTexEnd ) {
+    delete *iterTex;
+    ++iterTex;
+  }
+
+  auto
+    iterColor = this->colorsList.begin(),
+    iterColorEnd = this->colorsList.end();
+  while( iterColor != iterColorEnd ) {
+    delete *iterColor;
+    ++iterColor;
+  }
 }
 
 void Material::AddTexture( Texture* newTexture ) {
   if( newTexture ) {
     sprintf( __buffer1024, "texture%d", ( int ) this->texturesList.size() );
-    this->texturesList.insert( std::make_pair( __buffer1024, newTexture ) );
+    MaterialHashContainerTexture *container = new MaterialHashContainerTexture();
+    container->name = __buffer1024;
+    container->value = newTexture;
+    this->texturesList.push_back( container );
   } else {
     LOGE( "Material::AddTexture => texture is NULL" );
   }
@@ -31,7 +49,11 @@ void Material::AddTexture( Texture* newTexture ) {
 
 void Material::AddColor( const Vec4& newColor ) {
   sprintf( __buffer1024, "color%d", ( int ) this->colorsList.size() );
-  this->colorsList.insert( std::make_pair( __buffer1024, newColor ) );
+  //this->colorsList.insert( std::make_pair( __buffer1024, newColor ) );
+  MaterialHashContainerColor *container = new MaterialHashContainerColor();
+  container->name = __buffer1024;
+  container->value = newColor;
+  this->colorsList.push_back( container );
 }//AddColor
 
 void Material::Apply() {
@@ -39,17 +61,39 @@ void Material::Apply() {
     LOGE( "Material::Apply => shader is NULL" );
     return;
   }
+  LOGI( "apply shader..." );
   this->shaderProgram->UseProgram();
 
-  size_t num = 0;
+  GLint num = 0;
+  LOGI( "apply textures..." );
   for( auto& texture: this->texturesList ) {
     glActiveTexture( GL_TEXTURE0 + num );
-    glBindTexture( GL_TEXTURE_2D, texture.second->GetTextureId() );
-    glUniform1i( this->shaderProgram->GetUniformLocation( texture.first ), num );
+    LOGI( "textureId[%d]", texture->value->GetTextureId() );
+    glBindTexture( GL_TEXTURE_2D, texture->value->GetTextureId() );
+    LOGI( "uniform..." );
+    LOGI( "uniform location %d", this->shaderProgram->GetUniformLocation( texture->name ) );
+    glUniform1i( this->shaderProgram->GetUniformLocation( texture->name ), num );
     ++num;
   }
 
+  LOGI( "apply colors..." );
   for( auto& color: this->colorsList ) {
-    glUniform4fv( this->shaderProgram->GetUniformLocation( color.first ), 1, &color.second.x );
+    glUniform4fv( this->shaderProgram->GetUniformLocation( color->name ), 1, &color->value.x );
   }
 }//Apply
+
+Vec2 Material::GetTextureCoordsOffset( const int layer ) const {
+  if( this->texturesList.empty() ) {
+    return Vec2Null;
+  }
+
+  return this->texturesList[ layer ]->value->GetCoordsOffset();
+}//GetTextureCoordsOffset
+
+Vec2 Material::GetTextureCoordsScale( const int layer ) const {
+  if( this->texturesList.empty() ) {
+    return Vec2Null;
+  }
+
+  return this->texturesList[ layer ]->value->GetCoordsScale();
+}//GetTextureCoordsScale

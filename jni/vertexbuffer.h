@@ -2,6 +2,7 @@
 
 #include "math/kvector.h"
 #include "platform/opengl.h"
+#include "perobjectshaderbuffer.h"
 #include <vector>
 
 namespace Engine {
@@ -10,6 +11,7 @@ struct Vertice {
   Vec3 pos;
   Vec2 tex;
   Vec4 color;
+  Engine::PerObjectShaderBuffer::IndexType objectIndex;
 };
 
 class IndicesBlock {

@@ -3,6 +3,8 @@
 
 using namespace Game;
 
+Engine::PerObjectShaderBuffer* GameContainer::objectsMatricesList = NULL;
+
 
 GameContainer::GameContainer( Engine::Core *setCore )
 :core( setCore ) {
@@ -37,6 +39,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
   }
   this->core->Listen( this, Engine::EVENT_TYPE_CORE_CLOSE, GameContainer::OnAppClose );
   this->core->Listen( this, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnGraphicsInit );
+  this->objectsMatricesList = new Engine::PerObjectShaderBuffer();
 
   //this->_TestFile();
   //this->_TestImageLoader();
@@ -44,6 +47,10 @@ GameContainer::GameContainer( Engine::Core *setCore )
 }
 
 GameContainer::~GameContainer() {
+  SAFE_DELETE( this->objectsMatricesList );
+  for( auto& texture: this->texturesList ) {
+    delete texture.second;
+  }
 }
 
 void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
@@ -74,6 +81,9 @@ void GameContainer::OnAppClose( Engine::Listener* listener, Engine::Producer *pr
 //entry point
 void Engine::EntryPoint::Init( Core* core ) {
   game = new GameContainer( core );
+  if( core->renderer ) {
+    core->renderer->Listen( game, Engine::EventType::EVENT_TYPE_RENDERER_BEFORE_RENDER, GameContainer::BeforeRender );
+  }
 }//Init
 
 void Engine::EntryPoint::Destroy() {
@@ -81,8 +91,11 @@ void Engine::EntryPoint::Destroy() {
 }//Destroy
 
 void GameContainer::OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
-  //GameContainer *game = ( GameContainer* ) listener;
 }//OnGraphicsInit
+
+void GameContainer::BeforeRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  GameContainer::objectsMatricesList->Update();
+}//BeforeRender
 
 void GameContainer::_TestFile() {
   Engine::Memory testmem;
@@ -130,8 +143,8 @@ void GameContainer::_TestMesh() {
   static Engine::Mesh *mesh = 0;
   static Engine::Material *material;
   static Engine::ShaderProgram *shader;
-  static Engine::TextureType *texture0;
-  static Engine::TextureType *texture1;
+  static Engine::Texture *texture0;
+  static Engine::Texture *texture1;
   if( doInit ) {
     LOGI( "init..." );
     doInit = false;
@@ -152,11 +165,11 @@ void GameContainer::_TestMesh() {
     LOGI( "GetFile : %d", ( int ) res );
     Engine::ImageLoader loader;
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
-    texture0 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
+    texture0 = this->CreateTexture( "textures/glow.tga", loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
     res = this->core->GetFileManager()->GetFile( "textures/cat.bmp", imageFile );
     LOGI( "GetFile : %d", ( int ) res );
     loader.Load( imageFile.GetData(), imageFile.GetLength() );
-    texture1 = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
+    texture1 = this->CreateTexture( "textures/cat.bmp", loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
     LOGI( "new material..." );
     material = new Engine::Material( "test", shader );
     material->AddTexture( texture0 );
@@ -226,6 +239,12 @@ void GameContainer::_TestMesh() {
       this->CreateSprite( "/screen/border/bottom", "sprite-black", Vec2( 2.0f, height ), Vec3( 0.0f, -1.0f + height * 0.5f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
       this->CreateSprite( "/screen/border/top", "sprite-black", Vec2( 2.0f, height ), Vec3( 0.0f, 1.0f - height * 0.5f, -1.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraGUI.GetMatrixPointer() );
     }
+
+    uint32_t atlasWidth = 256, atlasHeight = 256;
+    Engine::Memory memAtlas( atlasWidth * atlasHeight * 4 );
+    Engine::Texture* textureAtlas = this->CreateTexture( "atlas0", atlasWidth, atlasHeight, memAtlas.GetData(), true, false, memAtlas.GetLength() );
+    textureAtlas->InitAtlas();
+    textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/cat.bmp" ) );
 
     //test static sprite
     LOGI( "new mesh..." );
@@ -309,17 +328,21 @@ void GameContainer::OnInitRender( Engine::Listener* listener, Engine::Producer *
 
 
 Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName ) {
-  Engine::Memory imageFile;
-  if( !this->core->GetFileManager()->GetFile( textureFileName, imageFile ) ) {
-    LOGE( "GameContainer::CreateMaterial => image '%s' not found", textureFileName.c_str() );
-    return NULL;
+  Engine::Texture *texture = this->GetTexture( textureFileName, true );
+  if( !texture ) {
+    Engine::Memory imageFile;
+    if( !this->core->GetFileManager()->GetFile( textureFileName, imageFile ) ) {
+      LOGE( "GameContainer::CreateMaterial => image '%s' not found", textureFileName.c_str() );
+      return NULL;
+    }
+    Engine::ImageLoader loader;
+    if( !loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
+      LOGE( "GameContainer::CreateMaterial => can't load image '%s'", textureFileName.c_str() );
+      return NULL;
+    }
+    texture = this->CreateTexture( textureFileName, loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
   }
-  Engine::ImageLoader loader;
-  if( !loader.Load( imageFile.GetData(), imageFile.GetLength() ) ) {
-    LOGE( "GameContainer::CreateMaterial => can't load image '%s'", textureFileName.c_str() );
-    return NULL;
-  }
-  Engine::Texture *texture = new Engine::TextureType( loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
+
   Engine::Material *material = this->CreateMaterial( name, shader );
   material->AddTexture( texture );
 
@@ -434,6 +457,8 @@ void GameContainer::DeleteObject( const std::string& objectName ) {
 
 Object::Object( const std::string &setName, Engine::Renderer *renderer, Engine::Material *material )
 :Mesh( renderer, material ), name( setName ), position( Vec3Null ), scale( Vec2One ), size( Vec2One ), rotation( 0.0f ), matrixChanged( true ) {
+  this->objectMatrixIndex = GameContainer::objectsMatricesList->AddContainer();
+  LOGI( "objectMatrixIndex => %d", this->objectMatrixIndex );
 }
 
 
@@ -498,14 +523,35 @@ void Object::BeforeRender() {
     mScale[ 1 ][ 1 ] = this->scale.y * this->size.y;
     this->matrix = mTrans * mRot * mScale;
     this->objectMatrix = &this->matrix[ 0 ][ 0 ];
-    LOGI( "calculated matrix: pos[%3.3f; %3.3f; %3.3f] scale[%3.3f; %3.3f] rot[%3.3f] matrix=>\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]\n[%3.3f; %3.3f; %3.3f; %3.3f]",
-      this->position.x, this->position.y, this->position.z, this->scale.x, this->scale.y, this->rotation,
-      this->matrix[ 0 ][ 0 ], this->matrix[ 0 ][ 1 ], this->matrix[ 0 ][ 2 ], this->matrix[ 0 ][ 3 ],
-      this->matrix[ 1 ][ 0 ], this->matrix[ 1 ][ 1 ], this->matrix[ 1 ][ 2 ], this->matrix[ 1 ][ 3 ],
-      this->matrix[ 2 ][ 0 ], this->matrix[ 2 ][ 1 ], this->matrix[ 2 ][ 2 ], this->matrix[ 2 ][ 3 ],
-      this->matrix[ 3 ][ 0 ], this->matrix[ 3 ][ 1 ], this->matrix[ 3 ][ 2 ], this->matrix[ 3 ][ 3 ]
-      );
+    Engine::PerObjectShaderBuffer::Container *matrixContainer = GameContainer::objectsMatricesList->GetContainer( this->objectMatrixIndex );
+    if( matrixContainer ) {
+      matrixContainer->modelMatrix = this->matrix;
+      matrixContainer->TexCoordsOffset = this->material->GetTextureCoordsOffset();
+      matrixContainer->TexCoordsScale = this->material->GetTextureCoordsScale();
+      LOGI( "Object::BeforeRender => container found" );
+    } else {
+      LOGE( "Object::BeforeRender => matrix container not found" );
+    }
 
     this->matrixChanged = false;
   }
 }//BeforeRender
+
+Engine::Texture* GameContainer::CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, Engine::ImageType setImageFormat ) {
+  Engine::Texture *texture = new Engine::TextureType( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat );
+  this->texturesList.insert( std::make_pair( name, texture ) );
+
+  return texture;
+}//CreateTexture
+
+Engine::Texture* GameContainer::GetTexture( const std::string &name, bool supressWarning ) {
+  auto texture = this->texturesList.find( name );
+  if( texture == this->texturesList.end() ) {
+    if( !supressWarning ) {
+      LOGE( "GameContainer::GetTexture => texture '%s' not found", name.c_str() );
+    }
+    return NULL;
+  }
+
+  return texture->second;
+}//GetTexture

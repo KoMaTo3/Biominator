@@ -32,9 +32,9 @@ void Mesh::Render( float *worldMatrix ) {
   this->BeforeRender();
 
   LOGI( "apply attribs, vPosition[%d] vTex[%d]", this->material->shaderProgram->GetAttribLocation( "vPosition" ), this->material->shaderProgram->GetAttribLocation( "vTex" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, pos ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vPosition" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + sizeof( Vec3 ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, tex ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTex" ) );
 
   if( this->customProjectionMatrix ) {
