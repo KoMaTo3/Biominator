@@ -10,6 +10,9 @@
     <Filter Include="math">
       <UniqueIdentifier>{6746387d-60bc-424b-bf99-3f90910b52ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{f65cecdf-4d0d-4f26-9baf-3eb00cdc6b3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\jni\win32\core.cpp">

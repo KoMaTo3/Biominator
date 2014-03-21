@@ -14,6 +14,7 @@ enum ImageType {
   IMAGE_TYPE_DXT1    = 5,
   IMAGE_TYPE_DXT3    = 6,
   IMAGE_TYPE_DXT5    = 7,
+  IMAGE_TYPE_ETC1    = 8,
 };
 
 class ImageLoader {
@@ -28,6 +29,7 @@ public:
   bool LoadDXT1( const unsigned char *data, const size_t dataLength );
   bool LoadDXT3( const unsigned char *data, const size_t dataLength );
   bool LoadDXT5( const unsigned char *data, const size_t dataLength );
+  bool LoadETC1( const unsigned char *data, const size_t dataLength );
   ImageType GetImageType( const unsigned char *data, const size_t dataLength ) const;
   inline bool IsCompressed() const { return this->isCompressed; }
 

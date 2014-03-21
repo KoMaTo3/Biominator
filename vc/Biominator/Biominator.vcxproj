@@ -149,6 +149,8 @@
     <ClInclude Include="..\..\jni\math\kvector.h" />
     <ClInclude Include="..\..\jni\memory.h" />
     <ClInclude Include="..\..\jni\mesh.h" />
+    <ClInclude Include="..\..\jni\platform\opengl.h" />
+    <ClInclude Include="..\..\jni\platform\texture.h" />
     <ClInclude Include="..\..\jni\predefines.h" />
     <ClInclude Include="..\..\jni\producer.h" />
     <ClInclude Include="..\..\jni\renderer.h" />

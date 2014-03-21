@@ -36,6 +36,9 @@ bool ImageLoader::Load( const unsigned char *data, const size_t dataLength ) {
   case IMAGE_TYPE_DXT5: 
     LOGW( "ImageLoader::Load => DXT5" );
     return this->LoadDXT5( data, dataLength );
+  case IMAGE_TYPE_ETC1: 
+    LOGW( "ImageLoader::Load => ETC1" );
+    return this->LoadETC1( data, dataLength );
   default:;
   }
   LOGE( "ImageLoader::Load => unknown format, data length[%d]", dataLength );
@@ -76,6 +79,10 @@ ImageType ImageLoader::GetImageType( const unsigned char *data, const size_t dat
 
     if( *sign == 0x35747864 ) { //DXT5
       return IMAGE_TYPE_DXT5;
+    }
+
+    if( *sign == 0x31637465 ) { //ETC1
+      return IMAGE_TYPE_ETC1;
     }
   }
   if( dataLength >= 10 ) {
@@ -385,3 +392,29 @@ bool ImageLoader::LoadDXT5( const unsigned char *data, const size_t dataLength )
 
   return true;
 }//LoadDXT5
+
+bool ImageLoader::LoadETC1( const unsigned char *data, const size_t dataLength ) {
+  uint32_t
+    *width,
+    *height;
+  this->imageDataRGBA.Free();
+  const size_t FOURCCSIZE = 4;
+  const size_t MINIMAL_ETC1_FILE_SIZE = FOURCCSIZE + sizeof( *width ) * 2 + 8;
+  this->imageType = IMAGE_TYPE_ETC1;
+  this->isCompressed = true;
+  if( dataLength < MINIMAL_ETC1_FILE_SIZE ) {
+    LOGE( "ImageLoader::LoadETC1 => dataLength[%d] minimal[%d]", dataLength, MINIMAL_ETC1_FILE_SIZE );
+    return false;
+  }
+
+  width   = ( uint32_t* ) ( data + FOURCCSIZE );
+  height  = ( uint32_t* ) ( data + FOURCCSIZE + sizeof( *width ) );
+  this->imageWidth = *width;
+  this->imageHeight = *height;
+
+  size_t dataSize = this->imageWidth * this->imageHeight;
+  this->imageDataRGBA.Alloc( dataSize );
+  memcpy( this->imageDataRGBA.GetData(), data + FOURCCSIZE + sizeof( *width ) * 2, dataSize );
+
+  return true;
+}//LoadETC1

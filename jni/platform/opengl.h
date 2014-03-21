@@ -9,6 +9,7 @@
 #include "../win32/opengl/glext.h"
 #include "../win32/opengl/wglext.h"
 #include "../interngl.h"
+#define GL_ETC1_RGB8_OES (0)
 
 #elif IS_ANDROID
 
@@ -25,5 +26,6 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 //#include "../interngl.h"
+#define GL_ETC1_RGB8_OES (0)
 
 #endif
