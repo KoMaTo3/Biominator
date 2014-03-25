@@ -32,6 +32,7 @@
 #include "math/kmatrix.h"
 #include "camera2d.h"
 #include "camera3d.h"
+#include "perobjectshaderbuffer.h"
 
 
 namespace Game {
@@ -49,6 +50,7 @@ public:
   static void OnGraphicsInit( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnAfterRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   static void OnInitRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+  static void BeforeRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
   void AppExit();
   void AppSuspend();
   void _TestFile();
@@ -64,6 +66,10 @@ public:
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName );
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color );
   Engine::ShaderProgram* CreateShader( const std::string& name, const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName );
+  Engine::ShaderProgram* GetShader( const std::string& name, bool supressWarning = false );
+  Engine::Texture* CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, Engine::ImageType setImageFormat = Engine::IMAGE_TYPE_UNKNOWN );
+  Engine::Texture* CreateTexture( const std::string &fileName );
+  Engine::Texture* GetTexture( const std::string &name, bool supressWarning = false );
 
   Engine::Core *core;
   Engine::Camera2d
@@ -71,6 +77,8 @@ public:
     cameraGUI;
   Engine::Camera3d
     camera3D;
+
+  static Engine::PerObjectShaderBuffer *objectsMatricesList;
 
 private:
   GameContainer();
@@ -82,10 +90,12 @@ private:
   typedef std::unordered_map< std::string, Engine::Material* > MaterialListType;
   typedef std::unordered_map< std::string, Engine::ShaderProgram* > ShaderListType;
   typedef std::unordered_map< std::string, Object* > ObjectListType;
+  typedef std::unordered_map< std::string, Engine::Texture* > TextureListType;
 
   MaterialListType materialsList;
   ShaderListType shadersList;
   ObjectListType objectsList;
+  TextureListType texturesList;
 };
 
 GameContainer *game = NULL;
@@ -113,6 +123,7 @@ private:
   float rotation;
   Mat4 matrix;
   bool matrixChanged;
+  Engine::PerObjectShaderBuffer::IndexType objectMatrixIndex;
 };
 
 };  //namespace Game

@@ -40,7 +40,7 @@ public:
   bool      operator!=(  const Vec2 &a ) const;            // exact compare, no epsilon
 
   float     Length( void ) const;
-  float     LengthFast( void ) const;
+  //float     LengthFast( void ) const;
   float     LengthSqr( void ) const;
   float     Normalize( void );      // returns length
   float     NormalizeFast( void );    // returns length
@@ -148,12 +148,14 @@ KM_INLINE float Vec2::Length( void ) const {
   return ( float )Math::Sqrt( x * x + y * y );
 }
 
+/*
 KM_INLINE float Vec2::LengthFast( void ) const {
   float sqrLength;
 
   sqrLength = x * x + y * y;
   return sqrLength * Math::RSqrt( sqrLength );
 }
+*/
 
 KM_INLINE float Vec2::LengthSqr( void ) const {
   return ( x * x + y * y );
@@ -346,7 +348,7 @@ public:
   Vec3 &    Cross( const Vec3 &a, const Vec3 &b );
   float     Length( void ) const;
   float     LengthSqr( void ) const;
-  float     LengthFast( void ) const;
+  //float     LengthFast( void ) const;
   float     Normalize( void );        // returns length
   float     NormalizeFast( void );      // returns length
   Vec3 &    Truncate( float length );    // cap length
@@ -625,12 +627,14 @@ KM_INLINE float Vec3::LengthSqr( void ) const {
   return ( x * x + y * y + z * z );
 }
 
+/*
 KM_INLINE float Vec3::LengthFast( void ) const {
   float sqrLength;
 
   sqrLength = x * x + y * y + z * z;
   return sqrLength * Math::RSqrt( sqrLength );
 }
+*/
 
 KM_INLINE float Vec3::Normalize( void ) {
   float sqrLength, invLength;

@@ -14,6 +14,9 @@ public:
   virtual ~TextureWin32();
   virtual void ReInitialize();
 
+protected:
+  virtual void PlaceToAtlas( Texture* textureAtlas, Engine::Rect< uint32_t > *rect );
+
 private:
   TextureWin32();
   TextureWin32( TextureWin32& );

@@ -6,6 +6,7 @@ namespace Engine {
 
 class Material;
 class Renderer;
+class PerObjectShaderBuffer;
 
 class Mesh {
 public:
@@ -13,10 +14,12 @@ public:
   virtual ~Mesh();
   virtual void Render( float *worldMatrix = 0 );
   virtual void BeforeRender();
-  VertexBufferWriter *vertices;
+  virtual void EnableRender( bool setEnabled = true );
   VertexBufferWriter* ResizeVertexBuffer( unsigned short setSize );
   inline Mesh* SetWorldMatrix( float *setWorldMatrix ) { this->customWorldMatrix = setWorldMatrix; return this; }
   inline Mesh* SetProjectionMatrix( float *setProjectionMatrix ) { this->customProjectionMatrix = setProjectionMatrix; return this; }
+
+  VertexBufferWriter *vertices;
 
 protected:
   float *objectMatrix;
@@ -30,6 +33,7 @@ private:
   Mesh& operator=( Mesh& );
 
   VertexBufferGL vertexBuffer;
+  bool enabled;
 };
 
 };

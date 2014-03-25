@@ -66,11 +66,12 @@ ShaderProgram::~ShaderProgram() {
 }
 
 
-GLint ShaderProgram::GetUniformLocation( const std::string& uniformName ) {
+GLint ShaderProgram::GetUniformLocation( const std::string& uniformName ) const {
+  LOGI( "ShaderProgram::GetUniformLocation => program[%d] name['%s']", this->program, uniformName.c_str() );
   return glGetUniformLocation( this->program, uniformName.c_str() );
 }//GetUniformLocation
 
-GLint ShaderProgram::GetAttribLocation( const std::string& attribName ) {
+GLint ShaderProgram::GetAttribLocation( const std::string& attribName ) const {
   return glGetAttribLocation( this->program, attribName.c_str() );
 }//GetAttribLocation
 

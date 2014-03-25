@@ -1,5 +1,4 @@
 #pragma once
-#include "predefines.h"
 #if IS_LINUX
 
 #include "../texture.h"
@@ -8,8 +7,8 @@
 
 namespace Engine {
 
-//class TextureLinux;
-//typedef TextureLinux TextureType;
+class TextureLinux;
+typedef TextureLinux TextureType;
 
 class TextureLinux: public Texture {
 public:

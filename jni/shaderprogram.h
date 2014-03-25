@@ -14,8 +14,8 @@ public:
   virtual ~ShaderProgram();
   bool AttachVertexShader( const char *content, const size_t length );
   bool AttachFragmentShader( const char *content, const size_t length );
-  GLint GetUniformLocation( const std::string& uniformName );
-  GLint GetAttribLocation( const std::string& attribName );
+  GLint GetUniformLocation( const std::string& uniformName ) const;
+  GLint GetAttribLocation( const std::string& attribName ) const;
   void UseProgram();
 
 private:

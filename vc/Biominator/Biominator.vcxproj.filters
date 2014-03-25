@@ -10,6 +10,9 @@
     <Filter Include="math">
       <UniqueIdentifier>{6746387d-60bc-424b-bf99-3f90910b52ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{f65cecdf-4d0d-4f26-9baf-3eb00cdc6b3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\jni\win32\core.cpp">
@@ -115,6 +118,12 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\jni\camera.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\perobjectshaderbuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\jni\squareatlas.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -237,6 +246,18 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\jni\camera.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\perobjectshaderbuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\platform\opengl.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\platform\texture.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\jni\squareatlas.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
