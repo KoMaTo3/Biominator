@@ -14,6 +14,7 @@ enum ImageType {
   IMAGE_TYPE_DXT1    = 5,
   IMAGE_TYPE_DXT3    = 6,
   IMAGE_TYPE_DXT5    = 7,
+  IMAGE_TYPE_ETC1    = 8,
 };
 
 class ImageLoader {

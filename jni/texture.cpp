@@ -34,7 +34,9 @@ void Texture::MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *
     GLenum format = 
       ( this->imageFormat == IMAGE_TYPE_DXT1 ? GL_COMPRESSED_RGBA_S3TC_DXT1_EXT :
       ( this->imageFormat == IMAGE_TYPE_DXT3 ? GL_COMPRESSED_RGBA_S3TC_DXT3_EXT :
-      ( this->imageFormat == IMAGE_TYPE_DXT5 ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : 0
+      ( this->imageFormat == IMAGE_TYPE_DXT5 ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT :
+      ( this->imageFormat == IMAGE_TYPE_ETC1 ? GL_ETC1_RGB8_OES : 0
+      )
       )
       )
       );

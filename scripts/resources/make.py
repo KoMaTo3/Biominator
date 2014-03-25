@@ -209,8 +209,11 @@ class FileParserWin32( FileParser ):
 #
 class FileParserLinux( FileParser ):
     def __init__( self, config = {} ):
-        super().__init__()
+        super().__init__( config )
         self.platform = 'linux'
+        self.parseByExt.update({
+            #'.tga': self.RawCopy
+        })
 
 #class FileParserLinux
 
@@ -219,8 +222,11 @@ class FileParserLinux( FileParser ):
 #
 class FileParserAndroid( FileParser ):
     def __init__( self, config = {} ):
-        super().__init__()
+        super().__init__( config )
         self.platform = 'android'
+        self.parseByExt.update({
+            #'.tga': self.RawCopy
+        })
 
 #class FileParserAndroid
 
