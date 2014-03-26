@@ -16,6 +16,7 @@ public:
 
 protected:
   virtual void PlaceToAtlas( Texture* textureAtlas, Engine::Rect< uint32_t > *rect );
+  virtual void ClearPlaceInAtlas( Texture* textureAtlas );
 
 private:
   TextureWin32();

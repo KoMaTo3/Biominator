@@ -58,8 +58,41 @@ void TextureWin32::PlaceToAtlas( Texture* textureAtlas, Engine::Rect< uint32_t >
     this->textureId = atlas->textureId;
     this->atlasFotThis = atlas;
     this->texCoordsScale.Set( float( this->width ) / float( atlas->width ), float( this->height ) / float( atlas->height ) );
-    this->texCoordsOffset.Set( float( rect->left ) / float( atlas->width ), float( rect->top ) / float( atlas->height ) );
+    this->texCoordsOffset.Set( float( rect->left + 1 ) / float( atlas->width ), float( rect->top + 1 ) / float( atlas->height ) );
   }
 
   atlas->MakeFromBuffer( atlas->width, atlas->height, atlas->savedBuffer.GetData(), atlas->dataLength );
 }//PlaceToAtlas
+
+
+void TextureWin32::ClearPlaceInAtlas( Texture* textureAtlas ) {
+  if( !this->atlasFotThis ) {
+    LOGE( "TextureWin32::ClearPlaceInAtlas => this texture not in atlas" );
+    return;
+  }
+
+  if( this == textureAtlas ) {
+    LOGE( "TextureWin32::ClearPlaceInAtlas => this == atlas" );
+    return;
+  }
+
+  TextureWin32 *atlas = static_cast< TextureWin32* >( textureAtlas );
+
+  uint32_t
+    destStride = atlas->width * 4,
+    bytesPerRow = ( this->width + 2 ) * 4;
+  uint8_t *destData = atlas->savedBuffer.GetData() + this->placeInAtlas->top * destStride + ( this->placeInAtlas->left << 2 );
+
+  for( uint32_t y = 0; y < this->height + 2; ++y ) {
+    memset( destData, 0, bytesPerRow );
+    destData += destStride;
+  }
+
+  glGenTextures( 1, &this->textureId );
+  this->atlasFotThis = 0;
+  this->texCoordsScale = Vec2One;
+  this->texCoordsOffset = Vec2Null;
+  this->MakeFromBuffer( this->width, this->height, this->savedBuffer.GetData(), this->savedBuffer.GetLength() );
+
+  atlas->MakeFromBuffer( atlas->width, atlas->height, atlas->savedBuffer.GetData(), atlas->dataLength );
+}//ClearPlaceInAtlas

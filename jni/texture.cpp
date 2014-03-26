@@ -6,7 +6,7 @@ using namespace Engine;
 
 Texture::Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat )
 :width( setWidth ), height( setHeight ), isTransparent( setIsTransparent ), textureId( 0 ), isCompressed( setIsCompressed ), dataLength( setDataLength ? setDataLength : setWidth * setHeight * 4 )
-,imageFormat( setImageFormat ), texCoordsOffset( Vec2Null ), texCoordsScale( Vec2One ), atlas( 0 ), atlasFotThis( 0 ) {
+,imageFormat( setImageFormat ), texCoordsOffset( Vec2Null ), texCoordsScale( Vec2One ), atlas( 0 ), atlasFotThis( 0 ), placeInAtlas( 0 ) {
   if( data ) {
     this->MakeFromBuffer( setWidth, setHeight, data, setDataLength );
   } else {
@@ -16,12 +16,17 @@ Texture::Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool s
 }
 
 Texture::~Texture() {
-  if( this->textureId && !atlasFotThis ) {
+  if( this->atlasFotThis ) {
+    this->atlasFotThis->UnbindTextureFromThisAtlas( this );
+  }
+
+  if( this->textureId && !this->atlasFotThis ) {
     LOGI( "~Texture => id[%d]", this->textureId );
     glDeleteTextures( 1, &this->textureId );
   }
 
   SAFE_DELETE( this->atlas );
+  SAFE_DELETE( this->placeInAtlas );
   LOGI( "~Texture %p", this );
 }
 
@@ -44,8 +49,14 @@ bool Texture::BindTextureToThisAtlas( Texture* texture ) {
     return false;
   }
 
-  if( !this->atlas ) {
+  if( !this->IsAtlas() ) {
     LOGE( "Texture::BindTextureToThisAtlas => this is not atlas" );
+    return false;
+  }
+
+  if( texture->IsAtlas() ) {
+    LOGE( "Texture::BindTextureToThisAtlas => can't move atlas in atlas" );
+    return false;
   }
 
   Engine::Size space( texture->GetWidth() + 2, texture->GetHeight() + 2 );
@@ -57,14 +68,49 @@ bool Texture::BindTextureToThisAtlas( Texture* texture ) {
   Engine::Rect< uint32_t > resultPlace;
   this->atlas->Cut( space, &resultPlace );
   texture->PlaceToAtlas( this, &resultPlace );
+  texture->placeInAtlas = new TexturePlaceRect( resultPlace );
 
   return true;
 }//BindTextureToThisAtlas
 
 
+bool Texture::UnbindTextureFromThisAtlas( Texture* texture ) {
+  if( !texture ) {
+    LOGE( "Texture::UnbindTextureFromThisAtlas => texture is null" );
+    return false;
+  }
+
+  if( !this->IsAtlas() ) {
+    LOGE( "Texture::UnbindTextureFromThisAtlas => this is not atlas" );
+    return false;
+  }
+
+  if( texture->IsAtlas() ) {
+    LOGE( "Texture::UnbindTextureFromThisAtlas => texture is atlas, this can't be in other atlas" );
+    return false;
+  }
+
+  if( !texture->placeInAtlas ) {
+    LOGE( "texture->placeInAtlas is NULL => %p", texture );
+  }
+  this->atlas->Release( *texture->placeInAtlas );
+  texture->ClearPlaceInAtlas( this );
+  LOGI( "SAFE_DELETE( texture->placeInAtlas ) => %p", texture );
+  SAFE_DELETE( texture->placeInAtlas );
+  texture->atlasFotThis = 0;
+
+  return true;
+}//UnbindTextureFromThisAtlas
+
+
 void Texture::PlaceToAtlas( Texture* texture, Engine::Rect< uint32_t > *rect ) {
   LOGE( "Texture::PlaceToAtlas => NYI" );
 }//PlaceToAtlas
+
+
+void Texture::ClearPlaceInAtlas( Texture* textureAtlas ) {
+  LOGE( "Texture::ClearPlaceInAtlas => NYI" );
+}//ClearPlaceInAtlas
 
 
 void Texture::MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *data, size_t dataLength ) {

@@ -48,8 +48,14 @@ GameContainer::GameContainer( Engine::Core *setCore )
 
 GameContainer::~GameContainer() {
   SAFE_DELETE( this->objectsMatricesList );
-  for( auto& texture: this->texturesList ) {
-    delete texture.second;
+
+  //за первый проход удаляем свободные текстуры, за второй - атласы
+  for( int pass = 0; pass < 2; ++pass ) {
+    for( auto& texture: this->texturesList ) {
+      if( texture.second && texture.second->IsAtlas() == ( pass == 1 ) ) {
+        SAFE_DELETE( texture.second );
+      }
+    }
   }
 }
 
@@ -270,6 +276,13 @@ void GameContainer::_TestMesh() {
     vertices->Get( 5 ).pos.Set( 1.0f, 1.0f, 1.0f );
     vertices->Get( 5 ).tex.Set( 1.0f, 0.0f );
     */
+    textureAtlas->BindTextureToThisAtlas( this->CreateTexture( "textures/alik16.bmp" ) );
+    for( int q = 0; q < 100; ++q ) {
+      textureAtlas->UnbindTextureFromThisAtlas( this->GetTexture( "textures/alik16.bmp" ) );
+      textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/alik16.bmp" ) );
+    }
+    this->CreateMaterial( "sprite-t-alik", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
+    this->CreateSprite( "test/alik", "sprite-t-alik", Vec2( 0.5f, 0.5f ), Vec3( -0.5f, 0.5f, -1.0f ), Vec2( 2.0f, 1.0f ), 0.4f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 
     LOGI( "ok" );
   } else {
