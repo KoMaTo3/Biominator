@@ -50,7 +50,7 @@ GameContainer::GameContainer( Engine::Core *setCore )
 GameContainer::~GameContainer() {
   SAFE_DELETE( this->objectsMatricesList );
 
-  //за первый проход удаляем свободные текстуры, за второй - атласы
+  //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ
   for( int pass = 0; pass < 2; ++pass ) {
     for( auto& texture: this->texturesList ) {
       if( texture.second && texture.second->IsAtlas() == ( pass == 1 ) ) {
@@ -184,13 +184,13 @@ void GameContainer::_TestMesh() {
     Object *object = this->CreateSprite( "test", "sprite-t", Vec2( 1.0f, 1.0f ), Vec3( -0.5f, -0.5f, 0.0f ), Vec2( 1.0f, 0.5f ), 0.0f );
 
     Vec2 screenScale( 1.0f, 1.0f );
-    bool isLandscape = false;
+    //bool isLandscape = false;
     if( this->core->renderer->GetScreenWidth() > this->core->renderer->GetScreenHeight() ) {
       screenScale.Set( ( ( float ) this->core->renderer->GetScreenHeight() ) / ( ( float ) this->core->renderer->GetScreenWidth() ) , 1.0f );
-      isLandscape = true;
+      //isLandscape = true;
     } else {
       screenScale.Set( 1.0f, ( ( float ) this->core->renderer->GetScreenWidth() ) / ( ( float ) this->core->renderer->GetScreenHeight() ) );
-      isLandscape = false;
+      //isLandscape = false;
     }
     LOGI( "scale: %3.3f x %3.3f", screenScale.x, screenScale.y );
     this->cameraMain.SetPosition( Vec3( 0.5f, 0.5f, 0.0f ) );

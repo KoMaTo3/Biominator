@@ -4,7 +4,7 @@
 using namespace Engine;
 
 Camera3d::Camera3d()
-:position( Vec3Null ), matrixChanged( true ), rotation( 0.0f, 0.0f, 0.0f, 1.0f ), FOV( Math::HALF_PI ), planeNear( 0.01f ), planeFar( 1000.0f ), aspect( 1.0f ) {
+:planeNear( 0.01f ), planeFar( 1000.0f ), FOV( Math::HALF_PI ), aspect( 1.0f ), position( Vec3Null ), rotation( 0.0f, 0.0f, 0.0f, 1.0f ), matrixChanged( true ) {
 }
 
 Camera3d::~Camera3d() {
