@@ -42,6 +42,7 @@ public:
 
   void Init( const Engine::Size& size );
   bool Cut( const Engine::Size& size, Engine::Rect< uint32_t > *result );
+  void Release( const Engine::Rect< uint32_t > &rect );
   bool HasPlace( const Engine::Size& size );
 
   bool _CanBePlaced( const Engine::Size& _who, const Engine::Rect< uint32_t > *_where );

@@ -105,6 +105,32 @@ bool SquareAtlas::Cut( const Engine::Size& size, Engine::Rect< uint32_t > *resul
 }//Cut
 
 
+// Если есть возможность - объединить свободные блоки, иначе просто добавить новый свободный блок
+void SquareAtlas::Release( const Engine::Rect< uint32_t > &rect ) {
+  for( auto &freeRect: this->items ) {
+    if( freeRect.second.top == rect.top && freeRect.second.bottom == rect.bottom ) {
+      if( freeRect.second.left == rect.right + 1 ) {
+        freeRect.second.left = rect.left;
+        return;
+      } else if( freeRect.second.right == rect.left - 1 ) {
+        freeRect.second.right = rect.right;
+        return;
+      }
+    } else if( freeRect.second.left == rect.left && freeRect.second.right == rect.right ) {
+      if( freeRect.second.top == rect.bottom + 1 ) {
+        freeRect.second.top = rect.top;
+        return;
+      } else if( freeRect.second.bottom == rect.top - 1 ) {
+        freeRect.second.bottom = rect.bottom;
+        return;
+      }
+    }
+  }
+
+	this->items.insert( SquareAtlasMap::value_type( _MapKey( rect ), rect ) );
+}//Release
+
+
 bool SquareAtlas::_CanBePlaced( const Engine::Size& _who, const Engine::Rect<uint32_t> *_where ) {
   if( _who.width > _where->right - _where->left + 1 ) {
     return false;

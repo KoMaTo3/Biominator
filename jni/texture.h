@@ -7,6 +7,8 @@
 
 namespace Engine {
 
+typedef Engine::Rect< uint32_t > TexturePlaceRect;
+
 class Texture {
 public:
   Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, ImageType setImageFormat = IMAGE_TYPE_UNKNOWN );
@@ -18,12 +20,15 @@ public:
   inline Vec2 GetCoordsScale() const { return this->texCoordsScale; };
   bool InitAtlas();
   bool BindTextureToThisAtlas( Texture* texture );
+  bool UnbindTextureFromThisAtlas( Texture* texture );
   inline size_t GetWidth() const { return this->width; };
   inline size_t GetHeight() const { return this->height; };
+  inline bool IsAtlas() const { return this->atlas != 0; };
 
 protected:
   virtual void MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *data, size_t dataLength );
   virtual void PlaceToAtlas( Texture* textureAtlas, Engine::Rect< uint32_t > *rect );
+  virtual void ClearPlaceInAtlas( Texture* textureAtlas );
 
   size_t
     width,
@@ -37,6 +42,7 @@ protected:
     texCoordsScale;
   SquareAtlas *atlas;
   Texture *atlasFotThis;
+  TexturePlaceRect *placeInAtlas;
 
   GLuint textureId;
 

@@ -32,21 +32,21 @@ void Mesh::Render( float *worldMatrix ) {
   this->BeforeRender();
 
   LOGI( "apply attribs, vPosition[%d] vTex[%d]", this->material->shaderProgram->GetAttribLocation( "vPosition" ), this->material->shaderProgram->GetAttribLocation( "vTex" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, pos ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vPosition" ), 3, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, pos ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vPosition" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, tex ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTex" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, tex ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTex" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat0" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 0 ] ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat0" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, modelMatrix ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat0" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat1" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 1 ] ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat1" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, modelMatrix ) + sizeof( Vec4 ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat1" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat2" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 2 ] ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat2" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, modelMatrix ) + 2 * sizeof( Vec4 ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat2" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat3" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, modelMatrix[ 3 ] ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vModelMat3" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, modelMatrix ) + 3 * sizeof( Vec4 ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vModelMat3" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexScale" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, texCoordsScale ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexScale" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, texCoordsScale ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexScale" ) );
-  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + FIELD_OFFSET( Vertice, texCoordsOffset ) ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, texCoordsOffset ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ) );
 
   if( this->customProjectionMatrix ) {
