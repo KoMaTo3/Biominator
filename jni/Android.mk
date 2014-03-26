@@ -25,10 +25,12 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     math/kvector.cpp \
                     memory.cpp \
                     mesh.cpp \
+                    perobjectshaderbuffer.cpp \
                     producer.cpp \
                     renderer.cpp \
                     shadermanager.cpp \
                     shaderprogram.cpp \
+                    squareatlas.cpp \
                     texture.cpp \
                     tools.cpp \
                     types.cpp \

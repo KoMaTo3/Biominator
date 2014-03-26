@@ -32,9 +32,9 @@ struct Size
   uint32_t width;
   uint32_t height;
 
-  Size() {}
+  Size();
   Size( const Size &newSize ) { this->height = newSize.height; this->width = newSize.width; }
-  Size( const uint32_t &newWidth, const uint32_t &newHeight ) { this->width = newWidth; this->height = newHeight; }
+  Size( const uint32_t &newWidth, const uint32_t &newHeight );
   Size operator+( const Size& when ){ return Size( this->width + when.width, this->height + when.height ); }
 };
 
