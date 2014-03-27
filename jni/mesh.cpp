@@ -7,7 +7,7 @@
 using namespace Engine;
 
 Mesh::Mesh( Renderer *setRenderer, Material *setMaterial )
-:vertices( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), objectMatrix( NULL ), customWorldMatrix( NULL ), customProjectionMatrix( NULL ), enabled( false ) {
+:vertices( NULL ), objectMatrix( NULL ), customWorldMatrix( NULL ), customProjectionMatrix( NULL ), material( setMaterial ), vertexBuffer( setRenderer ), enabled( false ) {
 }
 
 

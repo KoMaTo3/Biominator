@@ -15,6 +15,9 @@
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT (0)
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT (0)
 
 #elif IS_LINUX
 

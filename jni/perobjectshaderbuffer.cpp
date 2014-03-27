@@ -14,7 +14,7 @@ PerObjectShaderBuffer::~PerObjectShaderBuffer() {
 
 PerObjectShaderBuffer::IndexType PerObjectShaderBuffer::AddContainer() {
   if( !this->freeIndicies.empty() ) {
-    PerObjectShaderBuffer::IndexType index = *this->freeIndicies.end();
+    //PerObjectShaderBuffer::IndexType index = *this->freeIndicies.end();
     this->freeIndicies.pop_back();
   }
 

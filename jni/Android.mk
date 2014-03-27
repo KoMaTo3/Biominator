@@ -4,6 +4,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := Biominator
 LOCAL_SRC_FILES :=  Biominator.cpp \
+										camera.cpp \
+										camera2d.cpp \
+										camera3d.cpp \
                     core.cpp \
                     entrypoint.cpp \
                     event.cpp \
@@ -14,12 +17,20 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     imageloader.cpp \
                     listener.cpp \
                     material.cpp \
+                    math/kangles.cpp \
+                    math/klib.cpp \
+                    math/kmath.cpp \
+                    math/kmatrix.cpp \
+                    math/kquat.cpp \
+                    math/kvector.cpp \
                     memory.cpp \
                     mesh.cpp \
+                    perobjectshaderbuffer.cpp \
                     producer.cpp \
                     renderer.cpp \
                     shadermanager.cpp \
                     shaderprogram.cpp \
+                    squareatlas.cpp \
                     texture.cpp \
                     tools.cpp \
                     types.cpp \

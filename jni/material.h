@@ -4,6 +4,7 @@
 #include "math/kvector.h"
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 namespace Engine {
 
