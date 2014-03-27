@@ -7,7 +7,7 @@ FileManagerAndroid::FileManagerAndroid( AAssetManager *setAssetManager )
 :FileManager(), assetManager( setAssetManager ) {
   LOGI( "+FileManagerAndroid" );
   Memory fileContent;
-  if( this->GetFile( "data/.list", fileContent, true ) ) {
+  if( this->GetFile( "list", fileContent, true ) ) {
     this->InitList( fileContent );
   }
 }

@@ -178,7 +178,7 @@ class FileParser:
         return pathDest
 
     def WriteFilesList( self ):
-        fileName = self.releaseDir + self.dataDestName + '/' + '.list'
+        fileName = self.releaseDir + self.dataDestName + '/' + 'list'
         f = open( fileName, 'w+' )
         f.write( '//Generated: %s\n' % ( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) ) )
         offsetSrc = len( self.dataSrcName ) + 1
@@ -240,8 +240,8 @@ def CreateWin32Parser():
     return FileParserWin32( dict( release_dir = 'C:/temp/git/Biominator/vc/Biominator/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-win32' ) )
 
 def CreateAndroidParser():
-    #return FileParserAndroid( dict( release_dir = 'j:/android/projects/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
-    return FileParserAndroid( dict( release_dir = 'C:/temp/git/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
+    return FileParserAndroid( dict( release_dir = 'j:/android/projects/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
+    #return FileParserAndroid( dict( release_dir = 'C:/temp/git/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
 
 def CreateLinuxParser():
     return FileParserLinux( dict( release_dir = '/home/komato3/workspace/Biominator/linux/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-linux' ) )

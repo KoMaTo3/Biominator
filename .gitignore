@@ -56,3 +56,4 @@ scripts/resources/data
 scripts/resources/release-*
 scripts/resources/~release-*
 scripts/resources/__pycache__/
+scripts/resources/config.py

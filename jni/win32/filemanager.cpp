@@ -11,7 +11,7 @@ FileManagerWin32::FileManagerWin32( const std::string& setRootDir )
   }
 
   Memory fileContent;
-  if( this->GetFile( ".list", fileContent, true ) ) {
+  if( this->GetFile( "list", fileContent, true ) ) {
     LOGI( "FileManagerWin32 => loaded .list => parse" );
     this->InitList( fileContent );
   }

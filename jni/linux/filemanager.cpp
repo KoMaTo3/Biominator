@@ -12,7 +12,7 @@ FileManagerLinux::FileManagerLinux( const std::string& setRootDir )
   }
 
   Memory fileContent;
-  if( this->GetFile( ".list", fileContent, true ) ) {
+  if( this->GetFile( "list", fileContent, true ) ) {
     this->InitList( fileContent );
   }
 }
