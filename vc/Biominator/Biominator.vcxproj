@@ -106,6 +106,7 @@
     <ClCompile Include="..\..\jni\squareatlas.cpp" />
     <ClCompile Include="..\..\jni\texture.cpp" />
     <ClCompile Include="..\..\jni\tools.cpp" />
+    <ClCompile Include="..\..\jni\types.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffer.cpp" />
     <ClCompile Include="..\..\jni\vertexbuffergl.cpp" />
     <ClCompile Include="..\..\jni\win32\core.cpp">

@@ -45,9 +45,15 @@ public:
   void Release( const Engine::Rect< uint32_t > &rect );
   bool HasPlace( const Engine::Size& size );
 
+private:
   bool _CanBePlaced( const Engine::Size& _who, const Engine::Rect< uint32_t > *_where );
   bool _IsIntersect( const Engine::Rect< uint32_t >& square1, const Engine::Rect< uint32_t >& square2 );
   bool _IsHave( const Engine::Rect< uint32_t >& minSquare, const Engine::Rect< uint32_t >& maxSquare );
+  bool _CanBeCombined( Engine::Rect< uint32_t > firstPlace, Engine::Rect< uint32_t > secondPlace, Engine::Rect< uint32_t > *firstResult = 0, Engine::Rect< uint32_t > *secondResult = 0 );
+  void OptimizeFreeSpace();
+  Engine::Position _GetSliceEdge( const Engine::Rect< uint32_t > &firstPlace, const Engine::Rect< uint32_t > &secondPlace );
+  void _Slice( const Engine::Rect< uint32_t > &firstPlace, const Engine::Rect< uint32_t > &secondPlace, Engine::Rect< uint32_t > &result0, Engine::Rect< uint32_t > &result1 );
+  void _Combine( const Engine::Rect< uint32_t > &firstPlace, const Engine::Rect< uint32_t > &secondPlace, Engine::Rect< uint32_t > &result0, Engine::Rect< uint32_t > &result1 );
 
   void __Dump();
 };

@@ -59,6 +59,11 @@ bool Texture::BindTextureToThisAtlas( Texture* texture ) {
     return false;
   }
 
+  if( texture->isCompressed ) {
+    LOGE( "Texture::BindTextureToThisAtlas => can't move compressed texture to atlas" );
+    return false;
+  }
+
   Engine::Size space( texture->GetWidth() + 2, texture->GetHeight() + 2 );
   if( !this->atlas->HasPlace( space ) ) {
     LOGE( "Texture::BindTextureToThisAtlas => not enough space" );
@@ -92,6 +97,7 @@ bool Texture::UnbindTextureFromThisAtlas( Texture* texture ) {
 
   if( !texture->placeInAtlas ) {
     LOGE( "texture->placeInAtlas is NULL => %p", texture );
+    return false;
   }
   this->atlas->Release( *texture->placeInAtlas );
   texture->ClearPlaceInAtlas( this );

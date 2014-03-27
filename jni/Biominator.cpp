@@ -276,11 +276,13 @@ void GameContainer::_TestMesh() {
     vertices->Get( 5 ).pos.Set( 1.0f, 1.0f, 1.0f );
     vertices->Get( 5 ).tex.Set( 1.0f, 0.0f );
     */
+    textureAtlas->UnbindTextureFromThisAtlas( this->GetTexture( "textures/thu128.tga" ) );
     textureAtlas->BindTextureToThisAtlas( this->CreateTexture( "textures/alik16.bmp" ) );
     for( int q = 0; q < 100; ++q ) {
       textureAtlas->UnbindTextureFromThisAtlas( this->GetTexture( "textures/alik16.bmp" ) );
       textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/alik16.bmp" ) );
     }
+    textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/thu128.tga" ) );
     this->CreateMaterial( "sprite-t-alik", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
     this->CreateSprite( "test/alik", "sprite-t-alik", Vec2( 0.5f, 0.5f ), Vec3( -0.5f, 0.5f, -1.0f ), Vec2( 2.0f, 1.0f ), 0.4f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 

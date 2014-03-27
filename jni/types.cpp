@@ -13,13 +13,6 @@ Position::Position( const int setX, const int setY )
 Position::~Position() {
 }
 
-Size::Size()
-:width(), height() {
-}
-
-Size::Size( const int setWidth, const int setHeight )
-:width( setWidth ), height( setHeight ) {
-}
-
-Size::~Size() {
+Size::Size( const uint32_t &newWidth, const uint32_t &newHeight )
+:width( newWidth ), height( newHeight ) {
 }

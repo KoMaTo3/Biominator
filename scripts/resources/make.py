@@ -2,7 +2,8 @@ import os, shutil, re, struct, time, datetime
 import all_parse_shader, all_parse_picture
 
 #config
-platform = 'win32'
+from config import *
+platform = config_platform
 
 def Run( fileParser ):
     print( 'Resources package manager[ '+( fileParser.platform )+' ]' )
@@ -140,7 +141,8 @@ class FileParser:
         ext = fileInfo[ 1 ]
         timeStart = GetCurrentTime()
         if ext in self.parseByExt:
-            pathDest = self.parseByExt[ ext ]( pathSrc, pathDest, self, self.rules[ pathDest ] if pathDest in self.rules else None )
+            convertedPath = re.sub( r'^' + self.dataDestName + '\/', self.dataSrcName + '/', pathDest )
+            pathDest = self.parseByExt[ ext ]( pathSrc, pathDest, self, self.rules[ convertedPath ] if convertedPath in self.rules else None )
         else:
             self.RawCopy( pathSrc, pathDest )
         timeElapsed = GetCurrentTime() - timeStart
@@ -179,10 +181,12 @@ class FileParser:
         fileName = self.releaseDir + self.dataDestName + '/' + '.list'
         f = open( fileName, 'w+' )
         f.write( '//Generated: %s\n' % ( datetime.date.today().strftime( '%d.%m.%Y' ) + time.strftime( ' - %H:%M:%S' ) ) )
-        offset = len( self.dataSrcName ) + 1
+        offsetSrc = len( self.dataSrcName ) + 1
+        offsetDest = len( self.dataDestName ) + 1
         for file in self.filesList:
-            if file != self.filesList[ file ]:
-                f.write( file[offset:] + ':' + self.filesList[ file ][offset:] + '\n' )
+            convertedPath = re.sub( r'^' + self.dataDestName + '\/', self.dataSrcName + '/', self.filesList[ file ] )
+            if file != convertedPath:
+                f.write( file[offsetSrc:] + ':' + self.filesList[ file ][offsetDest:] + '\n' )
                 print( file + '\t=> ' + self.filesList[ file ] + ' [%d.ms]' % ( self.timing[ file ] ) )
         f.close()
 
@@ -209,8 +213,11 @@ class FileParserWin32( FileParser ):
 #
 class FileParserLinux( FileParser ):
     def __init__( self, config = {} ):
-        super().__init__()
+        super().__init__( config )
         self.platform = 'linux'
+        self.parseByExt.update({
+            #'.tga': self.RawCopy
+        })
 
 #class FileParserLinux
 
@@ -219,8 +226,11 @@ class FileParserLinux( FileParser ):
 #
 class FileParserAndroid( FileParser ):
     def __init__( self, config = {} ):
-        super().__init__()
+        super().__init__( config )
         self.platform = 'android'
+        self.parseByExt.update({
+            #'.tga': self.RawCopy
+        })
 
 #class FileParserAndroid
 
@@ -230,7 +240,8 @@ def CreateWin32Parser():
     return FileParserWin32( dict( release_dir = 'C:/temp/git/Biominator/vc/Biominator/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-win32' ) )
 
 def CreateAndroidParser():
-    return FileParserAndroid( dict( release_dir = 'j:/android/projects/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
+    #return FileParserAndroid( dict( release_dir = 'j:/android/projects/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
+    return FileParserAndroid( dict( release_dir = 'C:/temp/git/Biominator/', data_src_name = 'data', data_dest_name = 'assets', rules = '.rules-android' ) )
 
 def CreateLinuxParser():
     return FileParserLinux( dict( release_dir = '/home/komato3/workspace/Biominator/linux/', data_src_name = 'data', data_dest_name = 'data', rules = '.rules-linux' ) )
