@@ -3,6 +3,7 @@
 #include "producer.h"
 #include "eventmanagercontainer.h"
 #include "eventtypes.h"
+#include "timer.h"
 #include <string>
 
 void OnEngineRun();
@@ -11,6 +12,7 @@ namespace Engine {
 
 class Renderer;
 class FileManager;
+class ITimer;
 
 class Core: public Producer {
 public:
@@ -26,6 +28,7 @@ public:
 
   Renderer *renderer;
   FileManager *fileManager;
+  ITimer *timer;
 
 protected:
   bool isValid;

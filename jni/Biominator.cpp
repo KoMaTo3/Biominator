@@ -210,7 +210,7 @@ void GameContainer::_TestMesh() {
     material = this->CreateMaterial( "sprite-black", shader, "textures/blank.bmp" );
     material->AddColor( Vec4( 0.0f, 0.0f, 0.0f, 1.0f ) );
 
-    srand(time(0));
+    srand( ( unsigned int ) time( 0 ) );
 
     float
       borderWidth = 1.0f - screenScale.x,
@@ -307,7 +307,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   //test animation
   static float t = 0.0f;
   static Vec3 pos( Vec3Null ), posCenter( -0.5f, -0.5f, 0.0f );
-  t += 0.01f;
+  t += 0.5f * game->core->timer->GetDeltaF();
   if( ( pos - posCenter ).Length() < 0.02f ) {
     float
       a = ( ( float ) ( rand() % 1000 ) ) / 1000.0f * 3.141592f * 2.0f,

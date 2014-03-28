@@ -3,6 +3,7 @@
 #include "../tools.h"
 #include "../eventtypes.h"
 #include "filemanager.h"
+#include "timer.h"
 
 #include <string>
 
@@ -15,6 +16,7 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   //this->state->userData = this;
 
   this->fileManager = new FileManagerType( "data/" );
+  this->timer = new TimerWin32();
   this->mapVirtualKeys.leftShift = MapVirtualKey( VK_LSHIFT, 0 );
   this->mapVirtualKeys.leftControl = MapVirtualKey( VK_LCONTROL, 0 );
   this->mapVirtualKeys.leftAlt = MapVirtualKey( VK_LMENU, 0 );
