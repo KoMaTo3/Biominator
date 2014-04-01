@@ -32,6 +32,7 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     shaderprogram.cpp \
                     squareatlas.cpp \
                     texture.cpp \
+                    timer.cpp \
                     tools.cpp \
                     types.cpp \
                     vertexbuffer.cpp \
@@ -40,7 +41,8 @@ LOCAL_SRC_FILES :=  Biominator.cpp \
                     android/entrypoint.cpp \
                     android/filemanager.cpp \
                     android/renderer.cpp \
-                    android/texture.cpp
+                    android/texture.cpp \
+                    android/timer.cpp
 #LOCAL_CFLAGS += -std=c++11
 LOCAL_CFLAGS += -std=gnu++11
 

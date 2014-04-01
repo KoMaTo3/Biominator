@@ -4,6 +4,8 @@
 #include "../types.h"
 #include "../eventtypes.h"
 #include "filemanager.h"
+#include "time.h"
+#include "timer.h"
 
 using namespace Engine;
 
@@ -14,6 +16,7 @@ CoreAndroid::CoreAndroid( android_app *setApp )
   this->app->onInputEvent = CoreAndroid::HandleInput;
   this->app->userData = this;
   this->app->inputPollSource.process = CoreAndroid::ProcessInput;
+  this->timer = new TimerAndroid();
   this->fileManager = new FileManagerAndroid( this->app->activity->assetManager );
 
   //this->savedState.angle = 0.0f;
