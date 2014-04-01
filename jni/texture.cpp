@@ -23,7 +23,10 @@ Texture::~Texture() {
   if( this->textureId && !this->atlasFotThis ) {
     LOGI( "~Texture => id[%d]", this->textureId );
     glDeleteTextures( 1, &this->textureId );
+    this->textureId = 0;
   }
+
+  this->atlasFotThis = 0;
 
   SAFE_DELETE( this->atlas );
   SAFE_DELETE( this->placeInAtlas );
@@ -115,7 +118,7 @@ void Texture::PlaceToAtlas( Texture* texture, Engine::Rect< uint32_t > *rect ) {
 
 
 void Texture::ClearPlaceInAtlas( Texture* textureAtlas ) {
-  LOGE( "Texture::ClearPlaceInAtlas => NYI" );
+  LOGE( "Texture::ClearPlaceInAtlas => NYI, this[%p]", this );
 }//ClearPlaceInAtlas
 
 

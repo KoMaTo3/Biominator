@@ -5,6 +5,7 @@
 
 namespace Engine {
 
+class Texture;
 class TextureWin32;
 typedef TextureWin32 TextureType;
 
@@ -16,7 +17,7 @@ public:
 
 protected:
   virtual void PlaceToAtlas( Texture* textureAtlas, Engine::Rect< uint32_t > *rect );
-  virtual void ClearPlaceInAtlas( Texture* textureAtlas );
+  virtual void ClearPlaceInAtlas( Texture* textureAtlas ) override;
 
 private:
   TextureWin32();

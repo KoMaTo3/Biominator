@@ -8,7 +8,7 @@ Engine::PerObjectShaderBuffer* GameContainer::objectsMatricesList = NULL;
 
 
 GameContainer::GameContainer( Engine::Core *setCore )
-:core( setCore ) {
+:Listener(), Producer(), core( setCore ) {
   switch( this->core->GetPlatformType() ) {
     case Engine::PLATFORM_TYPE_WIN32: {
       this->core->Listen( this, Engine::EVENT_TYPE_KEY_PRESSED, GameContainer::OnKeyEvent );
@@ -48,9 +48,17 @@ GameContainer::GameContainer( Engine::Core *setCore )
 }
 
 GameContainer::~GameContainer() {
+  LOGI( "~GameContainer => remove objects" );
+  for( auto &object: this->objectsList ) {
+    SAFE_DELETE( object.second );
+  }
+  this->objectsList.clear();
+
+  LOGI( "~GameContainer => remove matrices" );
   SAFE_DELETE( this->objectsMatricesList );
 
   //�� ������ ������ ������� ��������� ��������, �� ������ - ������
+  LOGI( "~GameContainer => remove textures" );
   for( int pass = 0; pass < 2; ++pass ) {
     for( auto& texture: this->texturesList ) {
       if( texture.second && texture.second->IsAtlas() == ( pass == 1 ) ) {
@@ -58,11 +66,12 @@ GameContainer::~GameContainer() {
       }
     }
   }
+  LOGI( "~GameContainer done" );
 }
 
 void GameContainer::OnKeyEvent( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
-  Engine::EventKey *event = ( Engine::EventKey* ) data;
-  GameContainer *game = ( GameContainer* ) listener;
+  Engine::EventKey *event = static_cast< Engine::EventKey* >( data );
+  GameContainer *game = static_cast< GameContainer* >( listener );
   if( event->keyCode == Engine::KEY_CODE_ESCAPE ) {
     game->AppExit();
   }
@@ -80,7 +89,7 @@ void GameContainer::AppSuspend() {
 }//AppSuspend
 
 void GameContainer::OnAppClose( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
-  GameContainer *game = ( GameContainer* ) listener;
+  GameContainer *game = static_cast< GameContainer* >( listener );
   game->AppExit();
 }//OnAppClose
 
@@ -104,6 +113,8 @@ void GameContainer::BeforeRender( Engine::Listener* listener, Engine::Producer *
   if( GameContainer::objectsMatricesList ) {
     GameContainer::objectsMatricesList->Update();
   }
+  GameContainer *game = static_cast< GameContainer* >( listener );
+  game->TouchEvent( Engine::EventType::EVENT_TYPE_USER_0, game );
 }//BeforeRender
 
 void GameContainer::_TestFile() {
@@ -287,6 +298,9 @@ void GameContainer::_TestMesh() {
     this->CreateMaterial( "sprite-t-alik", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
     this->CreateSprite( "test/alik", "sprite-t-alik", Vec2( 0.5f, 0.5f ), Vec3( -0.5f, 0.5f, -1.0f ), Vec2( 2.0f, 1.0f ), 0.4f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 
+    this->CreateMaterial( "bacterium-0", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
+    this->CreateBacterium( "bac0", "bacterium-0", Vec2( 1.0f, 1.0f ), Vec3( 0.0f, -1.0f, 0.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
+
     LOGI( "ok" );
   } else {
     if( mesh ) {
@@ -299,15 +313,16 @@ void GameContainer::_TestMesh() {
 void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
   LOGI( "OnAfterRender" );
 
-  GameContainer *game = ( GameContainer* ) listener;
+  GameContainer *game = static_cast< GameContainer* >( listener );
   game->cameraMain.Update();
   game->cameraGUI.Update();
   game->camera3D.Update();
+  float f = game->core->timer->GetDeltaF();
 
   //test animation
   static float t = 0.0f;
   static Vec3 pos( Vec3Null ), posCenter( -0.5f, -0.5f, 0.0f );
-  t += 0.5f * game->core->timer->GetDeltaF();
+  t += 0.5f * f;
   if( ( pos - posCenter ).Length() < 0.02f ) {
     float
       a = ( ( float ) ( rand() % 1000 ) ) / 1000.0f * 3.141592f * 2.0f,
@@ -343,7 +358,7 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
 
 void GameContainer::OnInitRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
   LOGI( "OnInitRender" );
-  GameContainer *game = ( GameContainer* ) listener;
+  GameContainer *game = static_cast< GameContainer* >( listener );
   game->core->renderer->Listen( game, Engine::EVENT_TYPE_RENDERER_AFTER_RENDER, GameContainer::OnAfterRender );
   game->core->renderer->Listen( game, Engine::EVENT_TYPE_RENDERER_INIT, GameContainer::OnInitRender );
 }//OnInitRender
@@ -478,7 +493,9 @@ Object::Object( const std::string &setName, Engine::Renderer *renderer, Engine::
 
 
 Object::~Object() {
+  LOGI( "~Object %p", this );
   GameContainer::objectsMatricesList->DeleteContainer( this->objectMatrixIndex );
+  LOGI( "~Object %p done", this );
 }
 
 
@@ -605,3 +622,110 @@ Engine::ShaderProgram* GameContainer::GetShader( const std::string& name, bool s
 
   return shader->second;
 }//GetShader
+
+
+Engine::Material* GameContainer::GetMaterial( const std::string& name ) {
+  auto material = this->materialsList.find( name );
+  if( material == this->materialsList.end() ) {
+    LOGE( "GameContainer::GetMaterial => material '%s' not found", name.c_str() );
+    return NULL;
+  }
+
+  return material->second;
+}//GetMaterial
+
+
+Object* GameContainer::CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position, const Vec2& scale, const float rotation ) {
+  ObjectBacterium *object = new ObjectBacterium( name, this->core->renderer, this->GetMaterial( materialName ), 1.0f, 3 );
+  object->SetPosition( position );
+  object->SetRotation( rotation );
+  object->SetScale( scale );
+  this->Listen( object, Engine::EventType::EVENT_TYPE_USER_0, ObjectBacterium::Update );
+  this->objectsList.insert( std::make_pair( name, object ) );
+  return object;
+}//CreateBacterium
+
+
+ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *renderer, Engine::Material *material, const float radius, const int bonesCount )
+:Object( setName, renderer, material ), Listener() {
+  const int polygonsCount = 7;
+  const int verticesCount = polygonsCount * 3;
+  auto buffer = this->ResizeVertexBuffer( verticesCount );
+  for( int num = 0; num < polygonsCount; ++num ) {
+    float
+      deg = float( num ) / float( polygonsCount ) * Math::TWO_PI,
+      nextDeg = float( num + 1 ) / float( polygonsCount ) * Math::TWO_PI;
+
+    Engine::Vertice *vertice = &buffer->Get( num * 3 + 0 );
+    vertice->pos.Set( Math::Sin16( deg ) * radius, Math::Cos16( deg ) * radius, 0.0f );
+    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
+    vertice->tex.Set( 0.0f, 0.0f );
+    vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+    vertice->texCoordsScale.Set( 1.0f, 1.0f );
+
+    vertice = &buffer->Get( num * 3 + 1 );
+    vertice->pos.Set( Math::Sin16( nextDeg ) * radius, Math::Cos16( nextDeg ) * radius, 0.0f );
+    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
+    vertice->tex.Set( 0.0f, 0.0f );
+    vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+    vertice->texCoordsScale.Set( 1.0f, 1.0f );
+
+    vertice = &buffer->Get( num * 3 + 2 );
+    vertice->pos.Set( 0.0f, 0.0f, 0.0f );
+    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
+    vertice->tex.Set( 0.0f, 0.0f );
+    vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+    vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  }
+
+  for( int num = 0; num < bonesCount; ++num ) {
+    float
+      deg = float( num ) / float( bonesCount ) * Math::TWO_PI,
+      boneLength = radius * ( 0.8f + float( rand() % 1000 ) * 0.0004f );
+    ObjectBacteriumBone bone;
+    bone.basePosition.Set( Math::Sin16( deg ) * boneLength, Math::Cos16( deg ) * boneLength, 0.0f );
+    bone.tension = float( rand() % 1000 ) * 0.001f * 0.5f + 0.5f;
+    this->bones.push_back( bone );
+    
+    for( int verticeNum = 0; verticeNum < verticesCount; ++verticeNum ) {
+      float distance = ( this->vertices->Get( verticeNum ).pos - bone.basePosition ).Length();
+      if( distance > 5.0f ) {
+        continue;
+      }
+      float morphingPower = ( distance < Math::FLT_EPSILON_NUM ? 1.0f : Min2( 1.0f / distance, 1.0f ) );
+      bone.vertices.push_back( ObjectBacteriumBone::VerticeInfo( verticeNum, morphingPower ) );
+      LOGI( "Bone %d: pos[%3.3f; %3.3f] tension[%3.3f] vert[%d] morphPower[%3.3f]", num, bone.basePosition.x, bone.basePosition.y, bone.tension, verticeNum, morphingPower );
+      this->bones.push_back( bone );
+    }
+  }
+  LOGI( "ObjectBacterium %p", this );
+}
+
+
+ObjectBacterium::~ObjectBacterium() {
+  LOGI( "~ObjectBacterium %p", this );
+}
+
+
+ObjectBacteriumBone::ObjectBacteriumBone() {
+}
+
+ObjectBacteriumBone::ObjectBacteriumBone( const ObjectBacteriumBone& bone )
+:basePosition( bone.position ), position( bone.position ), tension( bone.tension ) {
+  this->vertices = bone.vertices;
+}
+
+ObjectBacteriumBone& ObjectBacteriumBone::operator=( ObjectBacteriumBone& bone ) {
+  this->basePosition = bone.basePosition;
+  this->position = bone.position;
+  this->tension = bone.tension;
+  this->vertices = bone.vertices;
+
+  return *this;
+}
+
+void ObjectBacterium::Update( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
+  ObjectBacterium *object = static_cast< ObjectBacterium* >( listener );
+  LOGI( "ObjectBacterium::Update => ObjectBacterium[%p] listener[%p]", object, listener );
+  LOGI( ". name['%s']", object->GetName().c_str() );
+}//Update

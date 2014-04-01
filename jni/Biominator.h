@@ -40,7 +40,7 @@ namespace Game {
 class KeyListener;
 class Object;
 
-class GameContainer: public Engine::Listener {
+class GameContainer: public Engine::Listener, public Engine::Producer {
 public:
   GameContainer( Engine::Core *setCore );
   virtual ~GameContainer();
@@ -60,11 +60,13 @@ public:
 
   Object* CreateObject( const std::string &name, const std::string &materialName, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
   Object* CreateSprite( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
+  Object* CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
   void DeleteObject( Object *obj );
   void DeleteObject( const std::string& objectName );
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader );
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName );
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color );
+  Engine::Material* GetMaterial( const std::string& name );
   Engine::ShaderProgram* CreateShader( const std::string& name, const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName );
   Engine::ShaderProgram* GetShader( const std::string& name, bool supressWarning = false );
   Engine::Texture* CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, Engine::ImageType setImageFormat = Engine::IMAGE_TYPE_UNKNOWN );
@@ -124,6 +126,44 @@ private:
   Mat4 matrix;
   bool matrixChanged;
   Engine::PerObjectShaderBuffer::IndexType objectMatrixIndex;
+};
+
+
+class ObjectBacteriumBone {
+public:
+  ObjectBacteriumBone();
+  ObjectBacteriumBone( const ObjectBacteriumBone& bone );
+  ObjectBacteriumBone& operator=( ObjectBacteriumBone& bone );
+
+  Vec3
+    basePosition,
+    position;
+  float tension;
+  struct VerticeInfo {
+    GLushort index;
+    float morphPower;
+
+    VerticeInfo( const GLushort setIndex, const float setMorphPower )
+    :index( setIndex ), morphPower( setMorphPower )
+    { }
+  };
+  std::deque< VerticeInfo > vertices;
+};
+
+
+class ObjectBacterium: public Object, public Engine::Listener {
+public:
+  ObjectBacterium( const std::string &setName, Engine::Renderer *renderer, Engine::Material *material, const float radius, const int bonesCount );
+  virtual ~ObjectBacterium();
+  static void Update( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
+
+private:
+  ObjectBacterium();
+  ObjectBacterium( ObjectBacterium& );
+  ObjectBacterium& operator=( ObjectBacterium& );
+  typedef std::deque< ObjectBacteriumBone > BonesList;
+
+  BonesList bones;
 };
 
 };  //namespace Game

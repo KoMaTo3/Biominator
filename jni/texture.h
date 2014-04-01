@@ -7,6 +7,7 @@
 
 namespace Engine {
 
+class Texture;
 typedef Engine::Rect< uint32_t > TexturePlaceRect;
 
 class Texture {

@@ -13,22 +13,26 @@ PerObjectShaderBuffer::~PerObjectShaderBuffer() {
 }
 
 PerObjectShaderBuffer::IndexType PerObjectShaderBuffer::AddContainer() {
+  PerObjectShaderBuffer::IndexType index = 0;
+
   if( !this->freeIndicies.empty() ) {
-    //PerObjectShaderBuffer::IndexType index = *this->freeIndicies.end();
+    index = *this->freeIndicies.end();
     this->freeIndicies.pop_back();
+  } else {
+    this->items.push_back( Container() );
+    size_t newSize = this->items.size();
+    if( newSize > 0x0000FFFF ) {
+      LOGE( "PerObjectShaderBuffer::AddContainer => index too big" );
+      return 0;
+    }
+    index = PerObjectShaderBuffer::IndexType( newSize - 1 );
   }
 
-  this->items.push_back( Container() );
-  size_t newSize = this->items.size();
-  if( newSize > 0x0000FFFF ) {
-    LOGE( "PerObjectShaderBuffer::AddContainer => index too big" );
-    return 0;
-  }
-  return PerObjectShaderBuffer::IndexType( newSize - 1 );
+  return index;
 }//AddContainer
 
 void PerObjectShaderBuffer::DeleteContainer( const PerObjectShaderBuffer::IndexType index ) {
-  if( this->items.size() >= index ) {
+  if( index >= this->items.size() ) {
     LOGE( "PerObjectShaderBuffer::DeleteContainer => index too big [%d]", index );
     return;
   }

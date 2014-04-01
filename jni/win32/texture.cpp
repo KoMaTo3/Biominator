@@ -7,9 +7,26 @@ TextureWin32::TextureWin32( size_t setWidth, size_t setHeight, unsigned char *da
 :Texture( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat ) {
   savedBuffer.Alloc( setDataLength );
   memcpy( savedBuffer.GetData(), data, savedBuffer.GetLength() );
+  LOGI( "+TextureWin32 %p", this );
 }
 
 TextureWin32::~TextureWin32() {
+  //код деструктора копирует ~Texture() т.к. должна вызываться TextureWin32::ClearPlaceInAtlas(), которая уже не существует в ~Texture()
+  if( this->atlasFotThis ) {
+    this->atlasFotThis->UnbindTextureFromThisAtlas( this );
+  }
+
+  if( this->textureId && !this->atlasFotThis ) {
+    LOGI( "~TextureWin32 => id[%d]", this->textureId );
+    glDeleteTextures( 1, &this->textureId );
+    this->textureId = 0;
+  }
+
+  this->atlasFotThis = 0;
+
+  SAFE_DELETE( this->atlas );
+  SAFE_DELETE( this->placeInAtlas );
+  LOGI( "~TextureWin32 %p", this );
 }
 
 void TextureWin32::ReInitialize() {
@@ -95,4 +112,5 @@ void TextureWin32::ClearPlaceInAtlas( Texture* textureAtlas ) {
   this->MakeFromBuffer( this->width, this->height, this->savedBuffer.GetData(), this->savedBuffer.GetLength() );
 
   atlas->MakeFromBuffer( atlas->width, atlas->height, atlas->savedBuffer.GetData(), atlas->dataLength );
+  LOGI( "TextureWin32::ClearPlaceInAtlas done" );
 }//ClearPlaceInAtlas
