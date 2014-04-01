@@ -33,6 +33,17 @@ enum EventType {
   /* ��������� ������, ����� ��� "�����" � ��������� �������� */
   EVENT_TYPE_SYSTEM_KEY,
 
+  EVENT_TYPE_USER_0,
+  EVENT_TYPE_USER_1,
+  EVENT_TYPE_USER_2,
+  EVENT_TYPE_USER_3,
+  EVENT_TYPE_USER_4,
+  EVENT_TYPE_USER_5,
+  EVENT_TYPE_USER_6,
+  EVENT_TYPE_USER_7,
+  EVENT_TYPE_USER_8,
+  EVENT_TYPE_USER_9,
+
   EVENT_TYPE_MAX
 };
 

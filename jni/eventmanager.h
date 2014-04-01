@@ -28,8 +28,10 @@ public:
   void AddListener( Listener *listener, const int eventId, ListenerProc *listenerProc );
   void RemoveListener( const Listener *listener );
   void RemoveListener( const Listener *listener, const int eventId );
+  void RemoveAllListeners();
   bool ListenerExists( const Listener *listener, const int eventId ) const;
   void TouchEvent( const int eventId, Producer* producer, void *data );
+  void RemoveProducerFromAllListeners();
 
 private:
   EventManager( EventManager& );

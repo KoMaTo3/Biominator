@@ -6,10 +6,13 @@ using namespace Engine;
 
 EventManagerContainer::EventManagerContainer()
 :eventManager( NULL ) {
+  LOGI( "EventManagerContainer %p", this );
 }
 
 EventManagerContainer::~EventManagerContainer() {
+  LOGI( "~EventManagerContainer %p", this );
   SAFE_DELETE( this->eventManager );
+  LOGI( "~EventManagerContainer %p done", this );
 }
 
 void EventManagerContainer::Listen( Listener *listener, const int eventId, ListenerProc *listenerProc ) {

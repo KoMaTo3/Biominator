@@ -12,6 +12,7 @@ public:
 
 protected:
   EventManager* GetEventManager();
+  inline bool EventManagerInitialized() const { return this->eventManager != 0; };
 
 private:
   EventManagerContainer( EventManagerContainer& );

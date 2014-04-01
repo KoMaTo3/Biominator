@@ -12,6 +12,7 @@ public:
   Listener();
   virtual ~Listener();
   void AddEventManager( EventManager* setManager );
+  void RemoveEventManager( EventManager* manager );
 
 private:
   Listener( Listener& );

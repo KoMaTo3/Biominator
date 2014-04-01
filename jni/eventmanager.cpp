@@ -10,9 +10,14 @@ ListenerHandler::ListenerHandler( int setEventId, Listener* setListener, Listene
 
 
 EventManager::EventManager() {
+  LOGI( "EventManager %p", this );
 }
 
 EventManager::~EventManager() {
+  LOGI( "~EventManager %p", this );
+  this->RemoveProducerFromAllListeners();
+  this->RemoveAllListeners();
+  LOGI( "~EventManager %p done", this );
 }
 
 void EventManager::AddListener( Listener *listener, const int eventId, ListenerProc *listenerProc ) {
@@ -31,16 +36,50 @@ bool EventManager::ListenerExists( const Listener *listener, const int eventId )
 }//ListenerExists
 
 void EventManager::RemoveListener( const Listener *listener ) {
+  LOGI( "EventManager::RemoveListener => this[%p] listener[%p] all[%d]", this, listener, this->listenersList.size() );
   auto
     iter = this->listenersList.begin(),
     iterEnd = this->listenersList.end();
+  std::deque< Listener* > removedListenersList;
   while( iter != iterEnd ) {
+    LOGI( ". iter listener %p", iter->listener );
     if( iter->listener == listener ) {
+      iter->listener->RemoveEventManager( this );
+      bool finded;
+      LOGI( ". erase" );
+      do {
+        finded = false;
+        iterEnd = this->listenersList.end();
+        for( iter = this->listenersList.begin(); iter != iterEnd; ++iter ) {
+          if( iter->listener == listener ) {
+            finded = true;
+            this->listenersList.erase( iter );
+            break;
+          }
+        }
+      } while( finded );
+      LOGI( ". erase done" );
+      /*
       this->listenersList.erase( iter );
+      iterEnd = this->listenersList.end();
+      for( iter = this->listenersList.begin(); iter != iterEnd; ) {
+        if( iter->listener == listener ) {
+          auto iterNext = iter;
+          ++iterNext;
+          this->listenersList.erase( iter );
+          iterEnd = this->listenersList.end();
+          iter = iterNext;
+        } else {
+          ++iter;
+        }
+      }
+      */
       break;
+    } else {
+      ++iter;
     }
-    ++iter;
   }
+  LOGI( "EventManager::RemoveListener => this[%p] listener[%p] all[%d] done", this, listener, this->listenersList.size() );
 }//RemoveListener
 
 void EventManager::RemoveListener( const Listener *listener, const int eventId ) {
@@ -49,12 +88,22 @@ void EventManager::RemoveListener( const Listener *listener, const int eventId )
     iterEnd = this->listenersList.end();
   while( iter != iterEnd ) {
     if( iter->eventId == eventId && iter->listener == listener ) {
+      //iter->listener->RemoveEventManager( this );
       this->listenersList.erase( iter );
       break;
     }
     ++iter;
   }
 }//RemoveListener
+
+void EventManager::RemoveAllListeners() {
+  while( !this->listenersList.empty() ) {
+    auto listener = this->listenersList.begin();
+    LOGI( "EventManager::RemoveAllListeners %p", listener->listener );
+    listener->listener->RemoveEventManager( this );
+    this->listenersList.pop_front();
+  }
+}//RemoveAllListeners
 
 void EventManager::TouchEvent( const int eventId, Producer* producer, void *data ) {
   ListenerVector listenersListProc;
@@ -68,3 +117,19 @@ void EventManager::TouchEvent( const int eventId, Producer* producer, void *data
     listener.proc( listener.listener, producer, eventId, data );
   }
 }//TouchEvent
+
+void EventManager::RemoveProducerFromAllListeners() {
+  LOGI( "EventManager::RemoveProducerFromAllListeners, manager[%p]", this );
+  for( auto &listener: this->listenersList ) {
+    //LOGI( "EventManager::RemoveProducerFromAllListeners, manager[%p] listener[%p]", this, listener.listener );
+    listener.listener->RemoveEventManager( this );
+  }
+  /*
+  for( auto &listener: this->listenersList ) {
+    LOGI( "EventManager::RemoveProducerFromAllListeners, manager[%p] listener[%p]", this, listener.listener );
+    listener.listener->RemoveEventManager( this );
+  }
+  this->listenersList.clear();
+  */
+  LOGI( "EventManager::RemoveProducerFromAllListeners done, manager[%p]", this );
+}//RemoveProducerFromAllListeners
