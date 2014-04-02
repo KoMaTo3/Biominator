@@ -10,9 +10,14 @@ namespace Engine {
 class Texture;
 typedef Engine::Rect< uint32_t > TexturePlaceRect;
 
+enum TextureFilterType {
+  TEXTURE_FILTER_TYPE_POINT = GL_NEAREST,
+  TEXTURE_FILTER_TYPE_LINEAR = GL_LINEAR,
+};
+
 class Texture {
 public:
-  Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, ImageType setImageFormat = IMAGE_TYPE_UNKNOWN );
+  Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, ImageType setImageFormat = IMAGE_TYPE_UNKNOWN, TextureFilterType setFilterType = TEXTURE_FILTER_TYPE_POINT );
   virtual ~Texture();
   virtual void ReInitialize() = 0;
   inline bool IsTransparent() const { return this->isTransparent; };
@@ -44,6 +49,7 @@ protected:
   SquareAtlas *atlas;
   Texture *atlasFotThis;
   TexturePlaceRect *placeInAtlas;
+  TextureFilterType filterType;
 
   GLuint textureId;
 

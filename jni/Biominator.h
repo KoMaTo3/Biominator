@@ -60,17 +60,17 @@ public:
 
   Object* CreateObject( const std::string &name, const std::string &materialName, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
   Object* CreateSprite( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
-  Object* CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f );
+  Object* CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position = Vec3Null, const Vec2& scale = Vec2One, const float rotation = 0.0f, const int bonesCount = 3 );
   void DeleteObject( Object *obj );
   void DeleteObject( const std::string& objectName );
   Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader );
-  Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName );
-  Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color );
+  Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, Engine::TextureFilterType filter );
+  Engine::Material* CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color, Engine::TextureFilterType filter );
   Engine::Material* GetMaterial( const std::string& name );
   Engine::ShaderProgram* CreateShader( const std::string& name, const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName );
   Engine::ShaderProgram* GetShader( const std::string& name, bool supressWarning = false );
-  Engine::Texture* CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, Engine::ImageType setImageFormat = Engine::IMAGE_TYPE_UNKNOWN );
-  Engine::Texture* CreateTexture( const std::string &fileName );
+  Engine::Texture* CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, Engine::ImageType setImageFormat = Engine::IMAGE_TYPE_UNKNOWN, Engine::TextureFilterType filter = Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
+  Engine::Texture* CreateTexture( const std::string &fileName, Engine::TextureFilterType filter = Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
   Engine::Texture* GetTexture( const std::string &name, bool supressWarning = false );
 
   Engine::Core *core;
@@ -111,7 +111,9 @@ public:
   Object* SetScale( const Vec2& setScale );
   Object* SetSize( const Vec2& setSize );
   Object* SetRotation( const float setRotation );
+  inline float GetRotation() const { return this->rotation; };
   virtual void BeforeRender();
+  virtual void _Test() {}
 
 private:
   Object();
@@ -142,12 +144,14 @@ public:
   struct VerticeInfo {
     GLushort index;
     float morphPower;
+    Vec3 srcPosition;
 
-    VerticeInfo( const GLushort setIndex, const float setMorphPower )
-    :index( setIndex ), morphPower( setMorphPower )
+    VerticeInfo( const GLushort setIndex, const float setMorphPower, const Vec3 &position )
+      :index( setIndex ), morphPower( setMorphPower ), srcPosition( position )
     { }
   };
-  std::deque< VerticeInfo > vertices;
+  typedef std::deque< VerticeInfo > VerticesList;
+  VerticesList vertices;
 };
 
 
@@ -157,13 +161,19 @@ public:
   virtual ~ObjectBacterium();
   static void Update( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data );
 
+  virtual void _Test();
+
 private:
   ObjectBacterium();
   ObjectBacterium( ObjectBacterium& );
   ObjectBacterium& operator=( ObjectBacterium& );
-  typedef std::deque< ObjectBacteriumBone > BonesList;
+  void RecalculateBones();
+
+  typedef std::deque< ObjectBacteriumBone* > BonesList;
 
   BonesList bones;
+  ObjectBacteriumBone::VerticesList defaultVerticesPosition;
+  float rotationSpeed;
 };
 
 };  //namespace Game

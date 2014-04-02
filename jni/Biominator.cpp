@@ -191,7 +191,7 @@ void GameContainer::_TestMesh() {
     this->materialsList.insert( std::make_pair( "test", material ) );
 
     shader = this->CreateShader( "sprite-t", "shaders/sprite-t.vs", "shaders/sprite-t.fs" );
-    material = this->CreateMaterial( "sprite-t", shader, "textures/thu128.tga" );
+    material = this->CreateMaterial( "sprite-t", shader, "textures/thu128.tga", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
     Object *object = this->CreateSprite( "test", "sprite-t", Vec2( 1.0f, 1.0f ), Vec3( -0.5f, -0.5f, 0.0f ), Vec2( 1.0f, 0.5f ), 0.0f );
 
     Vec2 screenScale( 1.0f, 1.0f );
@@ -215,10 +215,10 @@ void GameContainer::_TestMesh() {
 
     //this->camera3D
     shader = this->CreateShader( "mesh-3d", "shaders/mesh.vs", "shaders/mesh.fs" );
-    material = this->CreateMaterial( "mesh-3d", shader, "textures/cat.bmp" );
+    material = this->CreateMaterial( "mesh-3d", shader, "textures/cat.bmp", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
 
     shader = this->CreateShader( "sprite-tc", "shaders/sprite-tc.vs", "shaders/sprite-tc.fs" );
-    material = this->CreateMaterial( "sprite-black", shader, "textures/blank.bmp" );
+    material = this->CreateMaterial( "sprite-black", shader, "textures/blank.bmp", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
     material->AddColor( Vec4( 0.0f, 0.0f, 0.0f, 1.0f ) );
 
     srand( ( unsigned int ) time( 0 ) );
@@ -295,11 +295,13 @@ void GameContainer::_TestMesh() {
       textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/alik16.bmp" ) );
     }
     textureAtlas->BindTextureToThisAtlas( this->GetTexture( "textures/thu128.tga" ) );
-    this->CreateMaterial( "sprite-t-alik", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
+    this->CreateMaterial( "sprite-t-alik", this->GetShader( "sprite-t" ), "textures/alik16.bmp", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_POINT );
     this->CreateSprite( "test/alik", "sprite-t-alik", Vec2( 0.5f, 0.5f ), Vec3( -0.5f, 0.5f, -1.0f ), Vec2( 2.0f, 1.0f ), 0.4f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 
-    this->CreateMaterial( "bacterium-0", this->GetShader( "sprite-t" ), "textures/alik16.bmp" );
-    this->CreateBacterium( "bac0", "bacterium-0", Vec2( 1.0f, 1.0f ), Vec3( 0.0f, -1.0f, 0.0f ), Vec2( 1.0f, 1.0f ), 0.0f )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
+    this->CreateShader( "sprite-bacterium", "shaders/sprite-bacterium.vs", "shaders/sprite-bacterium.fs" );
+    this->CreateTexture( "textures/bioma-skin0.tga", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_LINEAR );
+    this->CreateMaterial( "bacterium-0", this->GetShader( "sprite-bacterium" ), "textures/bioma-skin0.tga", Vec4( 1.0f, 1.0f, 1.0f, 0.98f ), Engine::TextureFilterType::TEXTURE_FILTER_TYPE_LINEAR );
+    this->CreateBacterium( "bac0", "bacterium-0", Vec2( 1.0f, 1.0f ), Vec3( 0.0f, -1.0f, 0.0f ), Vec2( 1.0f, 1.0f ), 0.0f, 5 )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 
     LOGI( "ok" );
   } else {
@@ -311,8 +313,6 @@ void GameContainer::_TestMesh() {
 
 
 void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
-  LOGI( "OnAfterRender" );
-
   GameContainer *game = static_cast< GameContainer* >( listener );
   game->cameraMain.Update();
   game->cameraGUI.Update();
@@ -331,7 +331,6 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
   }
   float speed = 0.02f;
   pos += ( posCenter - pos ) * speed;
-  LOGI( "=> pos: %3.3f; %3.3f; %3.3f", pos.x, pos.y, pos.z );
   game->cameraMain.SetPosition( pos );
   //
 
@@ -346,6 +345,10 @@ void GameContainer::OnAfterRender( Engine::Listener* listener, Engine::Producer 
 
   if( game->objectsList.find( "test" ) != game->objectsList.end() ) {
     game->objectsList.find( "test" )->second->SetRotation( Math::Sin16( t * 3.0f ) * 3.141592f );
+  }
+
+  if( game->objectsList.find( "bac0" ) != game->objectsList.end() ) {
+    game->objectsList.find( "bac0" )->second->_Test();
   }
 
   game->_TestMesh();
@@ -364,10 +367,10 @@ void GameContainer::OnInitRender( Engine::Listener* listener, Engine::Producer *
 }//OnInitRender
 
 
-Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName ) {
+Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, Engine::TextureFilterType filter ) {
   Engine::Texture *texture = this->GetTexture( textureFileName, true );
   if( !texture ) {
-    texture = this->CreateTexture( textureFileName );
+    texture = this->CreateTexture( textureFileName, filter );
   }
 
   Engine::Material *material = this->CreateMaterial( name, shader );
@@ -385,8 +388,8 @@ Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine
 }//CreateMaterial
 
 
-Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color ) {
-  Engine::Material *material = this->CreateMaterial( name, shader, textureFileName );
+Engine::Material* GameContainer::CreateMaterial( const std::string& name, Engine::ShaderProgram *shader, const std::string textureFileName, const Vec4& color, Engine::TextureFilterType filter ) {
+  Engine::Material *material = this->CreateMaterial( name, shader, textureFileName, filter );
   if( !material ) {
     return NULL;
   }
@@ -570,7 +573,6 @@ void Object::BeforeRender() {
         vertice.texCoordsScale = this->material->GetTextureCoordsScale();
         vertice.texCoordsOffset = this->material->GetTextureCoordsOffset();
       }
-      LOGI( "TexCoordsScale => [%3.3f; %3.3f]", matrixContainer->TexCoordsScale.x, matrixContainer->TexCoordsScale.y );
     } else {
       LOGE( "Object::BeforeRender => matrix container not found" );
     }
@@ -581,14 +583,14 @@ void Object::BeforeRender() {
   //GameContainer::objectsMatricesList->BindToShader( *this->material->shaderProgram, this->objectMatrixIndex );
 }//BeforeRender
 
-Engine::Texture* GameContainer::CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, Engine::ImageType setImageFormat ) {
-  Engine::Texture *texture = new Engine::TextureType( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat );
+Engine::Texture* GameContainer::CreateTexture( const std::string &name, size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, Engine::ImageType setImageFormat, Engine::TextureFilterType filter ) {
+  Engine::Texture *texture = new Engine::TextureType( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat, filter );
   this->texturesList.insert( std::make_pair( name, texture ) );
 
   return texture;
 }//CreateTexture
 
-Engine::Texture* GameContainer::CreateTexture( const std::string &fileName ) {
+Engine::Texture* GameContainer::CreateTexture( const std::string &fileName, Engine::TextureFilterType filter ) {
   Engine::Memory imageFile;
   if( !this->core->GetFileManager()->GetFile( fileName, imageFile ) ) {
     LOGE( "GameContainer::CreateTexture => file '%s' not found", fileName.c_str() );
@@ -596,7 +598,7 @@ Engine::Texture* GameContainer::CreateTexture( const std::string &fileName ) {
   }
   Engine::ImageLoader loader;
   loader.Load( imageFile.GetData(), imageFile.GetLength() );
-  return this->CreateTexture( fileName, loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType );
+  return this->CreateTexture( fileName, loader.imageWidth, loader.imageHeight, loader.imageDataRGBA.GetData(), loader.isTransparent, loader.isCompressed, loader.imageDataRGBA.GetLength(), loader.imageType, filter );
 }//CreateTexture
 
 Engine::Texture* GameContainer::GetTexture( const std::string &name, bool supressWarning ) {
@@ -635,8 +637,8 @@ Engine::Material* GameContainer::GetMaterial( const std::string& name ) {
 }//GetMaterial
 
 
-Object* GameContainer::CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position, const Vec2& scale, const float rotation ) {
-  ObjectBacterium *object = new ObjectBacterium( name, this->core->renderer, this->GetMaterial( materialName ), 1.0f, 3 );
+Object* GameContainer::CreateBacterium( const std::string &name, const std::string &materialName, const Vec2& size, const Vec3& position, const Vec2& scale, const float rotation, const int bonesCount ) {
+  ObjectBacterium *object = new ObjectBacterium( name, this->core->renderer, this->GetMaterial( materialName ), 1.0f, bonesCount );
   object->SetPosition( position );
   object->SetRotation( rotation );
   object->SetScale( scale );
@@ -648,56 +650,200 @@ Object* GameContainer::CreateBacterium( const std::string &name, const std::stri
 
 ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *renderer, Engine::Material *material, const float radius, const int bonesCount )
 :Object( setName, renderer, material ), Listener() {
-  const int polygonsCount = 7;
-  const int verticesCount = polygonsCount * 3;
+  const int polygonsCount = 64;
+  const int verticesBaseCount = polygonsCount * 3;
+  const int verticesCount = verticesBaseCount + 4 * 3;
   auto buffer = this->ResizeVertexBuffer( verticesCount );
-  for( int num = 0; num < polygonsCount; ++num ) {
+  const float deltaRadius = 0.15f;
+  const float legs = float( bonesCount );
+  int num;
+  Engine::Vertice *vertice;
+  for( num = 0; num < polygonsCount; ++num ) {
     float
       deg = float( num ) / float( polygonsCount ) * Math::TWO_PI,
-      nextDeg = float( num + 1 ) / float( polygonsCount ) * Math::TWO_PI;
+      nextDeg = float( num + 1 ) / float( polygonsCount ) * Math::TWO_PI,
+      newRadius = radius * ( 1.0f + Math::Cos16( deg * legs ) * deltaRadius ),
+      newNextRadius = radius * ( 1.0f + Math::Cos16( nextDeg * legs ) * deltaRadius );
 
-    Engine::Vertice *vertice = &buffer->Get( num * 3 + 0 );
-    vertice->pos.Set( Math::Sin16( deg ) * radius, Math::Cos16( deg ) * radius, 0.0f );
-    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
+    vertice = &buffer->Get( num * 3 + 0 );
+    vertice->pos.Set( Math::Sin16( deg ) * newRadius, Math::Cos16( deg ) * newRadius, 0.0f );
+    vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
     vertice->tex.Set( 0.0f, 0.0f );
     vertice->texCoordsOffset.Set( 0.0f, 0.0f );
     vertice->texCoordsScale.Set( 1.0f, 1.0f );
 
     vertice = &buffer->Get( num * 3 + 1 );
-    vertice->pos.Set( Math::Sin16( nextDeg ) * radius, Math::Cos16( nextDeg ) * radius, 0.0f );
-    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
+    vertice->pos.Set( Math::Sin16( nextDeg ) * newNextRadius, Math::Cos16( nextDeg ) * newNextRadius, 0.0f );
+    vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
     vertice->tex.Set( 0.0f, 0.0f );
     vertice->texCoordsOffset.Set( 0.0f, 0.0f );
     vertice->texCoordsScale.Set( 1.0f, 1.0f );
 
     vertice = &buffer->Get( num * 3 + 2 );
     vertice->pos.Set( 0.0f, 0.0f, 0.0f );
-    vertice->color.Set( 1.0f, 0.0f, 0.0f, 1.0f );
-    vertice->tex.Set( 0.0f, 0.0f );
+    vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
+    vertice->tex.Set( 0.0f, 72.0f / 128.0f );
     vertice->texCoordsOffset.Set( 0.0f, 0.0f );
     vertice->texCoordsScale.Set( 1.0f, 1.0f );
   }
+
 
   for( int num = 0; num < bonesCount; ++num ) {
     float
       deg = float( num ) / float( bonesCount ) * Math::TWO_PI,
       boneLength = radius * ( 0.8f + float( rand() % 1000 ) * 0.0004f );
-    ObjectBacteriumBone bone;
-    bone.basePosition.Set( Math::Sin16( deg ) * boneLength, Math::Cos16( deg ) * boneLength, 0.0f );
-    bone.tension = float( rand() % 1000 ) * 0.001f * 0.5f + 0.5f;
+    ObjectBacteriumBone *bone = new ObjectBacteriumBone();
+    bone->basePosition.Set( Math::Sin16( deg ) * boneLength, Math::Cos16( deg ) * boneLength, 0.0f );
+    bone->position = bone->basePosition;
+    bone->tension = float( rand() % 1000 ) * 0.001f * 0.5f + 0.5f;
     this->bones.push_back( bone );
     
-    for( int verticeNum = 0; verticeNum < verticesCount; ++verticeNum ) {
-      float distance = ( this->vertices->Get( verticeNum ).pos - bone.basePosition ).Length();
-      if( distance > 5.0f ) {
+    for( int verticeNum = 0; verticeNum < verticesBaseCount; ++verticeNum ) {
+      float distance = ( this->vertices->Get( verticeNum ).pos - bone->basePosition ).Length();
+      if( distance > radius || this->vertices->Get( verticeNum ).pos.Length() < 0.1f ) {
         continue;
       }
-      float morphingPower = ( distance < Math::FLT_EPSILON_NUM ? 1.0f : Min2( 1.0f / distance, 1.0f ) );
-      bone.vertices.push_back( ObjectBacteriumBone::VerticeInfo( verticeNum, morphingPower ) );
-      LOGI( "Bone %d: pos[%3.3f; %3.3f] tension[%3.3f] vert[%d] morphPower[%3.3f]", num, bone.basePosition.x, bone.basePosition.y, bone.tension, verticeNum, morphingPower );
-      this->bones.push_back( bone );
+      float morphingPower = ( distance < Math::FLT_EPSILON_NUM ? 1.0f : Min2( 1.0f / ( distance * distance ) / ( 2.0f * radius ), 1.0f ) );
+      bone->vertices.push_back( ObjectBacteriumBone::VerticeInfo( verticeNum, morphingPower, this->vertices->Get( verticeNum ).pos ) );
+      //LOGI( "Bone %d: pos[%3.3f; %3.3f] distance[%3.3f] tension[%3.3f] vert[%d] morphPower[%3.3f]", num, bone->basePosition.x, bone->basePosition.y, distance, bone->tension, verticeNum, morphingPower );
     }
   }
+
+  //defaultVerticesPosition
+  for( int verticeNum = 0; verticeNum < verticesBaseCount; ++verticeNum ) {
+    this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( verticeNum, 0.0f, this->vertices->Get( verticeNum ).pos ) );
+  }
+
+  //left eye
+  float
+    eyesRange = 0.3f * radius,
+    eyesSize = 0.15f * radius;
+  num = verticesBaseCount - 1;
+  Vec4 eyeColor( 0.7f, 0.9f, 1.0f, 0.8f );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  //right eye
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  vertice = &buffer->Get( ++num );
+  vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, -1.0f, 0.0f ) * eyesSize;
+  vertice->color = eyeColor;
+  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
+
+  /*
+  vertice = &buffer->Get( num++ * 3 + 0 );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * 0.5f + Vec3( 0.0f, -radius * 0.3f, 0.0f );
+  vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
+  vertice->tex.Set( 0.0f, 0.125f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+
+  vertice = &buffer->Get( num++ * 3 + 0 );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * 0.5f + Vec3( radius * 0.3f, 0.0f, 0.0f );
+  vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
+  vertice->tex.Set( 0.5f, 0.0f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+
+  vertice = &buffer->Get( num++ * 3 + 0 );
+  vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * 0.5f + Vec3( radius * 0.3f, -radius * 0.3f, 0.0f );
+  vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
+  vertice->tex.Set( 0.5f, 0.125f );
+  vertice->texCoordsOffset.Set( 0.0f, 0.0f );
+  vertice->texCoordsScale.Set( 1.0f, 1.0f );
+  */
+
+  this->rotationSpeed = ( float( rand() % 1000 ) / 500.0f - 1.0f ) * 0.01f;
+
   LOGI( "ObjectBacterium %p", this );
 }
 
@@ -726,6 +872,39 @@ ObjectBacteriumBone& ObjectBacteriumBone::operator=( ObjectBacteriumBone& bone )
 
 void ObjectBacterium::Update( Engine::Listener* listener, Engine::Producer *producer, int eventId, void *data ) {
   ObjectBacterium *object = static_cast< ObjectBacterium* >( listener );
-  LOGI( "ObjectBacterium::Update => ObjectBacterium[%p] listener[%p]", object, listener );
-  LOGI( ". name['%s']", object->GetName().c_str() );
+
+  object->RecalculateBones();
 }//Update
+
+
+void ObjectBacterium::RecalculateBones() {
+  for( auto& verticeInfo: this->defaultVerticesPosition ) {
+    this->vertices->Get( verticeInfo.index ).pos = verticeInfo.srcPosition;
+  }
+
+  for( auto& bone: this->bones ) {
+    for( auto& verticeInfo: bone->vertices ) {
+      Engine::Vertice &vertice = this->vertices->Get( verticeInfo.index );
+      Vec3 boneDeltaPos = bone->position - bone->basePosition;
+      Vec3 deltaPos = boneDeltaPos * verticeInfo.morphPower;
+      vertice.pos += deltaPos;
+    }
+  }
+}//RecalculateBones
+
+void ObjectBacterium::_Test() {
+  float t = float( game->core->timer->GetTime() ) * 3.0f;
+  float r = 0.1f;
+  int num = 0;
+  float angleBetweenBones = Math::TWO_PI / float( this->bones.size() );
+  for( auto& bone: this->bones ) {
+    float dt = float( num );
+    float sign = ( num % 2 ? -1.0f : 1.0f );
+    float direction = Math::Sin16( float( num ) * angleBetweenBones * 1.5f + 0.5f );
+    Vec3 pos( Math::Sin16( t * sign + dt ) * r * direction, Math::Cos16( t * sign + dt ) * r * direction, 0.0f );
+    bone->position = bone->basePosition + pos;
+    ++num;
+  }
+
+  this->SetRotation( this->GetRotation() + this->rotationSpeed );
+}//_Test

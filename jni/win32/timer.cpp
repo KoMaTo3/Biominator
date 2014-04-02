@@ -7,6 +7,7 @@ TimerWin32::TimerWin32()
 :ITimer() {
   this->UpdateFreq();
   this->UpdateCounter();
+  this->currentTime = 0.0;
 }
 
 

@@ -3,8 +3,8 @@
 
 using namespace Engine;
 
-TextureWin32::TextureWin32( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat )
-:Texture( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat ) {
+TextureWin32::TextureWin32( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat, TextureFilterType setFilterType )
+:Texture( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat, setFilterType ) {
   savedBuffer.Alloc( setDataLength );
   memcpy( savedBuffer.GetData(), data, savedBuffer.GetLength() );
   LOGI( "+TextureWin32 %p", this );

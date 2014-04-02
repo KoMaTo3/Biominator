@@ -48,6 +48,8 @@ void Mesh::Render( float *worldMatrix ) {
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexScale" ) );
   glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ), 2, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, texCoordsOffset ) ) );
   glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vTexOffset" ) );
+  glVertexAttribPointer( this->material->shaderProgram->GetAttribLocation( "vColor" ), 4, GL_FLOAT, GL_FALSE, sizeof( Vertice ), ( void* ) ( this->vertices->GetBeginIndex() * sizeof( Vertice ) + offsetof( Vertice, color ) ) );
+  glEnableVertexAttribArray( this->material->shaderProgram->GetAttribLocation( "vColor" ) );
 
   if( this->customProjectionMatrix ) {
     glUniformMatrix4fv( this->material->shaderProgram->GetUniformLocation( "projMatrix" ), 1, false, this->customProjectionMatrix );

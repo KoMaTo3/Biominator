@@ -57,7 +57,7 @@ CoreWin32::CoreWin32( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
       className.c_str(),
       windowName.c_str(),
       style | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-      700,
+      1300,
       750,
       windowRect.right - windowRect.left,
       windowRect.bottom - windowRect.top,

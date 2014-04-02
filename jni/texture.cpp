@@ -4,9 +4,9 @@
 
 using namespace Engine;
 
-Texture::Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat )
+Texture::Texture( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat, TextureFilterType setFilterType )
 :width( setWidth ), height( setHeight ), isTransparent( setIsTransparent ), textureId( 0 ), isCompressed( setIsCompressed ), dataLength( setDataLength ? setDataLength : setWidth * setHeight * 4 )
-,imageFormat( setImageFormat ), texCoordsOffset( Vec2Null ), texCoordsScale( Vec2One ), atlas( 0 ), atlasFotThis( 0 ), placeInAtlas( 0 ) {
+,imageFormat( setImageFormat ), texCoordsOffset( Vec2Null ), texCoordsScale( Vec2One ), atlas( 0 ), atlasFotThis( 0 ), placeInAtlas( 0 ), filterType( setFilterType ) {
   if( data ) {
     this->MakeFromBuffer( setWidth, setHeight, data, setDataLength );
   } else {
@@ -129,10 +129,11 @@ void Texture::MakeFromBuffer( size_t setWidth, size_t setHeight, unsigned char *
     if( !this->textureId ) {
       glGenTextures( 1, &this->textureId );
     }
+    LOGI( "Texture::MakeFromBuffer => filter[x%X]", this->filterType );
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
     glBindTexture( GL_TEXTURE_2D, this->textureId );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filterType );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filterType );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     if( this->isCompressed ) {
