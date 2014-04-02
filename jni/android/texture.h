@@ -11,7 +11,7 @@ typedef TextureAndroid TextureType;
 
 class TextureAndroid: public Texture {
 public:
-  TextureAndroid( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, ImageType setImageFormat = IMAGE_TYPE_UNKNOWN );
+  TextureAndroid( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent = false, bool setIsCompressed = false, size_t setDataLength = 0, ImageType setImageFormat = IMAGE_TYPE_UNKNOWN, TextureFilterType setFilterType = TEXTURE_FILTER_TYPE_POINT );
   virtual ~TextureAndroid();
   virtual void ReInitialize();
 

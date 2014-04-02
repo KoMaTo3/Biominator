@@ -3,8 +3,8 @@
 
 using namespace Engine;
 
-TextureAndroid::TextureAndroid( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat )
-:Texture( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat ) {
+TextureAndroid::TextureAndroid( size_t setWidth, size_t setHeight, unsigned char *data, bool setIsTransparent, bool setIsCompressed, size_t setDataLength, ImageType setImageFormat, TextureFilterType setFilterType )
+:Texture( setWidth, setHeight, data, setIsTransparent, setIsCompressed, setDataLength, setImageFormat, setFilterType ) {
   //this->fileName = "";
 }
 
