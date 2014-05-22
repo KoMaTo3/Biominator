@@ -300,7 +300,7 @@ void GameContainer::_TestMesh() {
 
     this->CreateShader( "sprite-bacterium", "shaders/sprite-bacterium.vs", "shaders/sprite-bacterium.fs" );
     this->CreateTexture( "textures/bioma-skin0.tga", Engine::TextureFilterType::TEXTURE_FILTER_TYPE_LINEAR );
-    this->CreateMaterial( "bacterium-0", this->GetShader( "sprite-bacterium" ), "textures/bioma-skin0.tga", Vec4( 1.0f, 1.0f, 1.0f, 0.98f ), Engine::TextureFilterType::TEXTURE_FILTER_TYPE_LINEAR );
+    this->CreateMaterial( "bacterium-0", this->GetShader( "sprite-bacterium" ), "textures/bioma-skin0.tga", Vec4( 1.0f, 1.0f, 1.0f, 0.99f ), Engine::TextureFilterType::TEXTURE_FILTER_TYPE_LINEAR );
     this->CreateBacterium( "bac0", "bacterium-0", Vec2( 1.0f, 1.0f ), Vec3( 0.0f, -1.0f, 0.0f ), Vec2( 1.0f, 1.0f ), 0.0f, 5 )->SetWorldMatrix( this->cameraMain.GetMatrixPointer() );
 
     LOGI( "ok" );
@@ -682,7 +682,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
     vertice = &buffer->Get( num * 3 + 2 );
     vertice->pos.Set( 0.0f, 0.0f, 0.0f );
     vertice->color.Set( 1.0f, 1.0f, 1.0f, 1.0f );
-    vertice->tex.Set( 0.0f, 72.0f / 128.0f );
+    vertice->tex.Set( 0.0f, 72.0f / 512.0f );
     vertice->texCoordsOffset.Set( 0.0f, 0.0f );
     vertice->texCoordsScale.Set( 1.0f, 1.0f );
   }
@@ -715,16 +715,19 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   }
 
   //left eye
+  Vec2
+    eyeLeftTopTex( 20.0f / 128.0f, 0.0f ),
+    eyeRightBottomTex( 128.0f / 128.0f, 83.0f / 512.0f );
   float
     eyesRange = 0.3f * radius,
-    eyesSize = 0.15f * radius;
+    eyesSize = 0.25f * radius;
   num = verticesBaseCount - 1;
-  Vec4 eyeColor( 0.7f, 0.9f, 1.0f, 0.8f );
+  Vec4 eyeColor( 0.7f, 0.9f, 1.0f, 1.0f );
 
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -732,7 +735,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -740,7 +743,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -748,7 +751,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -756,7 +759,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -764,7 +767,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( -1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -774,7 +777,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -782,7 +785,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -790,7 +793,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -798,7 +801,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( -1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 18.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeRightBottomTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -806,7 +809,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, 1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 0.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeLeftTopTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
@@ -814,7 +817,7 @@ ObjectBacterium::ObjectBacterium( const std::string &setName, Engine::Renderer *
   vertice = &buffer->Get( ++num );
   vertice->pos = Vec3( 1.0f, 1.0f, 0.0f ) * radius * eyesRange + Vec3( 1.0f, -1.0f, 0.0f ) * eyesSize;
   vertice->color = eyeColor;
-  vertice->tex.Set( 2.0f / 32.0f, 16.0f / 128.0f );
+  vertice->tex.Set( eyeLeftTopTex.x, eyeRightBottomTex.y );
   vertice->texCoordsOffset.Set( 0.0f, 0.0f );
   vertice->texCoordsScale.Set( 1.0f, 1.0f );
   this->defaultVerticesPosition.push_back( ObjectBacteriumBone::VerticeInfo( num, 0.0f, vertice->pos ) );
